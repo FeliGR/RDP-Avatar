@@ -83,8 +83,10 @@ export const updatePersonaTrait = async (userId, trait, value) => {
 export const sendMessage = async (userId, userText) => {
   try {
     const response = await dialogApi.post(`/api/dialog/${userId}`, {
-      user_text: userText,
+      text: userText, // Changed field name from user_text to text
     });
+    
+    // Return the entire response data for flexible handling in DialogContext
     return response.data;
   } catch (error) {
     console.error("Error sending message to dialog orchestrator:", error);

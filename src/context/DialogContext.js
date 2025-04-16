@@ -54,7 +54,23 @@ export const DialogProvider = ({ children }) => {
         try {
           // Send to Dialog Orchestrator
           const response = await sendMessage(personalityTraits.userId, text);
-          responseText = response.text;
+          
+          // Handle different response formats
+          if (response.data && response.data.response) {
+            // New format: {"data":{"response":"Hello!"}, "status":"success"}
+            responseText = response.data.response;
+          } else if (response.text) {
+            // Old format: {"text":"Hello!"}
+            responseText = response.text;
+          } else if (typeof response === 'string') {
+            // Plain string response
+            responseText = response;
+          } else {
+            // Fallback for unexpected format
+            console.warn("Unexpected response format:", response);
+            responseText = "Received a response in an unexpected format.";
+          }
+          
           setDialogApiAvailable(true);
         } catch (apiError) {
           console.error("API call failed:", apiError);

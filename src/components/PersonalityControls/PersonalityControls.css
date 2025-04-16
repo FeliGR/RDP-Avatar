@@ -8,23 +8,30 @@
   flex-direction: column;
 }
 
-.personality-controls::-webkit-scrollbar {
-  width: 4px;
+/* Add loading indicator that doesn't cause layout shifts */
+.loading-indicator {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: rgba(33, 150, 243, 0.7);
+  animation: pulse-opacity 1.5s infinite ease-in-out;
+  pointer-events: none;
 }
 
-.personality-controls::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.personality-controls::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.3);
-  border-radius: 10px;
+@keyframes pulse-opacity {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
 }
 
 .trait-control {
   margin-bottom: 0.8rem;
   transition: margin-bottom 0.2s ease;
   position: relative;
+  transform: translateZ(0); /* Hardware acceleration */
+  will-change: transform; /* Hint at element changing */
 }
 
 .trait-control:last-child {
@@ -43,6 +50,7 @@
   margin-left: 6px;
   font-weight: 600;
   color: #64b5f6;
+  transition: all 0.15s ease-out; /* Smooth transition for changing values */
 }
 
 .trait-description {
@@ -149,7 +157,7 @@
   left: 0;
   height: 100%;
   border-radius: 3px;
-  transition: width 0.3s ease;
+  transition: width 0.15s ease-out; /* Faster, smoother transition */
 }
 
 .openness-bar {

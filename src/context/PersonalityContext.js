@@ -50,9 +50,13 @@ export const PersonalityProvider = ({ children }) => {
   }, []);
 
   // Update a single personality trait
-  const updateTrait = async (trait, value) => {
+  const updateTrait = async (trait, value, options = { showLoading: false }) => {
     try {
-      setIsLoading(true);
+      // Only show loading indicator if explicitly requested
+      // This helps prevent flickering during slider interactions
+      if (options.showLoading) {
+        setIsLoading(true);
+      }
       
       // Update local state immediately for responsive UI
       setPersonalityTraits((prev) => ({ ...prev, [trait]: value }));
@@ -73,7 +77,9 @@ export const PersonalityProvider = ({ children }) => {
       // We still return true since we updated the UI state
       return true;
     } finally {
-      setIsLoading(false);
+      if (options.showLoading) {
+        setIsLoading(false);
+      }
     }
   };
 

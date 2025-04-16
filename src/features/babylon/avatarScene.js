@@ -189,6 +189,14 @@ export const updateAvatarBasedOnPersonality = (avatar, personalityTraits) => {
   }
 };
 
+// Update a single personality trait without affecting avatar styling
+export const updateSingleTrait = (avatar, trait, value) => {
+  // This function intentionally does nothing with the avatar's appearance
+  // It just receives the trait and value but doesn't modify the avatar
+  console.log(`Trait ${trait} updated to ${value} - no visual changes applied`);
+  return;
+};
+
 // Placeholder for animation functions
 export const startAnimation = (avatar, animationName) => {
   // Implementation depends on the specific avatar model and animations

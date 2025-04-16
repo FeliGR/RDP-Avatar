@@ -1,14 +1,51 @@
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { usePersonality } from "../../context/PersonalityContext";
 import "./PersonalityControls.css";
+
+// Debounce utility function
+const useDebounce = (callback, delay) => {
+  const timeoutRef = useRef(null);
+  
+  const debouncedCallback = useCallback((...args) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    
+    timeoutRef.current = setTimeout(() => {
+      callback(...args);
+    }, delay);
+  }, [callback, delay]);
+  
+  return debouncedCallback;
+};
 
 const PersonalityControls = () => {
   const { personalityTraits, updateTrait, isLoading, error } = usePersonality();
   const rangeRefs = useRef({});
+  // Local state for immediate UI feedback
+  const [localTraits, setLocalTraits] = useState({});
+  
+  // Initialize local traits from context when it changes
+  useEffect(() => {
+    setLocalTraits(personalityTraits || {});
+  }, [personalityTraits]);
 
-  const handleTraitChange = async (trait, value) => {
-    // Convert to integer instead of float
-    await updateTrait(trait, parseInt(value, 10));
+  // Debounced function to update trait in the backend
+  const debouncedUpdateTrait = useDebounce((trait, value) => {
+    updateTrait(trait, value);
+  }, 400); // 400ms debounce time
+
+  const handleTraitChange = (trait, value) => {
+    const numericValue = parseInt(value, 10);
+    
+    // Update local state immediately for responsive UI
+    setLocalTraits(prev => ({
+      ...prev,
+      [trait]: numericValue
+    }));
+    
+    // Debounce the actual API call
+    debouncedUpdateTrait(trait, numericValue);
   };
 
   const traitDescriptions = {
@@ -59,10 +96,7 @@ const PersonalityControls = () => {
         }
       });
     };
-  }, [personalityTraits]);
-  
-  // Ensure personalityTraits is properly initialized
-  const validTraits = personalityTraits || {};
+  }, [localTraits]); // Changed dependency to localTraits
   
   // Define the Big Five traits explicitly to ensure they're always shown
   const bigFiveTraits = ['openness', 'conscientiousness', 'extraversion', 'agreeableness', 'neuroticism'];
@@ -70,11 +104,12 @@ const PersonalityControls = () => {
   return (
     <div className="personality-controls">
       {error && <div className="error-message">{error}</div>}
-      {isLoading && <div className="loading-message">Loading personality profile...</div>}
+      {isLoading && <div className="loading-indicator" aria-label="Loading..."></div>}
 
       {bigFiveTraits.map(trait => {
-        // Get the trait value or use default if not available
-        const value = validTraits[trait] !== undefined ? validTraits[trait] : 3;
+        // Use local traits for immediate UI feedback
+        const traitFromState = localTraits[trait];
+        const value = traitFromState !== undefined ? traitFromState : 3;
         
         // Ensure value is a whole number
         const numericValue = typeof value === 'number' ? Math.round(value) : parseInt(value, 10) || 3;

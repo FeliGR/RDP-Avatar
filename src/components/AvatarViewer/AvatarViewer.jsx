@@ -6,6 +6,7 @@ import {
   loadAvatarModel,
   resetCameraPosition,
   updateAvatarBasedOnPersonality,
+  updateSingleTrait,
 } from "../../features/babylon/avatarScene";
 import "./AvatarViewer.css";
 
@@ -15,7 +16,9 @@ const AvatarViewer = () => {
   const avatarRef = useRef(null);
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
+  const [initialTraitsSet, setInitialTraitsSet] = useState(false);
   const { personalityTraits, isLoading } = usePersonality();
+  const previousTraitsRef = useRef({});
 
   // Initialize Babylon.js scene
   useEffect(() => {
@@ -31,6 +34,8 @@ const AvatarViewer = () => {
 
           // Update avatar based on initial personality traits
           updateAvatarBasedOnPersonality(avatar, personalityTraits);
+          setInitialTraitsSet(true);
+          previousTraitsRef.current = { ...personalityTraits };
         } catch (error) {
           console.error("Failed to load avatar:", error);
         }
@@ -41,43 +46,51 @@ const AvatarViewer = () => {
       // Add interaction listeners for tooltip
       const canvas = canvasRef.current;
       let interactionTimeout;
-      
+
       const handleInteraction = () => {
         if (!hasInteracted) {
           setHasInteracted(true);
           setTooltipVisible(true);
-          
+
           // Hide tooltip after 5 seconds
           interactionTimeout = setTimeout(() => {
             setTooltipVisible(false);
           }, 5000);
         }
       };
-      
-      canvas.addEventListener('pointerdown', handleInteraction);
-      canvas.addEventListener('wheel', handleInteraction);
-      
+
+      canvas.addEventListener("pointerdown", handleInteraction);
+      canvas.addEventListener("wheel", handleInteraction);
+
       // Cleanup on component unmount
       return () => {
         if (sceneRef.current) {
           const { engine, scene } = sceneRef.current;
           disposeScene(engine, scene);
         }
-        
-        canvas.removeEventListener('pointerdown', handleInteraction);
-        canvas.removeEventListener('wheel', handleInteraction);
+
+        canvas.removeEventListener("pointerdown", handleInteraction);
+        canvas.removeEventListener("wheel", handleInteraction);
         clearTimeout(interactionTimeout);
       };
     }
   }, []);
 
-  // Update avatar when personality traits change
+  // Handle personality trait changes
   useEffect(() => {
-    if (avatarRef.current) {
-      updateAvatarBasedOnPersonality(avatarRef.current, personalityTraits);
+    if (avatarRef.current && initialTraitsSet) {
+      // For each trait change, use updateSingleTrait to avoid styling changes
+      for (const [trait, value] of Object.entries(personalityTraits)) {
+        if (previousTraitsRef.current[trait] !== value) {
+          updateSingleTrait(avatarRef.current, trait, value);
+        }
+      }
+
+      // Update our reference to the current traits
+      previousTraitsRef.current = { ...personalityTraits };
     }
-  }, [personalityTraits]);
-  
+  }, [personalityTraits, initialTraitsSet]);
+
   // Handle reset camera button
   const handleResetCamera = () => {
     if (sceneRef.current) {
@@ -90,12 +103,12 @@ const AvatarViewer = () => {
       <div className="avatar-canvas-container">
         {isLoading && <div className="avatar-loading">Updating avatar...</div>}
         <canvas ref={canvasRef} className="avatar-canvas" />
-        
+
         {/* Replace static instructions with tooltip */}
-        <div className={`avatar-tooltip ${tooltipVisible ? 'visible' : ''}`}>
+        <div className={`avatar-tooltip ${tooltipVisible ? "visible" : ""}`}>
           <p>Drag to rotate • Scroll to zoom</p>
         </div>
-        
+
         {/* Reset camera button */}
         <button className="reset-camera-button" onClick={handleResetCamera}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">

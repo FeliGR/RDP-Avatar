@@ -86,9 +86,9 @@ function AppContent() {
   return (
     <div className="app-container">
       <header className="app-header">
-        <h1>AdaptiveAI-PersonaAR</h1>
+        <h1>Persona Dynamics AI</h1>
         <p className="app-description">
-          Customize your avatar's personality and interact through voice or text
+          Experience next-generation digital identity with AI-powered avatar personalization. Our advanced platform enables seamless voice and text interactions while dynamically adapting to your unique personality traits.
         </p>
       </header>
 

@@ -50,6 +50,17 @@ export const initScene = (canvas) => {
   return { scene, engine };
 };
 
+// Reset camera to default position
+export const resetCameraPosition = (scene) => {
+  const camera = scene.getCameraByName("camera");
+  if (camera && camera instanceof BABYLON.ArcRotateCamera) {
+    camera.alpha = -Math.PI / 2;
+    camera.beta = Math.PI / 2.5;
+    camera.radius = 3;
+    camera.target = new BABYLON.Vector3(0, 1, 0);
+  }
+};
+
 // Load avatar model
 export const loadAvatarModel = async (
   scene,

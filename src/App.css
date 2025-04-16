@@ -31,7 +31,7 @@
   height: 100vh; /* Set fixed height to viewport height */
   overflow: hidden; /* Prevent scrolling at container level */
   background: linear-gradient(135deg, #1a1f2c 0%, #2c3e50 100%);
-  color: #f5f5f5;
+  color: #E4E9F0; /* Updated text color */
   display: flex;
   flex-direction: column;
 }
@@ -71,8 +71,8 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 0.75rem;
-  padding: 0.75rem;
+  gap: 2rem; /* Increased from 0.75rem to 2rem (32px) */
+  padding: 1rem; /* m-4 equivalent */
   height: calc(100% - 4rem);
   min-height: 0;
 }
@@ -90,7 +90,7 @@
   display: flex;
   flex-direction: row;
   flex: 2 1 0;
-  gap: 0.75rem;
+  gap: 2rem; /* Increased from 0.75rem to 2rem (32px) */
   min-height: 200px;
   min-width: 0;
   overflow: hidden;
@@ -108,7 +108,7 @@
 @media (min-width: 992px) {
   .app-content {
     flex-direction: row;
-    gap: 1rem;
+    gap: 2rem; /* Increased from 1rem to 2rem (32px) */
     padding: 1rem;
   }
   
@@ -122,7 +122,7 @@
     width: 60%;
     max-width: 60%;
     flex-direction: column;
-    gap: 1rem;
+    gap: 2rem; /* Increased from 1rem to 2rem (32px) */
   }
 }
 
@@ -260,20 +260,21 @@
 
 /* Card styling for components */
 .app-card {
-  background: rgba(255, 255, 255, 0.05);
+  background: #212B3A; /* Updated lighter card background */
   backdrop-filter: blur(10px);
-  border-radius: 12px;
+  border-radius: 12px; /* Uniform border radius */
   border: 1px solid rgba(255, 255, 255, 0.1);
   overflow: hidden;
   transition: all 0.3s ease;
   height: 100%;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Added subtle box-shadow */
 }
 
 .app-card:hover {
   border-color: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 .app-card-header {
@@ -288,12 +289,12 @@
 .app-card-header h2 {
   font-size: 1.1rem;
   font-weight: 500;
-  color: #fff;
+  color: #FFFFFF; /* Updated heading color */
   margin: 0;
 }
 
 .app-card-content {
-  padding: 0.75rem;
+  padding: 1.5rem; /* Increased padding (p-6 equivalent) */
   flex: 1;
   overflow: auto;
   min-height: 0; /* Important for flex containers to allow proper scrolling */

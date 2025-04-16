@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { usePersonality } from "../../context/PersonalityContext";
 import "./PersonalityControls.css";
 
 const PersonalityControls = () => {
   const { personalityTraits, updateTrait, isLoading, error } = usePersonality();
+  const rangeRefs = useRef({});
 
   const handleTraitChange = async (trait, value) => {
     // Convert to integer instead of float
@@ -28,11 +29,38 @@ const PersonalityControls = () => {
     return ((value - 1) / 4) * 100; // Scale from 1-5 to 0-100%
   };
 
-  // Debug output to check the structure of personalityTraits
+  // Update range slider position variables for tooltips
   useEffect(() => {
-    console.log("Personality traits:", personalityTraits);
+    const updateRangePositions = () => {
+      Object.entries(rangeRefs.current).forEach(([trait, element]) => {
+        if (element) {
+          const value = element.value;
+          const min = element.min || 1;
+          const max = element.max || 5;
+          const percent = ((value - min) / (max - min)) * 100;
+          element.style.setProperty('--range-percent', `${percent}%`);
+        }
+      });
+    };
+    
+    updateRangePositions();
+    
+    // Setup event listeners for all range inputs
+    Object.values(rangeRefs.current).forEach(element => {
+      if (element) {
+        element.addEventListener('input', updateRangePositions);
+      }
+    });
+    
+    return () => {
+      Object.values(rangeRefs.current).forEach(element => {
+        if (element) {
+          element.removeEventListener('input', updateRangePositions);
+        }
+      });
+    };
   }, [personalityTraits]);
-
+  
   // Ensure personalityTraits is properly initialized
   const validTraits = personalityTraits || {};
   
@@ -55,7 +83,7 @@ const PersonalityControls = () => {
         const percentage = calculatePercentage(numericValue);
 
         return (
-          <div key={trait} className="trait-control">
+          <div key={trait} className={`trait-control ${trait}`}>
             <label htmlFor={trait}>
               {formatTrait(trait)}
               <span className="trait-value">({numericValue})</span>
@@ -79,6 +107,7 @@ const PersonalityControls = () => {
               value={numericValue}
               onChange={(e) => handleTraitChange(trait, e.target.value)}
               disabled={isLoading}
+              ref={el => rangeRefs.current[trait] = el}
             />
             <div className="trait-range">
               <span>Low</span>

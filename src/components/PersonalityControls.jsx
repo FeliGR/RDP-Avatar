@@ -6,7 +6,8 @@ const PersonalityControls = () => {
   const { personalityTraits, updateTrait, isLoading, error } = usePersonality();
 
   const handleTraitChange = async (trait, value) => {
-    await updateTrait(trait, parseFloat(value));
+    // Convert to integer instead of float
+    await updateTrait(trait, parseInt(value, 10));
   };
 
   const traitDescriptions = {
@@ -40,16 +41,15 @@ const PersonalityControls = () => {
   
   return (
     <div className="personality-controls">
-      <h2>Personality Profile</h2>
       {error && <div className="error-message">{error}</div>}
       {isLoading && <div className="loading-message">Loading personality profile...</div>}
 
       {bigFiveTraits.map(trait => {
         // Get the trait value or use default if not available
-        const value = validTraits[trait] !== undefined ? validTraits[trait] : 3.0;
+        const value = validTraits[trait] !== undefined ? validTraits[trait] : 3;
         
-        // Ensure value is a number
-        const numericValue = typeof value === 'number' ? value : parseFloat(value) || 3.0;
+        // Ensure value is a whole number
+        const numericValue = typeof value === 'number' ? Math.round(value) : parseInt(value, 10) || 3;
         
         // Calculate progress bar width
         const percentage = calculatePercentage(numericValue);
@@ -58,7 +58,7 @@ const PersonalityControls = () => {
           <div key={trait} className="trait-control">
             <label htmlFor={trait}>
               {formatTrait(trait)}
-              <span className="trait-value">({numericValue.toFixed(1)})</span>
+              <span className="trait-value">({numericValue})</span>
             </label>
             <p className="trait-description">{traitDescriptions[trait]}</p>
 
@@ -73,9 +73,9 @@ const PersonalityControls = () => {
               type="range"
               id={trait}
               name={trait}
-              min="1.0"
-              max="5.0"
-              step="0.1"
+              min="1"
+              max="5"
+              step="1"
               value={numericValue}
               onChange={(e) => handleTraitChange(trait, e.target.value)}
               disabled={isLoading}

@@ -95,7 +95,12 @@ function AppContent() {
       <main className="app-content">
         <div className="avatar-section">
           <div className="app-card">
-            <AvatarViewer />
+            <div className="app-card-header">
+              <h2>Avatar</h2>
+            </div>
+            <div className="app-card-content">
+              <AvatarViewer />
+            </div>
           </div>
         </div>
 

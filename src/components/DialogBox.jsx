@@ -35,7 +35,6 @@ const DialogBox = () => {
   return (
     <div className="dialog-box">
       <div className="dialog-header">
-        <h2>Conversation</h2>
         <button
           className="clear-button"
           onClick={clearConversation}

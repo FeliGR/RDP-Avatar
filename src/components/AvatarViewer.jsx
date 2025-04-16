@@ -54,9 +54,6 @@ const AvatarViewer = () => {
 
   return (
     <div className="avatar-viewer">
-      <div className="avatar-viewer-header">
-        <h2>AR Avatar</h2>
-      </div>
       <div className="avatar-canvas-container">
         {isLoading && <div className="avatar-loading">Updating avatar...</div>}
         <canvas ref={canvasRef} className="avatar-canvas" />

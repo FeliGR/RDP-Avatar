@@ -79,12 +79,12 @@
     grid-template-rows: 1fr;
     padding: 1.5rem;
   }
-  
+
   .avatar-section {
     grid-column: 2;
     grid-row: 1;
   }
-  
+
   .interaction-section {
     grid-column: 1;
     grid-row: 1;
@@ -104,18 +104,18 @@
     overflow-y: auto;
     gap: 1.5rem;
   }
-  
+
   .avatar-section {
     grid-row: 1;
   }
-  
+
   .interaction-section {
     grid-row: 2;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1.5rem;
   }
-  
+
   .interaction-section .voice-command-container {
     grid-column: 1 / span 2;
   }
@@ -129,12 +129,12 @@
     height: auto;
     padding-bottom: 5rem;
   }
-  
+
   .avatar-section {
     height: 40vh;
     min-height: 300px;
   }
-  
+
   .interaction-section {
     display: flex;
     flex-direction: column;
@@ -259,11 +259,11 @@
   .app-header {
     padding: 1rem;
   }
-  
+
   .app-header h1 {
     font-size: 1.5rem;
   }
-  
+
   .voice-command-container {
     position: fixed;
     bottom: 1rem;

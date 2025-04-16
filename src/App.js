@@ -5,8 +5,8 @@ import DialogBox from "./components/DialogBox";
 import PersonalityControls from "./components/PersonalityControls";
 import { DialogProvider, useDialog } from "./context/DialogContext";
 import {
-    PersonalityProvider,
-    usePersonality,
+  PersonalityProvider,
+  usePersonality,
 } from "./context/PersonalityContext";
 import VoiceCommandProcessor from "./voice/voiceCommands";
 
@@ -71,7 +71,9 @@ const VoiceCommandButton = () => {
       <button
         onClick={toggleListening}
         className={`voice-button ${isListening ? "listening" : ""}`}
-        aria-label={isListening ? "Stop voice recognition" : "Start voice recognition"}
+        aria-label={
+          isListening ? "Stop voice recognition" : "Start voice recognition"
+        }
       >
         {isListening ? "Stop" : "Voice"}
       </button>
@@ -106,7 +108,7 @@ function AppContent() {
               <PersonalityControls />
             </div>
           </div>
-          
+
           <div className="app-card">
             <div className="app-card-header">
               <h2>Conversation</h2>
@@ -116,7 +118,7 @@ function AppContent() {
             </div>
           </div>
         </div>
-        
+
         <VoiceCommandButton />
       </main>
     </div>

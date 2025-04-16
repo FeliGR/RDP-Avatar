@@ -1,7 +1,12 @@
-import React, { useEffect, useRef } from 'react';
-import { disposeScene, initScene, loadAvatarModel, updateAvatarBasedOnPersonality } from '../babylon/avatarScene';
-import { usePersonality } from '../context/PersonalityContext';
-import './AvatarViewer.css';
+import React, { useEffect, useRef } from "react";
+import {
+  disposeScene,
+  initScene,
+  loadAvatarModel,
+  updateAvatarBasedOnPersonality,
+} from "../babylon/avatarScene";
+import { usePersonality } from "../context/PersonalityContext";
+import "./AvatarViewer.css";
 
 const AvatarViewer = () => {
   const canvasRef = useRef(null);
@@ -20,11 +25,11 @@ const AvatarViewer = () => {
         try {
           const avatar = await loadAvatarModel(scene);
           avatarRef.current = avatar;
-          
+
           // Update avatar based on initial personality traits
           updateAvatarBasedOnPersonality(avatar, personalityTraits);
         } catch (error) {
-          console.error('Failed to load avatar:', error);
+          console.error("Failed to load avatar:", error);
         }
       };
 

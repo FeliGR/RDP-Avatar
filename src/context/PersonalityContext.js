@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { getPersonaProfile, updatePersonaTrait } from '../services/api';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { getPersonaProfile, updatePersonaTrait } from "../services/api";
 
 // Default personality traits
 const DEFAULT_PERSONALITY = {
@@ -8,7 +8,7 @@ const DEFAULT_PERSONALITY = {
   extraversion: 3.0,
   agreeableness: 3.0,
   neuroticism: 3.0,
-  userId: 1 // This would typically come from authentication
+  userId: 1, // This would typically come from authentication
 };
 
 // Create the context
@@ -19,9 +19,11 @@ export const usePersonality = () => useContext(PersonalityContext);
 
 // Provider component
 export const PersonalityProvider = ({ children }) => {
-  const [personalityTraits, setPersonalityTraits] = useState(DEFAULT_PERSONALITY);
+  const [personalityTraits, setPersonalityTraits] =
+    useState(DEFAULT_PERSONALITY);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [apiAvailable, setApiAvailable] = useState(true);
 
   // Load initial personality data
   useEffect(() => {
@@ -32,9 +34,12 @@ export const PersonalityProvider = ({ children }) => {
         const data = await getPersonaProfile(userId);
         setPersonalityTraits({ ...data, userId });
         setError(null);
+        setApiAvailable(true);
       } catch (err) {
-        console.error('Failed to fetch personality data:', err);
-        setError('Failed to load personality profile. Using default values.');
+        console.error("Failed to fetch personality data:", err);
+        setApiAvailable(false);
+        // Use a more friendly error message
+        setError("Using default personality settings (API server unavailable)");
         // Keep using default values if API fails
       } finally {
         setIsLoading(false);
@@ -48,26 +53,40 @@ export const PersonalityProvider = ({ children }) => {
   const updateTrait = async (trait, value) => {
     try {
       setIsLoading(true);
-      const userId = personalityTraits.userId;
-      await updatePersonaTrait(userId, trait, value);
-      setPersonalityTraits(prev => ({ ...prev, [trait]: value }));
+      
+      // Update local state immediately for responsive UI
+      setPersonalityTraits((prev) => ({ ...prev, [trait]: value }));
+      
+      // Only attempt API call if we believe the API is available
+      if (apiAvailable) {
+        const userId = personalityTraits.userId;
+        await updatePersonaTrait(userId, trait, value);
+      } else {
+        console.log(`API unavailable, trait ${trait} updated locally only`);
+      }
+      
       return true;
     } catch (err) {
       console.error(`Failed to update ${trait}:`, err);
-      setError(`Failed to update ${trait}. Please try again.`);
-      return false;
+      setApiAvailable(false);
+      setError(`Personality trait updated locally only (API server unavailable)`);
+      // We still return true since we updated the UI state
+      return true;
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <PersonalityContext.Provider value={{ 
-      personalityTraits, 
-      isLoading, 
-      error,
-      updateTrait 
-    }}>
+    <PersonalityContext.Provider
+      value={{
+        personalityTraits,
+        isLoading,
+        error,
+        updateTrait,
+        apiAvailable
+      }}
+    >
       {children}
     </PersonalityContext.Provider>
   );

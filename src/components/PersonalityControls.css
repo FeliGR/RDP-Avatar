@@ -1,0 +1,118 @@
+.personality-controls {
+  height: 100%;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.trait-control {
+  margin-bottom: 1.5rem;
+}
+
+.trait-control:last-child {
+  margin-bottom: 0;
+}
+
+.trait-control label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.trait-value {
+  margin-left: 8px;
+  font-weight: 600;
+  color: #64b5f6;
+}
+
+.trait-description {
+  margin: 5px 0 10px;
+  font-size: 0.8rem;
+  font-weight: normal;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.trait-control input[type="range"] {
+  width: 100%;
+  height: 6px;
+  -webkit-appearance: none;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}
+
+.trait-control input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  background: #64b5f6;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 0 4px rgba(100, 181, 246, 0.2);
+  transition: all 0.2s ease;
+}
+
+.trait-control input[type="range"]::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 0 6px rgba(100, 181, 246, 0.3);
+}
+
+.trait-control input[type="range"]::-webkit-slider-thumb:active {
+  transform: scale(1.1);
+}
+
+.trait-range {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.trait-progress {
+  position: relative;
+  height: 6px;
+  margin-bottom: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.trait-progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.openness-bar {
+  background: linear-gradient(to right, #43a047, #66bb6a);
+}
+
+.conscientiousness-bar {
+  background: linear-gradient(to right, #1976d2, #42a5f5);
+}
+
+.extraversion-bar {
+  background: linear-gradient(to right, #e53935, #ff7043);
+}
+
+.agreeableness-bar {
+  background: linear-gradient(to right, #8e24aa, #ba68c8);
+}
+
+.neuroticism-bar {
+  background: linear-gradient(to right, #fb8c00, #ffb74d);
+}
+
+.error-message {
+  background-color: rgba(244, 67, 54, 0.1);
+  color: #ef5350;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  font-size: 0.85rem;
+  border-left: 3px solid #ef5350;
+}

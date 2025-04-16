@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { usePersonality } from "../context/PersonalityContext";
+import { usePersonality } from "../../context/PersonalityContext";
 import "./PersonalityControls.css";
 
 const PersonalityControls = () => {

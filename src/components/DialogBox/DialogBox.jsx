@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useDialog } from "../context/DialogContext";
+import { useDialog } from "../../context/DialogContext";
 import "./DialogBox.css";
 
 const DialogBox = () => {

@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import "./App.css";
-import AvatarViewer from "./components/AvatarViewer";
-import DialogBox from "./components/DialogBox";
-import PersonalityControls from "./components/PersonalityControls";
+import AvatarViewer from "./components/AvatarViewer/AvatarViewer";
+import DialogBox from "./components/DialogBox/DialogBox";
+import PersonalityControls from "./components/PersonalityControls/PersonalityControls";
 import { DialogProvider, useDialog } from "./context/DialogContext";
 import {
   PersonalityProvider,
   usePersonality,
 } from "./context/PersonalityContext";
-import VoiceCommandProcessor from "./voice/voiceCommands";
+import VoiceCommandProcessor from "./features/voice/voiceCommands";
 
 // Voice command component
 const VoiceCommandButton = () => {

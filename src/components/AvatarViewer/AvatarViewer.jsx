@@ -1,11 +1,11 @@
 import React, { useEffect, useRef } from "react";
+import { usePersonality } from "../../context/PersonalityContext";
 import {
-  disposeScene,
-  initScene,
-  loadAvatarModel,
-  updateAvatarBasedOnPersonality,
-} from "../babylon/avatarScene";
-import { usePersonality } from "../context/PersonalityContext";
+    disposeScene,
+    initScene,
+    loadAvatarModel,
+    updateAvatarBasedOnPersonality,
+} from "../../features/babylon/avatarScene";
 import "./AvatarViewer.css";
 
 const AvatarViewer = () => {

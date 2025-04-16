@@ -4,6 +4,12 @@ import { usePersonality } from "../../context/PersonalityContext";
 import VoiceCommandProcessor from "../../features/voice/voiceCommands";
 import "./DialogBox.css";
 
+// Create a custom event for typing status
+export const TYPING_EVENTS = {
+  START: 'user-typing-start',
+  STOP: 'user-typing-stop'
+};
+
 const DialogBox = () => {
   const { messages, sendUserMessage, isLoading, error, clearConversation } =
     useDialog();
@@ -13,6 +19,7 @@ const DialogBox = () => {
   const [commandProcessor, setCommandProcessor] = useState(null);
   const [statusMessage, setStatusMessage] = useState("");
   const messagesEndRef = useRef(null);
+  const typingTimeoutRef = useRef(null);
 
   // Auto-scroll to bottom of messages
   const scrollToBottom = () => {
@@ -23,10 +30,19 @@ const DialogBox = () => {
     scrollToBottom();
   }, [messages]);
 
+  // Dispatch custom events for typing to notify avatar
+  const dispatchTypingEvent = (isTyping) => {
+    const eventName = isTyping ? TYPING_EVENTS.START : TYPING_EVENTS.STOP;
+    document.dispatchEvent(new CustomEvent(eventName));
+  };
+
   // Handle recognition end (called when speech recognition stops)
   const handleRecognitionEnd = () => {
     setIsListening(false);
     setStatusMessage("Voice recognition complete");
+    
+    // Also dispatch typing stop event 
+    dispatchTypingEvent(false);
     
     // Clear status message after 2 seconds
     setTimeout(() => {
@@ -79,6 +95,34 @@ const DialogBox = () => {
 
     await sendUserMessage(inputText.trim());
     setInputText("");
+    
+    // Dispatch typing stop event
+    dispatchTypingEvent(false);
+    
+    // Clear any pending typing timeout
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = null;
+    }
+  };
+
+  // Handle typing events for the avatar
+  const handleInputChange = (e) => {
+    const text = e.target.value;
+    setInputText(text);
+    
+    // Dispatch typing start event
+    dispatchTypingEvent(true);
+    
+    // Clear existing timeout
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+    
+    // Set timeout to stop typing after 2 seconds of inactivity
+    typingTimeoutRef.current = setTimeout(() => {
+      dispatchTypingEvent(false);
+    }, 2000);
   };
 
   // Send message on Ctrl+Enter
@@ -95,6 +139,9 @@ const DialogBox = () => {
       setStatusMessage("Voice recognition stopped");
       setIsListening(false);
       
+      // Dispatch typing stop event
+      dispatchTypingEvent(false);
+      
       // Clear status message after 2 seconds
       setTimeout(() => {
         setStatusMessage("");
@@ -104,6 +151,9 @@ const DialogBox = () => {
       if (started) {
         setStatusMessage("Listening...");
         setIsListening(true);
+        
+        // Dispatch typing start event since voice is active
+        dispatchTypingEvent(true);
       } else {
         setStatusMessage("Failed to start voice recognition");
         
@@ -114,6 +164,15 @@ const DialogBox = () => {
       }
     }
   };
+  
+  // Cleanup typing timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div className="dialog-box">
@@ -185,7 +244,7 @@ const DialogBox = () => {
         <input
           type="text"
           value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
+          onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           placeholder="Ask me anything about your AI self…"
           disabled={isLoading}

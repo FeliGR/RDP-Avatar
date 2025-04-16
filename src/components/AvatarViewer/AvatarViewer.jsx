@@ -1,10 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
+import { TYPING_EVENTS } from "../../components/DialogBox/DialogBox";
+import { useDialog } from "../../context/DialogContext";
 import { usePersonality } from "../../context/PersonalityContext";
 import {
+  AVATAR_STATES,
+  detectSentiment,
   disposeScene,
   initScene,
   loadAvatarModel,
   resetCameraPosition,
+  setAvatarState,
   updateAvatarBasedOnPersonality,
   updateSingleTrait,
 } from "../../features/babylon/avatarScene";
@@ -18,7 +23,10 @@ const AvatarViewer = () => {
   const [hasInteracted, setHasInteracted] = useState(false);
   const [initialTraitsSet, setInitialTraitsSet] = useState(false);
   const { personalityTraits, isLoading } = usePersonality();
+  const { messages, isLoading: isMessageLoading } = useDialog();
   const previousTraitsRef = useRef({});
+  const previousMessagesLengthRef = useRef(0);
+  const typingTimeoutRef = useRef(null);
 
   // Initialize Babylon.js scene
   useEffect(() => {
@@ -72,6 +80,11 @@ const AvatarViewer = () => {
         canvas.removeEventListener("pointerdown", handleInteraction);
         canvas.removeEventListener("wheel", handleInteraction);
         clearTimeout(interactionTimeout);
+        
+        // Clear any pending animation timeouts
+        if (typingTimeoutRef.current) {
+          clearTimeout(typingTimeoutRef.current);
+        }
       };
     }
   }, []);
@@ -90,6 +103,82 @@ const AvatarViewer = () => {
       previousTraitsRef.current = { ...personalityTraits };
     }
   }, [personalityTraits, initialTraitsSet]);
+
+  // Handle chat message changes to trigger avatar animations
+  useEffect(() => {
+    if (!avatarRef.current || !initialTraitsSet) return;
+
+    // Check if new message was added
+    if (messages.length > previousMessagesLengthRef.current) {
+      // Get the latest message
+      const latestMessage = messages[messages.length - 1];
+      
+      if (latestMessage.sender === 'bot') {
+        // Bot is speaking - animate avatar with appropriate sentiment
+        const sentiment = detectSentiment(latestMessage.text);
+        setAvatarState(avatarRef.current, AVATAR_STATES.SPEAKING, sentiment);
+        
+        // Calculate speaking duration based on message length (100ms per character, min 1s, max 10s)
+        const speakingDuration = Math.min(Math.max(latestMessage.text.length * 100, 1000), 10000);
+        
+        // Return to idle after speaking
+        typingTimeoutRef.current = setTimeout(() => {
+          setAvatarState(avatarRef.current, AVATAR_STATES.IDLE);
+        }, speakingDuration);
+      } else {
+        // User sent a message - avatar should return to idle
+        // This could happen when transitioning from listening to idle
+        setAvatarState(avatarRef.current, AVATAR_STATES.IDLE);
+      }
+      
+      // Update ref to current message count
+      previousMessagesLengthRef.current = messages.length;
+    }
+  }, [messages, initialTraitsSet]);
+
+  // Handle message loading state to show "listening" animation
+  useEffect(() => {
+    if (!avatarRef.current || !initialTraitsSet) return;
+    
+    if (isMessageLoading) {
+      // When waiting for bot response, show listening state
+      setAvatarState(avatarRef.current, AVATAR_STATES.LISTENING);
+    }
+  }, [isMessageLoading, initialTraitsSet]);
+
+  // Listen for custom typing events from DialogBox
+  useEffect(() => {
+    if (!avatarRef.current || !initialTraitsSet) return;
+    
+    const handleTypingStart = () => {
+      setAvatarState(avatarRef.current, AVATAR_STATES.LISTENING);
+      
+      // Clear any existing timeout
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+        typingTimeoutRef.current = null;
+      }
+    };
+    
+    const handleTypingStop = () => {
+      // Return to idle state
+      setAvatarState(avatarRef.current, AVATAR_STATES.IDLE);
+    };
+    
+    // Add event listeners for custom typing events
+    document.addEventListener(TYPING_EVENTS.START, handleTypingStart);
+    document.addEventListener(TYPING_EVENTS.STOP, handleTypingStop);
+    
+    // Cleanup listeners
+    return () => {
+      document.removeEventListener(TYPING_EVENTS.START, handleTypingStart);
+      document.removeEventListener(TYPING_EVENTS.STOP, handleTypingStop);
+      
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    };
+  }, [initialTraitsSet]);
 
   // Handle reset camera button
   const handleResetCamera = () => {

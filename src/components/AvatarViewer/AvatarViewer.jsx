@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { usePersonality } from "../../context/PersonalityContext";
 import {
-    disposeScene,
-    initScene,
-    loadAvatarModel,
-    updateAvatarBasedOnPersonality,
-    resetCameraPosition,
+  disposeScene,
+  initScene,
+  loadAvatarModel,
+  resetCameraPosition,
+  updateAvatarBasedOnPersonality,
 } from "../../features/babylon/avatarScene";
 import "./AvatarViewer.css";
 

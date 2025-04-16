@@ -1,10 +1,11 @@
 // Voice recognition for commands and messaging
 class VoiceRecognition {
-  constructor(onResult, onError) {
+  constructor(onResult, onError, onEnd) {
     this.recognition = null;
     this.isListening = false;
     this.onResult = onResult;
     this.onError = onError;
+    this.onEnd = onEnd;
     this.initRecognition();
   }
 
@@ -45,6 +46,9 @@ class VoiceRecognition {
 
     this.recognition.onend = () => {
       this.isListening = false;
+      if (this.onEnd) {
+        this.onEnd();
+      }
     };
   }
 
@@ -81,16 +85,32 @@ class VoiceRecognition {
 
 // Command parser to handle voice commands
 export class VoiceCommandProcessor {
-  constructor(dialogHandler, personalityHandler) {
+  constructor(dialogHandler, personalityHandler, onRecognitionEnd) {
     this.dialogHandler = dialogHandler;
     this.personalityHandler = personalityHandler;
+    this.onRecognitionEnd = onRecognitionEnd;
     this.voiceRecognition = null;
   }
 
   initialize() {
     this.voiceRecognition = new VoiceRecognition(
-      (transcript) => this.processCommand(transcript),
-      (error) => console.error("Voice recognition error:", error)
+      (transcript) => {
+        this.processCommand(transcript);
+        // Auto-stop after processing a command
+        this.stopListening();
+      },
+      (error) => {
+        console.error("Voice recognition error:", error);
+        if (this.onRecognitionEnd) {
+          this.onRecognitionEnd();
+        }
+      },
+      () => {
+        // This callback fires when recognition ends for any reason
+        if (this.onRecognitionEnd) {
+          this.onRecognitionEnd();
+        }
+      }
     );
   }
 

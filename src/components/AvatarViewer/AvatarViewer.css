@@ -64,37 +64,6 @@
   backdrop-filter: blur(4px);
 }
 
-.reset-camera-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: rgba(0, 0, 0, 0.5);
-  color: rgba(255, 255, 255, 0.9);
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  z-index: 10;
-  opacity: 0.7;
-}
-
-.reset-camera-button:hover {
-  opacity: 1;
-  background: rgba(33, 150, 243, 0.3);
-  border-color: rgba(33, 150, 243, 0.5);
-}
-
-.reset-camera-button svg {
-  width: 12px;
-  height: 12px;
-}
-
 .avatar-tooltip {
   position: absolute;
   top: 50%;

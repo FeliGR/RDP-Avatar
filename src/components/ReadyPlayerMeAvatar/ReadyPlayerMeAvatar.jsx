@@ -1,49 +1,29 @@
+import { AvatarCreator } from "@readyplayerme/react-avatar-creator";
 import * as BABYLON from "babylonjs";
-import "babylonjs-loaders"; // Important for loading GLB files
+import "babylonjs-loaders";
 import React, { useEffect, useRef, useState } from "react";
 import { AVATAR_STATES, SENTIMENTS } from "../../features/babylon/avatarScene";
 import "./ReadyPlayerMeAvatar.css";
 
-// Use a public demo avatar as fallback
-const DEFAULT_AVATAR_URL = "https://models.readyplayer.me/65a682d88673952a1d7a863a.glb";
+// Default subdomain for Ready Player Me
+const RPM_SUBDOMAIN = "demo";
 
-const ReadyPlayerMeAvatar = ({ 
+const ReadyPlayerMeAvatar = ({
   canvasRef,
   onAvatarLoaded,
   avatarState,
   sentiment,
   personalityTraits
 }) => {
-  const [avatarUrl, setAvatarUrl] = useState(localStorage.getItem("rpmAvatarUrl") || DEFAULT_AVATAR_URL);
-  const [showCreator, setShowCreator] = useState(false);
+  // Get avatar URL from localStorage or use null
+  const savedAvatarUrl = localStorage.getItem("rpmAvatarUrl");
+  const [avatarUrl, setAvatarUrl] = useState(savedAvatarUrl || null);
+  const [showCreator, setShowCreator] = useState(!savedAvatarUrl);
   const [isLoading, setIsLoading] = useState(false);
+  const [avatarError, setAvatarError] = useState(null);
   const avatarRef = useRef(null);
   const sceneRef = useRef(null);
   const animationsRef = useRef({});
-  const iframeRef = useRef(null);
-
-  // Initialize the iframe API for Ready Player Me
-  useEffect(() => {
-    if (showCreator) {
-      // Set up message listener for iframe communication
-      const handleMessage = (event) => {
-        if (event.data.type === 'v1.frame.ready') {
-          console.log('Ready Player Me iframe is ready');
-        } else if (event.data.type === 'v1.avatar.exported') {
-          console.log('Avatar exported:', event.data.data.url);
-          handleAvatarCreated(event.data.data.url);
-        } else if (event.data.type === 'v1.frame.error') {
-          console.error('Error creating avatar:', event.data.data);
-        }
-      };
-
-      window.addEventListener('message', handleMessage);
-      
-      return () => {
-        window.removeEventListener('message', handleMessage);
-      };
-    }
-  }, [showCreator]);
 
   // Initialize Babylon.js scene
   useEffect(() => {
@@ -95,8 +75,10 @@ const ReadyPlayerMeAvatar = ({
     
     sceneRef.current = { scene, engine };
     
-    // Load avatar on scene initialization
-    loadAvatar(avatarUrl);
+    // Load avatar if URL exists
+    if (avatarUrl) {
+      loadAvatar(avatarUrl);
+    }
     
     // Cleanup on unmount
     return () => {
@@ -106,53 +88,149 @@ const ReadyPlayerMeAvatar = ({
     };
   }, [canvasRef]);
 
+  // Load avatar when URL changes
+  useEffect(() => {
+    if (avatarUrl && sceneRef.current) {
+      loadAvatar(avatarUrl);
+    }
+  }, [avatarUrl]);
+
+  // Handle avatar creator completion
+  const handleAvatarExported = (response) => {
+    console.log("Avatar created with URL:", response);
+    
+    // Extract the URL from the response object
+    // The response can be either a direct URL string (old API) or an object with data.url (new API)
+    const urlValue = typeof response === 'object' && response.data ? response.data.url : response;
+    
+    // Ensure the URL points to a GLB file
+    const avatarUrl = typeof urlValue === 'string' && urlValue.endsWith('.glb') ? urlValue : `${urlValue}.glb`;
+    
+    // Add cache-busting parameter to force reload of the model
+    const cacheBustedUrl = avatarUrl.includes('?') 
+      ? `${avatarUrl}&t=${Date.now()}` 
+      : `${avatarUrl}?t=${Date.now()}`;
+    
+    console.log("Saving new avatar URL:", cacheBustedUrl);
+    
+    // Save to localStorage and update state
+    localStorage.setItem("rpmAvatarUrl", cacheBustedUrl);
+    
+    // Set loading state before changing URL to ensure visual feedback
+    setIsLoading(true);
+    
+    // Clear current avatar reference to force complete reload
+    if (avatarRef.current) {
+      avatarRef.current = null;
+    }
+    
+    // Update the avatar URL with a slight delay to ensure clean scene transition
+    setTimeout(() => {
+      setAvatarUrl(cacheBustedUrl);
+      setShowCreator(false);
+    }, 100);
+  };
+
   // Load Ready Player Me avatar
   const loadAvatar = async (url) => {
     if (!sceneRef.current || !sceneRef.current.scene) return;
     
     setIsLoading(true);
+    setAvatarError(null);
     
     try {
+      console.log("Loading avatar from URL:", url);
       const { scene } = sceneRef.current;
       
-      // Clear existing avatar
+      // More thorough cleanup of existing avatar and all its children
       if (avatarRef.current) {
+        console.log("Disposing previous avatar...");
+        // Dispose all meshes associated with the previous avatar
+        if (Array.isArray(avatarRef.current.getChildMeshes)) {
+          const childMeshes = avatarRef.current.getChildMeshes();
+          childMeshes.forEach(mesh => {
+            if (mesh.material) {
+              mesh.material.dispose();
+            }
+            mesh.dispose();
+          });
+        }
+        // Dispose the root mesh
         avatarRef.current.dispose();
         avatarRef.current = null;
       }
       
-      // Load the avatar from URL
-      const result = await BABYLON.SceneLoader.ImportMeshAsync(
+      // Clear any other meshes in the scene that might be from previous loads
+      const sceneMeshes = scene.meshes.slice(); // Create a copy to avoid modification during iteration
+      sceneMeshes.forEach(mesh => {
+        // Only dispose meshes that aren't part of the scene infrastructure
+        if (mesh.name !== "camera" && !mesh.name.includes("light")) {
+          if (mesh.material) {
+            mesh.material.dispose();
+          }
+          mesh.dispose();
+        }
+      });
+      
+      // Ensure we have a full URL
+      const fullUrl = url.startsWith('http') ? url : `https://models.readyplayer.me/${url}`;
+      
+      console.log("Loading new avatar from:", fullUrl);
+      
+      // Load avatar using ImportMesh for better error handling
+      BABYLON.SceneLoader.ImportMesh(
         "",
-        url,
+        fullUrl,
         "",
-        scene
+        scene,
+        (meshes, particleSystems, skeletons) => {
+          console.log("Avatar loaded successfully:", meshes.length, "meshes and", skeletons.length, "skeletons");
+          
+          if (meshes.length === 0) {
+            setAvatarError("Avatar loaded but no meshes were found");
+            setIsLoading(false);
+            return;
+          }
+          
+          const avatarMesh = meshes[0];
+          avatarMesh.scaling = new BABYLON.Vector3(1, 1, 1);
+          avatarMesh.position = new BABYLON.Vector3(0, 0, 0);
+          
+          // Setup animations with skeleton if available
+          const skeleton = skeletons.length > 0 ? skeletons[0] : null;
+          if (skeleton) {
+            console.log("Setting up animations with skeleton");
+            setupAnimations(skeleton, scene);
+          } else {
+            console.warn("No skeleton found in the imported avatar");
+          }
+          
+          avatarRef.current = avatarMesh;
+          
+          // Notify parent that avatar is loaded
+          if (onAvatarLoaded) {
+            onAvatarLoaded(avatarMesh);
+          }
+          
+          // Start idle animation
+          playAnimation(AVATAR_STATES.IDLE);
+          setIsLoading(false);
+        },
+        (progressEvent) => {
+          // Progress update
+          const loadProgress = progressEvent.lengthComputable ? 
+            Math.round(progressEvent.loaded / progressEvent.total * 100) : 0;
+          console.log(`Loading avatar: ${loadProgress}%`);
+        },
+        (scene, message, exception) => {
+          console.error("Error loading avatar:", message, exception);
+          setAvatarError(`Failed to load avatar: ${message}`);
+          setIsLoading(false);
+        }
       );
-      
-      const avatarMesh = result.meshes[0];
-      avatarMesh.scaling = new BABYLON.Vector3(1, 1, 1);
-      avatarMesh.position = new BABYLON.Vector3(0, 0, 0);
-      
-      // Store animations
-      const skeleton = result.skeletons[0];
-      if (skeleton) {
-        // Store animations for later use
-        setupAnimations(skeleton, scene);
-      }
-      
-      avatarRef.current = avatarMesh;
-      
-      // Notify parent that avatar is loaded
-      if (onAvatarLoaded) {
-        onAvatarLoaded(avatarMesh);
-      }
-      
-      // Start idle animation
-      playAnimation(AVATAR_STATES.IDLE);
-      
     } catch (error) {
       console.error("Error loading Ready Player Me avatar:", error);
-    } finally {
+      setAvatarError(`Failed to load avatar: ${error.message}`);
       setIsLoading(false);
     }
   };
@@ -171,188 +249,22 @@ const ReadyPlayerMeAvatar = ({
 
   // Create idle animation
   const createIdleAnimation = (skeleton, scene) => {
-    const idleAnim = new BABYLON.Animation(
-      "idleAnim",
-      "position.y",
-      30,
-      BABYLON.Animation.ANIMATIONTYPE_FLOAT,
-      BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
-    );
-    
-    const keyFrames = [];
-    keyFrames.push({ frame: 0, value: 0 });
-    keyFrames.push({ frame: 30, value: 0.01 });
-    keyFrames.push({ frame: 60, value: 0 });
-    
-    idleAnim.setKeys(keyFrames);
-    
-    const idleGroup = new BABYLON.AnimationGroup("idleGroup", scene);
-    
-    const headBone = findBone(skeleton, "Head");
-    if (headBone) {
-      const headAnim = new BABYLON.Animation(
-        "headIdleAnim",
-        "rotationQuaternion",
-        30,
-        BABYLON.Animation.ANIMATIONTYPE_QUATERNION,
-        BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
-      );
-      
-      const baseRotation = headBone.rotationQuaternion.clone();
-      const q1 = BABYLON.Quaternion.RotationAxis(
-        BABYLON.Axis.Y,
-        0.02
-      ).multiply(baseRotation);
-      const q2 = BABYLON.Quaternion.RotationAxis(
-        BABYLON.Axis.Y,
-        -0.02
-      ).multiply(baseRotation);
-      
-      const headFrames = [];
-      headFrames.push({ frame: 0, value: baseRotation });
-      headFrames.push({ frame: 30, value: q1 });
-      headFrames.push({ frame: 60, value: q2 });
-      headFrames.push({ frame: 90, value: baseRotation });
-      
-      headAnim.setKeys(headFrames);
-      idleGroup.addTargetedAnimation(headAnim, headBone);
-    }
-    
-    return idleGroup;
+    // ...existing code...
   };
 
   // Create speaking animation
   const createSpeakingAnimation = (skeleton, scene) => {
-    const speakGroup = new BABYLON.AnimationGroup("speakGroup", scene);
-    
-    const jawBone = findBone(skeleton, "Jaw");
-    if (jawBone) {
-      const jawAnim = new BABYLON.Animation(
-        "jawAnim",
-        "rotationQuaternion",
-        15,
-        BABYLON.Animation.ANIMATIONTYPE_QUATERNION,
-        BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
-      );
-      
-      const baseRotation = jawBone.rotationQuaternion.clone();
-      const openJaw = BABYLON.Quaternion.RotationAxis(
-        BABYLON.Axis.X,
-        -0.2
-      ).multiply(baseRotation);
-      
-      const jawFrames = [];
-      jawFrames.push({ frame: 0, value: baseRotation });
-      jawFrames.push({ frame: 5, value: openJaw });
-      jawFrames.push({ frame: 10, value: baseRotation });
-      jawFrames.push({ frame: 15, value: openJaw });
-      jawFrames.push({ frame: 20, value: baseRotation });
-      
-      jawAnim.setKeys(jawFrames);
-      speakGroup.addTargetedAnimation(jawAnim, jawBone);
-    }
-    
-    const headBone = findBone(skeleton, "Head");
-    if (headBone) {
-      const headAnim = new BABYLON.Animation(
-        "speakingHeadAnim",
-        "rotationQuaternion",
-        30,
-        BABYLON.Animation.ANIMATIONTYPE_QUATERNION,
-        BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
-      );
-      
-      const baseRotation = headBone.rotationQuaternion.clone();
-      const nodDown = BABYLON.Quaternion.RotationAxis(
-        BABYLON.Axis.X,
-        0.05
-      ).multiply(baseRotation);
-      
-      const headFrames = [];
-      headFrames.push({ frame: 0, value: baseRotation });
-      headFrames.push({ frame: 15, value: nodDown });
-      headFrames.push({ frame: 30, value: baseRotation });
-      
-      headAnim.setKeys(headFrames);
-      speakGroup.addTargetedAnimation(headAnim, headBone);
-    }
-    
-    return speakGroup;
+    // ...existing code...
   };
 
   // Create listening animation
   const createListeningAnimation = (skeleton, scene) => {
-    const listenGroup = new BABYLON.AnimationGroup("listenGroup", scene);
-    
-    const headBone = findBone(skeleton, "Head");
-    if (headBone) {
-      const headAnim = new BABYLON.Animation(
-        "listeningHeadAnim",
-        "rotationQuaternion",
-        30,
-        BABYLON.Animation.ANIMATIONTYPE_QUATERNION,
-        BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
-      );
-      
-      const baseRotation = headBone.rotationQuaternion.clone();
-      const tiltLeft = BABYLON.Quaternion.RotationAxis(
-        BABYLON.Axis.Z,
-        0.1
-      ).multiply(baseRotation);
-      const tiltRight = BABYLON.Quaternion.RotationAxis(
-        BABYLON.Axis.Z,
-        -0.08
-      ).multiply(baseRotation);
-      
-      const headFrames = [];
-      headFrames.push({ frame: 0, value: baseRotation });
-      headFrames.push({ frame: 20, value: tiltLeft });
-      headFrames.push({ frame: 40, value: baseRotation });
-      headFrames.push({ frame: 60, value: tiltRight });
-      headFrames.push({ frame: 80, value: baseRotation });
-      
-      headAnim.setKeys(headFrames);
-      listenGroup.addTargetedAnimation(headAnim, headBone);
-    }
-    
-    return listenGroup;
+    // ...existing code...
   };
 
   // Create thinking animation
   const createThinkingAnimation = (skeleton, scene) => {
-    const thinkGroup = new BABYLON.AnimationGroup("thinkGroup", scene);
-    
-    const headBone = findBone(skeleton, "Head");
-    if (headBone) {
-      const headAnim = new BABYLON.Animation(
-        "thinkingHeadAnim",
-        "rotationQuaternion",
-        30,
-        BABYLON.Animation.ANIMATIONTYPE_QUATERNION,
-        BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
-      );
-      
-      const baseRotation = headBone.rotationQuaternion.clone();
-      const lookUp = BABYLON.Quaternion.RotationAxis(
-        BABYLON.Axis.X,
-        -0.1
-      ).multiply(baseRotation);
-      const lookDown = BABYLON.Quaternion.RotationAxis(
-        BABYLON.Axis.X,
-        0.1
-      ).multiply(baseRotation);
-      
-      const headFrames = [];
-      headFrames.push({ frame: 0, value: baseRotation });
-      headFrames.push({ frame: 20, value: lookUp });
-      headFrames.push({ frame: 40, value: lookDown });
-      headFrames.push({ frame: 60, value: baseRotation });
-      
-      headAnim.setKeys(headFrames);
-      thinkGroup.addTargetedAnimation(headAnim, headBone);
-    }
-    
-    return thinkGroup;
+    // ...existing code...
   };
 
   // Find bone by name in skeleton
@@ -364,94 +276,12 @@ const ReadyPlayerMeAvatar = ({
 
   // Play animation based on state
   const playAnimation = (state, sentimentValue = SENTIMENTS.NEUTRAL) => {
-    Object.values(animationsRef.current).forEach(anim => {
-      if (anim && anim.isPlaying) {
-        anim.stop();
-      }
-    });
-    
-    const animation = animationsRef.current[state];
-    if (animation) {
-      animation.play(true);
-    }
-    
-    if (avatarRef.current && sceneRef.current) {
-      const skeleton = sceneRef.current.scene.skeletons[0];
-      if (skeleton) {
-        applyFacialExpression(skeleton, sentimentValue);
-      }
-    }
+    // ...existing code...
   };
 
   // Apply facial expressions based on sentiment
   const applyFacialExpression = (skeleton, sentiment) => {
-    const browBone = findBone(skeleton, "Brow");
-    const mouthBone = findBone(skeleton, "Mouth");
-    const jawBone = findBone(skeleton, "Jaw");
-    
-    if (!browBone && !mouthBone && !jawBone) {
-      return;
-    }
-    
-    if (browBone) {
-      browBone.rotation = new BABYLON.Vector3(0, 0, 0);
-    }
-    
-    if (mouthBone) {
-      mouthBone.rotation = new BABYLON.Vector3(0, 0, 0);
-    }
-    
-    if (jawBone) {
-      jawBone.rotation = new BABYLON.Vector3(0, 0, 0);
-    }
-    
-    switch (sentiment) {
-      case SENTIMENTS.HAPPY:
-        if (browBone) {
-          browBone.rotation = new BABYLON.Vector3(0, 0, 0.1);
-        }
-        if (mouthBone) {
-          mouthBone.rotation = new BABYLON.Vector3(0, 0, 0.2);
-        }
-        break;
-        
-      case SENTIMENTS.SAD:
-        if (browBone) {
-          browBone.rotation = new BABYLON.Vector3(0, 0, -0.1);
-        }
-        if (mouthBone) {
-          mouthBone.rotation = new BABYLON.Vector3(0, 0, -0.2);
-        }
-        break;
-        
-      case SENTIMENTS.SURPRISED:
-        if (browBone) {
-          browBone.rotation = new BABYLON.Vector3(0, 0, 0.3);
-        }
-        if (jawBone) {
-          jawBone.rotation = new BABYLON.Vector3(-0.2, 0, 0);
-        }
-        break;
-        
-      case SENTIMENTS.CONFUSED:
-        if (browBone) {
-          browBone.rotation = new BABYLON.Vector3(0, 0.1, 0.1);
-        }
-        break;
-        
-      case SENTIMENTS.ANGRY:
-        if (browBone) {
-          browBone.rotation = new BABYLON.Vector3(0.1, 0, -0.2);
-        }
-        if (mouthBone) {
-          mouthBone.rotation = new BABYLON.Vector3(0.1, 0, -0.1);
-        }
-        break;
-        
-      case SENTIMENTS.NEUTRAL:
-      default:
-        break;
-    }
+    // ...existing code...
   };
 
   // Handle state and sentiment changes
@@ -460,14 +290,6 @@ const ReadyPlayerMeAvatar = ({
       playAnimation(avatarState, sentiment);
     }
   }, [avatarState, sentiment]);
-
-  // Handle avatar creator completion
-  const handleAvatarCreated = (url) => {
-    localStorage.setItem("rpmAvatarUrl", url);
-    setAvatarUrl(url);
-    setShowCreator(false);
-    loadAvatar(url);
-  };
 
   // Reset camera to default position
   const resetCamera = () => {
@@ -482,13 +304,39 @@ const ReadyPlayerMeAvatar = ({
     }
   };
 
+  // Try to load a default avatar if there's an error
+  const handleLoadDefaultAvatar = () => {
+    const defaultUrl = "https://models.readyplayer.me/65a682d88673952a1d7a863a.glb";
+    setAvatarUrl(defaultUrl);
+    localStorage.setItem("rpmAvatarUrl", defaultUrl);
+  };
+
   return (
     <div className="ready-player-me-avatar">
       {isLoading && (
         <div className="avatar-loading">Loading avatar...</div>
       )}
       
-      {!showCreator && (
+      {avatarError && (
+        <div className="avatar-error">
+          {avatarError}
+          <button onClick={handleLoadDefaultAvatar}>Load Default Avatar</button>
+        </div>
+      )}
+      
+      {!avatarUrl && !showCreator && !isLoading && (
+        <div className="no-avatar-message">
+          <p>No avatar created yet</p>
+          <button 
+            className="customize-avatar-button"
+            onClick={() => setShowCreator(true)}
+          >
+            Create Avatar
+          </button>
+        </div>
+      )}
+      
+      {avatarUrl && !showCreator && (
         <button 
           className="customize-avatar-button"
           onClick={() => setShowCreator(true)}
@@ -506,13 +354,24 @@ const ReadyPlayerMeAvatar = ({
             Cancel
           </button>
           
-          <iframe
-            ref={iframeRef}
-            className="avatar-creator"
-            src="https://demo.readyplayer.me/avatar?frameApi"
-            allow="camera *"
-            title="Ready Player Me Avatar Creator"
-          />
+          <div className="avatar-creator-container">
+            <AvatarCreator
+              subdomain={RPM_SUBDOMAIN}
+              className="avatar-creator"
+              onAvatarExported={handleAvatarExported}
+              onUserSet={() => console.log("User is set in AvatarCreator")}
+              onError={(error) => {
+                console.error("Avatar Creator error:", error);
+                setAvatarError(`Avatar Creator error: ${error}`);
+              }}
+              // Pass the current avatar URL to load it for editing
+              avatarId={avatarUrl && avatarUrl.split('/').pop().split('.')[0].split('?')[0]}
+              // Allow editing full body avatar
+              bodyType="fullbody"
+              // Ensure the latest version of the avatar is loaded (avoid caching)
+              clearCache={true}
+            />
+          </div>
         </div>
       )}
     </div>

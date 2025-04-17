@@ -3,9 +3,9 @@ import { TYPING_EVENTS } from "../../components/DialogBox/DialogBox";
 import { useDialog } from "../../context/DialogContext";
 import { usePersonality } from "../../context/PersonalityContext";
 import {
-  AVATAR_STATES,
-  SENTIMENTS,
-  detectSentiment,
+    AVATAR_STATES,
+    SENTIMENTS,
+    detectSentiment,
 } from "../../features/babylon/avatarScene";
 import ReadyPlayerMeAvatar from "../ReadyPlayerMeAvatar/ReadyPlayerMeAvatar";
 import "./AvatarViewer.css";
@@ -139,10 +139,6 @@ const AvatarViewer = () => {
   return (
     <div className="avatar-viewer">
       <div className="avatar-canvas-container">
-        {(isLoading || isPersonalityLoading) && (
-          <div className="avatar-loading">Updating avatar...</div>
-        )}
-        
         <canvas ref={canvasRef} className="avatar-canvas" />
         
         <ReadyPlayerMeAvatar

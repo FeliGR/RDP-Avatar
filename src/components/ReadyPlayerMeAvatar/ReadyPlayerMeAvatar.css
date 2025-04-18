@@ -12,7 +12,7 @@
 .ready-player-me-avatar button,
 .avatar-error,
 .no-avatar-message,
-.avatar-creator-overlay {
+.avatar-creator-container {
   pointer-events: auto; /* Re-enable pointer events for interactive elements */
 }
 
@@ -149,76 +149,72 @@
   }
 }
 
-.avatar-creator-overlay {
-  position: fixed;
+/* New styling for the avatar creator container to fit inside the canvas area */
+.avatar-creator-container {
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
-  z-index: 100;
+  width: 100%;
+  height: 100%;
+  background: rgba(25, 35, 60, 0.9);
+  z-index: 20;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  pointer-events: auto; /* Ensure overlay is interactive */
-}
-
-.avatar-creator-container {
-  width: 100%;
-  max-width: 1200px;
-  height: 90vh;
   border-radius: 8px;
   overflow: hidden;
-  pointer-events: auto; /* Ensure container is interactive */
 }
 
 .avatar-creator {
   width: 100%;
   height: 100%;
   border: none;
-  pointer-events: auto; /* Ensure iframe is interactive */
 }
 
 .close-creator-button {
   position: absolute;
   top: 20px;
   right: 20px;
-  background: rgba(244, 67, 54, 0.7);
+  background: rgba(244, 67, 54, 0.85);
   color: white;
   border: none;
   border-radius: 50%;
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.2s ease;
-  z-index: 101;
+  z-index: 30; /* Increased z-index to ensure it's above other elements */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .close-creator-button:hover {
-  background: rgba(244, 67, 54, 0.9);
+  background: rgba(244, 67, 54, 1);
   transform: scale(1.1);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
 }
 
 .close-creator-button::after {
   content: "×";
-  font-size: 20px;
+  font-size: 24px;
+  line-height: 24px;
 }
 
 @media (max-width: 768px) {
-  .avatar-creator-container {
-    height: 100vh;
-    width: 100vw;
-    max-width: none;
-    border-radius: 0;
+  .close-creator-button {
+    width: 36px;
+    height: 36px;
+    top: 15px;
+    right: 15px;
   }
   
-  .close-creator-button {
-    top: 10px;
-    right: 10px;
+  .close-creator-button::after {
+    font-size: 20px;
   }
 }

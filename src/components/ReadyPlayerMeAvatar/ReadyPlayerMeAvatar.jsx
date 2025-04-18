@@ -346,32 +346,31 @@ const ReadyPlayerMeAvatar = ({
       )}
       
       {showCreator && (
-        <div className="avatar-creator-overlay">
+        <div className="avatar-creator-container">
           <button 
             className="close-creator-button"
             onClick={() => setShowCreator(false)}
+            aria-label="Close avatar creator"
           >
-            Cancel
+            <span className="visually-hidden">Close</span>
           </button>
           
-          <div className="avatar-creator-container">
-            <AvatarCreator
-              subdomain={RPM_SUBDOMAIN}
-              className="avatar-creator"
-              onAvatarExported={handleAvatarExported}
-              onUserSet={() => console.log("User is set in AvatarCreator")}
-              onError={(error) => {
-                console.error("Avatar Creator error:", error);
-                setAvatarError(`Avatar Creator error: ${error}`);
-              }}
-              // Pass the current avatar URL to load it for editing
-              avatarId={avatarUrl && avatarUrl.split('/').pop().split('.')[0].split('?')[0]}
-              // Allow editing full body avatar
-              bodyType="fullbody"
-              // Ensure the latest version of the avatar is loaded (avoid caching)
-              clearCache={true}
-            />
-          </div>
+          <AvatarCreator
+            subdomain={RPM_SUBDOMAIN}
+            className="avatar-creator"
+            onAvatarExported={handleAvatarExported}
+            onUserSet={() => console.log("User is set in AvatarCreator")}
+            onError={(error) => {
+              console.error("Avatar Creator error:", error);
+              setAvatarError(`Avatar Creator error: ${error}`);
+            }}
+            // Pass the current avatar URL to load it for editing
+            avatarId={avatarUrl && avatarUrl.split('/').pop().split('.')[0].split('?')[0]}
+            // Allow editing full body avatar
+            bodyType="fullbody"
+            // Ensure the latest version of the avatar is loaded (avoid caching)
+            clearCache={true}
+          />
         </div>
       )}
     </div>

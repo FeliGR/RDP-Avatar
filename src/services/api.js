@@ -10,31 +10,21 @@ const getRuntimeEnv = (key, defaultValue) => {
   return process.env[key] || defaultValue;
 };
 
-// API configuration with more reliable defaults
+// Determine if we're running in development or production
+const isLocalDevelopment = window.location.hostname === 'localhost' || 
+                          window.location.hostname === '127.0.0.1';
+
+// API configuration with environment-aware defaults
 const API_CONFIG = {
   personaEngine: getRuntimeEnv(
     "REACT_APP_PERSONA_ENGINE_URL",
-    "http://localhost:5001" // Changed default to ladaptiveai-personaar-frontendocalhost instead of Docker service name
+    isLocalDevelopment ? "http://localhost:5001" : "http://persona-engine-service:5001"
   ),
   dialogOrchestrator: getRuntimeEnv(
     "REACT_APP_DIALOG_ORCHESTRATOR_URL",
-    "http://localhost:5002" // Changed default to localhost instead of Docker service name
+    isLocalDevelopment ? "http://localhost:5002" : "http://dialog-orchestrator-service:5002"
   ),
 };
-
-// Only use Docker service names if specifically set through environment variables
-if (!window.location.hostname.includes("localhost") && 
-    !window.location.hostname.includes("127.0.0.1")) {
-  // If not on localhost and no environment variables are set, we're probably in production
-  if (!window.ENV?.REACT_APP_PERSONA_ENGINE_URL && 
-      !process.env.REACT_APP_PERSONA_ENGINE_URL) {
-    API_CONFIG.personaEngine = "http://persona-engine-service:5001";
-  }
-  if (!window.ENV?.REACT_APP_DIALOG_ORCHESTRATOR_URL && 
-      !process.env.REACT_APP_DIALOG_ORCHESTRATOR_URL) {
-    API_CONFIG.dialogOrchestrator = "http://dialog-orchestrator-service:5002";
-  }
-}
 
 console.log("Using API endpoints:", API_CONFIG);
 

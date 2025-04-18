@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
-import { sendMessage } from "../services/api";
-import { usePersonality } from "./PersonalityContext";
+import { usePersonality } from "../../features/personality/PersonalityContext";
+import { sendMessage } from "../../services/api";
 
 // Create the context
 export const DialogContext = createContext();

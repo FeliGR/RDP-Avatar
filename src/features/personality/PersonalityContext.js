@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { getPersonaProfile, updatePersonaTrait } from "../services/api";
+import { getPersonaProfile, updatePersonaTrait } from "../../services/api";
 
 // Default personality traits
 const DEFAULT_PERSONALITY = {

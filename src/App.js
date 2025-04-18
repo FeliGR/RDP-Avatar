@@ -1,10 +1,10 @@
 import React from "react";
 import "./App.css";
-import AvatarViewer from "./components/AvatarViewer/AvatarViewer";
-import DialogBox from "./components/DialogBox/DialogBox";
-import PersonalityControls from "./components/PersonalityControls/PersonalityControls";
-import { DialogProvider } from "./context/DialogContext";
-import { PersonalityProvider } from "./context/PersonalityContext";
+import AvatarViewer from "./features/avatar/AvatarViewer";
+import DialogBox from "./features/dialog/DialogBox";
+import { DialogProvider } from "./features/dialog/DialogContext";
+import { PersonalityProvider } from "./features/personality/PersonalityContext";
+import PersonalityControls from "./features/personality/PersonalityControls";
 
 function AppContent() {
   return (

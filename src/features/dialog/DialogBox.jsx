@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useDialog } from "../../context/DialogContext";
-import { usePersonality } from "../../context/PersonalityContext";
-import VoiceCommandProcessor from "../../features/voice/voiceCommands";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { usePersonality } from "../../features/personality/PersonalityContext";
+import VoiceCommandProcessor from "../voice/voiceCommands";
 import "./DialogBox.css";
+import { useDialog } from "./DialogContext";
 
 // Create a custom event for typing status
 export const TYPING_EVENTS = {
@@ -21,14 +21,26 @@ const DialogBox = () => {
   const messagesEndRef = useRef(null);
   const typingTimeoutRef = useRef(null);
 
-  // Auto-scroll to bottom of messages
+  // Auto-scroll to bottom of messages with a more reliable approach
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messagesEndRef.current) {
+      // Force immediate scroll without animation
+      messagesEndRef.current.scrollIntoView(false);
+      
+      // Double-ensure scroll position with a small delay and direct DOM manipulation
+      setTimeout(() => {
+        const container = document.querySelector('.messages-container');
+        if (container) {
+          container.scrollTop = container.scrollHeight;
+        }
+      }, 50);
+    }
   };
 
-  useEffect(() => {
+  // Use useLayoutEffect instead of useEffect for DOM measurements before browser paint
+  useLayoutEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, isLoading]);
 
   // Dispatch custom events for typing to notify avatar
   const dispatchTypingEvent = (isTyping) => {
@@ -93,7 +105,9 @@ const DialogBox = () => {
     e.preventDefault();
     if (!inputText.trim() || isLoading) return;
 
-    await sendUserMessage(inputText.trim());
+    const messageToSend = inputText.trim();
+    
+    // Clear input text immediately
     setInputText("");
     
     // Dispatch typing stop event
@@ -104,6 +118,9 @@ const DialogBox = () => {
       clearTimeout(typingTimeoutRef.current);
       typingTimeoutRef.current = null;
     }
+
+    // After clearing the input, send the message
+    await sendUserMessage(messageToSend);
   };
 
   // Handle typing events for the avatar

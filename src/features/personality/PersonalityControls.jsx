@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { usePersonality } from "../../context/PersonalityContext";
+import { usePersonality } from "./PersonalityContext";
 import "./PersonalityControls.css";
 
 // Debounce utility function

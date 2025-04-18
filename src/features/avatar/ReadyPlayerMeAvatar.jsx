@@ -93,6 +93,23 @@ const ReadyPlayerMeAvatar = ({
     }
   }, [avatarUrl]);
 
+  // Effect to handle avatar errors by showing the avatar creator
+  useEffect(() => {
+    if (avatarError) {
+      // Clear the stored URL if it's causing errors
+      if (localStorage.getItem("rpmAvatarUrl")) {
+        localStorage.removeItem("rpmAvatarUrl");
+      }
+      
+      // Show the avatar creator when there's an error
+      setShowCreator(true);
+      
+      // Clear the error since we're handling it
+      setAvatarError(null);
+      setAvatarUrl(null);
+    }
+  }, [avatarError]);
+
   // Handle avatar creator completion
   const handleAvatarExported = (response) => {
     console.log("Avatar created with URL:", response);
@@ -235,24 +252,10 @@ const ReadyPlayerMeAvatar = ({
     }
   };
 
-  // Try to load a default avatar if there's an error
-  const handleLoadDefaultAvatar = () => {
-    const defaultUrl = "https://models.readyplayer.me/65a682d88673952a1d7a863a.glb";
-    setAvatarUrl(defaultUrl);
-    localStorage.setItem("rpmAvatarUrl", defaultUrl);
-  };
-
   return (
     <div className="ready-player-me-avatar">
       {isLoading && (
         <div className="avatar-loading">Loading avatar...</div>
-      )}
-      
-      {avatarError && (
-        <div className="avatar-error">
-          {avatarError}
-          <button onClick={handleLoadDefaultAvatar}>Load Default Avatar</button>
-        </div>
       )}
       
       {!avatarUrl && !showCreator && !isLoading && (
@@ -293,7 +296,9 @@ const ReadyPlayerMeAvatar = ({
             onUserSet={() => console.log("User is set in AvatarCreator")}
             onError={(error) => {
               console.error("Avatar Creator error:", error);
-              setAvatarError(`Avatar Creator error: ${error}`);
+              // Even if there's an error with the creator, keep it open
+              // so the user can try again instead of going back to an error state
+              setShowCreator(true);
             }}
             // Pass the current avatar URL to load it for editing
             avatarId={avatarUrl && avatarUrl.split('/').pop().split('.')[0].split('?')[0]}

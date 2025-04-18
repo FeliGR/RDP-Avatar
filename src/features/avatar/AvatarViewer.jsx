@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { usePersonality } from "../../context/PersonalityContext";
-import { SENTIMENTS } from "../../features/babylon/avatarScene";
-import ReadyPlayerMeAvatar from "../ReadyPlayerMeAvatar/ReadyPlayerMeAvatar";
+import { usePersonality } from "../../features/personality/PersonalityContext";
+import { SENTIMENTS } from "./avatarScene";
 import "./AvatarViewer.css";
+import ReadyPlayerMeAvatar from "./ReadyPlayerMeAvatar";
 
 const AvatarViewer = () => {
   const canvasRef = useRef(null);

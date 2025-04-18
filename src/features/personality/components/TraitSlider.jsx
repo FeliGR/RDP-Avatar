@@ -1,23 +1,19 @@
-import React, { useEffect, useRef } from 'react';
-import { formatTrait, TRAIT_DESCRIPTIONS } from '../constants';
+import React, { useEffect, useRef } from "react";
+import { formatTrait, TRAIT_DESCRIPTIONS } from "../constants";
 
 /**
  * TraitSlider component for individual personality trait control
  */
-const TraitSlider = ({ 
-  trait, 
-  value, 
-  onChange, 
-  disabled = false 
-}) => {
+const TraitSlider = ({ trait, value, onChange, disabled = false }) => {
   const rangeRef = useRef(null);
-  const numericValue = typeof value === 'number' ? Math.round(value) : parseInt(value, 10) || 3;
+  const numericValue =
+    typeof value === "number" ? Math.round(value) : parseInt(value, 10) || 3;
 
   // Calculate percentage for progress bar width
   const calculatePercentage = (value) => {
     return ((value - 1) / 4) * 100; // Scale from 1-5 to 0-100%
   };
-  
+
   // Update range slider position variables for tooltip
   useEffect(() => {
     const updateRangePosition = () => {
@@ -26,25 +22,25 @@ const TraitSlider = ({
         const min = element.min || 1;
         const max = element.max || 5;
         const percent = ((numericValue - min) / (max - min)) * 100;
-        element.style.setProperty('--range-percent', `${percent}%`);
+        element.style.setProperty("--range-percent", `${percent}%`);
       }
     };
-    
+
     updateRangePosition();
-    
+
     // Setup event listener for range input
     const element = rangeRef.current;
     if (element) {
-      element.addEventListener('input', updateRangePosition);
+      element.addEventListener("input", updateRangePosition);
     }
-    
+
     return () => {
       if (element) {
-        element.removeEventListener('input', updateRangePosition);
+        element.removeEventListener("input", updateRangePosition);
       }
     };
   }, [numericValue]);
-  
+
   const percentage = calculatePercentage(numericValue);
 
   return (

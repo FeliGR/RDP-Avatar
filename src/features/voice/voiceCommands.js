@@ -1,4 +1,4 @@
-import { TRAIT_NAME_MAP } from '../personality/constants';
+import { TRAIT_NAME_MAP } from "../personality/constants";
 
 // Voice recognition for commands and messaging
 class VoiceRecognition {

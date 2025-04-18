@@ -24,10 +24,10 @@ const PersonalityControls = () => {
    */
   const handleTraitChange = (trait, value) => {
     const numericValue = parseInt(value, 10);
-    
+
     // Update local state immediately for responsive UI
     updateLocalTrait(trait, numericValue);
-    
+
     // Debounce the actual API call
     debouncedUpdateTrait(trait, numericValue);
   };
@@ -35,15 +35,12 @@ const PersonalityControls = () => {
   return (
     <div className="personality-controls">
       <ErrorMessage message={error} />
-      
+
       {isLoading && (
-        <div 
-          className="loading-indicator" 
-          aria-label="Loading..."
-        />
+        <div className="loading-indicator" aria-label="Loading..." />
       )}
 
-      {BIG_FIVE_TRAITS.map(trait => (
+      {BIG_FIVE_TRAITS.map((trait) => (
         <TraitSlider
           key={trait}
           trait={trait}

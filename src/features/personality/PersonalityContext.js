@@ -10,7 +10,8 @@ export const usePersonality = () => useContext(PersonalityContext);
 
 // Provider component
 export const PersonalityProvider = ({ children }) => {
-  const [personalityTraits, setPersonalityTraits] = useState(DEFAULT_PERSONALITY);
+  const [personalityTraits, setPersonalityTraits] =
+    useState(DEFAULT_PERSONALITY);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [apiAvailable, setApiAvailable] = useState(true);
@@ -46,7 +47,11 @@ export const PersonalityProvider = ({ children }) => {
    * @param {Object} options - Additional options
    * @returns {Promise<boolean>} - Success status
    */
-  const updateTrait = async (trait, value, options = { showLoading: false }) => {
+  const updateTrait = async (
+    trait,
+    value,
+    options = { showLoading: false }
+  ) => {
     if (!trait || value === undefined) {
       console.error(`Invalid trait update: ${trait}=${value}`);
       return false;
@@ -58,10 +63,10 @@ export const PersonalityProvider = ({ children }) => {
       if (options.showLoading) {
         setIsLoading(true);
       }
-      
+
       // Update local state immediately for responsive UI
       setPersonalityTraits((prev) => ({ ...prev, [trait]: value }));
-      
+
       // Only attempt API call if we believe the API is available
       if (apiAvailable) {
         const userId = personalityTraits.userId;
@@ -69,12 +74,14 @@ export const PersonalityProvider = ({ children }) => {
       } else {
         console.log(`API unavailable, trait ${trait} updated locally only`);
       }
-      
+
       return true;
     } catch (err) {
       console.error(`Failed to update ${trait}:`, err);
       setApiAvailable(false);
-      setError(`Personality trait updated locally only (API server unavailable)`);
+      setError(
+        `Personality trait updated locally only (API server unavailable)`
+      );
       // We still return true since we updated the UI state
       return true;
     } finally {
@@ -87,7 +94,7 @@ export const PersonalityProvider = ({ children }) => {
   /**
    * Update personality trait based on voice commands
    * @param {string} trait - The trait to update
-   * @param {string} action - "increase", "decrease", or "set" 
+   * @param {string} action - "increase", "decrease", or "set"
    * @param {number} amount - Amount to change
    * @returns {boolean} - Success status
    */
@@ -99,7 +106,7 @@ export const PersonalityProvider = ({ children }) => {
     try {
       const currentValue = personalityTraits[trait] || 3;
       let newValue;
-      
+
       switch (action) {
         case "increase":
           newValue = Math.min(5, currentValue + amount);
@@ -113,7 +120,7 @@ export const PersonalityProvider = ({ children }) => {
         default:
           return false;
       }
-      
+
       return await updateTrait(trait, newValue, { showLoading: true });
     } catch (err) {
       console.error(`Failed to handle trait action: ${trait} ${action}`, err);
@@ -127,7 +134,7 @@ export const PersonalityProvider = ({ children }) => {
     error,
     updateTrait,
     handleTraitAction,
-    apiAvailable
+    apiAvailable,
   };
 
   return (

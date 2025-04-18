@@ -22,8 +22,13 @@
 }
 
 @keyframes pulse-opacity {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 .trait-control {
@@ -98,7 +103,7 @@
   top: -25px;
   left: calc(var(--range-percent, 50%) - 12px);
   background: rgba(255, 255, 255, 0.9);
-  color: #212B3A;
+  color: #212b3a;
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 0.7rem;
@@ -195,26 +200,26 @@
   .trait-control {
     margin-bottom: 1rem;
   }
-  
+
   .trait-description {
     font-size: 0.8rem;
     margin: 3px 0 6px;
   }
-  
+
   .trait-control input[type="range"] {
     height: 6px;
   }
-  
+
   .trait-control input[type="range"]::-webkit-slider-thumb {
     width: 18px;
     height: 18px;
   }
-  
+
   .trait-progress {
     height: 6px;
     margin-bottom: 8px;
   }
-  
+
   .trait-control label {
     font-size: 1rem;
   }
@@ -232,15 +237,15 @@
   .trait-description {
     display: none;
   }
-  
+
   .trait-control {
     margin-bottom: 0.4rem;
   }
-  
+
   .trait-control label {
     font-size: 0.85rem;
   }
-  
+
   .trait-progress {
     margin-bottom: 4px;
   }
@@ -253,7 +258,7 @@
     flex-wrap: wrap;
     align-content: flex-start;
   }
-  
+
   .trait-control {
     width: 48%;
     margin-right: 2%;

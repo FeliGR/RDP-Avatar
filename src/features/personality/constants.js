@@ -14,11 +14,11 @@ export const DEFAULT_PERSONALITY = {
  * The Big Five personality traits
  */
 export const BIG_FIVE_TRAITS = [
-  'openness',
-  'conscientiousness',
-  'extraversion',
-  'agreeableness',
-  'neuroticism'
+  "openness",
+  "conscientiousness",
+  "extraversion",
+  "agreeableness",
+  "neuroticism",
 ];
 
 /**

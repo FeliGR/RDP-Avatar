@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef } from "react";
 
 /**
  * Custom hook that returns a debounced version of the callback function
@@ -8,17 +8,20 @@ import { useCallback, useRef } from 'react';
  */
 const useDebounce = (callback, delay) => {
   const timeoutRef = useRef(null);
-  
-  const debouncedCallback = useCallback((...args) => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-    
-    timeoutRef.current = setTimeout(() => {
-      callback(...args);
-    }, delay);
-  }, [callback, delay]);
-  
+
+  const debouncedCallback = useCallback(
+    (...args) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      timeoutRef.current = setTimeout(() => {
+        callback(...args);
+      }, delay);
+    },
+    [callback, delay]
+  );
+
   return debouncedCallback;
 };
 

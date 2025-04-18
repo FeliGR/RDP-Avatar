@@ -82,10 +82,18 @@
 }
 
 @keyframes fadeInOut {
-  0% { opacity: 0; }
-  10% { opacity: 1; }
-  70% { opacity: 1; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 /* Replace static instructions with tooltip */
@@ -117,7 +125,7 @@
   .avatar-viewer-header h2 {
     font-size: 1.2rem;
   }
-  
+
   .avatar-instructions {
     font-size: 0.75rem;
     padding: 5px 12px;

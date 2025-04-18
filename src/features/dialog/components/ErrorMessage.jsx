@@ -1,7 +1,9 @@
 import React from "react";
 
 /**
- * Error message component for displaying errors in personality components
+ * Component for displaying error messages in the dialog
+ * @param {Object} props - Component props
+ * @param {string} props.message - The error message to display
  */
 const ErrorMessage = ({ message }) => {
   if (!message) return null;

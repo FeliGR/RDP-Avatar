@@ -12,7 +12,10 @@ function AppContent() {
       <header className="app-header">
         <h1>Persona Dynamics AI</h1>
         <p className="app-description">
-          Experience next-generation digital identity with AI-powered avatar personalization. Our advanced platform enables seamless voice and text interactions while dynamically adapting to your unique personality traits.
+          Experience next-generation digital identity with AI-powered avatar
+          personalization. Our advanced platform enables seamless voice and text
+          interactions while dynamically adapting to your unique personality
+          traits.
         </p>
       </header>
 

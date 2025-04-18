@@ -27,8 +27,9 @@ const getRuntimeEnv = (key, defaultValue) => {
 /**
  * Determines if we're running in development or production
  */
-const isLocalDevelopment = window.location.hostname === 'localhost' || 
-                          window.location.hostname === '127.0.0.1';
+const isLocalDevelopment =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1";
 
 // Global API configuration
 // -----------------------------------------------------------------------------
@@ -39,11 +40,15 @@ const isLocalDevelopment = window.location.hostname === 'localhost' ||
 const API_ENDPOINTS = {
   personaEngine: getRuntimeEnv(
     "REACT_APP_PERSONA_ENGINE_URL",
-    isLocalDevelopment ? "http://localhost:5001" : "http://persona-engine-service:5001"
+    isLocalDevelopment
+      ? "http://localhost:5001"
+      : "http://persona-engine-service:5001"
   ),
   dialogOrchestrator: getRuntimeEnv(
     "REACT_APP_DIALOG_ORCHESTRATOR_URL",
-    isLocalDevelopment ? "http://localhost:5002" : "http://dialog-orchestrator-service:5002"
+    isLocalDevelopment
+      ? "http://localhost:5002"
+      : "http://dialog-orchestrator-service:5002"
   ),
 };
 
@@ -72,7 +77,7 @@ const createApiClient = (baseURL) => {
     ...DEFAULT_CONFIG,
     baseURL,
   });
-  
+
   // Add response interceptor for global error handling
   client.interceptors.response.use(
     (response) => response,
@@ -112,7 +117,8 @@ export const handleApiError = (error) => {
     return {
       status: 0,
       data: null,
-      message: "No response received from server. Please check your connection.",
+      message:
+        "No response received from server. Please check your connection.",
     };
   } else {
     // Something happened in setting up the request that triggered an Error
@@ -165,7 +171,7 @@ export const personaService = {
       // Error is already processed by the interceptor
       throw error;
     }
-  }
+  },
 };
 
 /**
@@ -189,7 +195,7 @@ export const dialogService = {
       // Error is already processed by the interceptor
       throw error;
     }
-  }
+  },
 };
 
 // Legacy exports for backward compatibility

@@ -63,20 +63,20 @@ export const resetCameraPosition = (scene) => {
 
 // Avatar states (without animations)
 export const AVATAR_STATES = {
-  IDLE: 'idle',
-  SPEAKING: 'speaking',
-  LISTENING: 'listening',
-  THINKING: 'thinking'
+  IDLE: "idle",
+  SPEAKING: "speaking",
+  LISTENING: "listening",
+  THINKING: "thinking",
 };
 
 // Sentiment types for expressions
 export const SENTIMENTS = {
-  NEUTRAL: 'neutral',
-  HAPPY: 'happy',
-  SAD: 'sad',
-  SURPRISED: 'surprised',
-  CONFUSED: 'confused',
-  ANGRY: 'angry'
+  NEUTRAL: "neutral",
+  HAPPY: "happy",
+  SAD: "sad",
+  SURPRISED: "surprised",
+  CONFUSED: "confused",
+  ANGRY: "angry",
 };
 
 // Load avatar model
@@ -186,7 +186,7 @@ export const loadAvatarModel = async (
       {
         radius: 0.15,
         tessellation: 24,
-        arc: 0.5
+        arc: 0.5,
       },
       scene
     );
@@ -208,7 +208,7 @@ export const loadAvatarModel = async (
 // Detect sentiment from message
 export const detectSentiment = (message) => {
   const text = message.toLowerCase();
-  
+
   // Simple keyword-based sentiment detection
   if (/\b(happy|great|excellent|amazing|good|love|like|thanks)\b/.test(text)) {
     return SENTIMENTS.HAPPY;
@@ -221,7 +221,7 @@ export const detectSentiment = (message) => {
   } else if (/\b(angry|upset|annoyed|frustrat|hate)\b/.test(text)) {
     return SENTIMENTS.ANGRY;
   }
-  
+
   return SENTIMENTS.NEUTRAL;
 };
 

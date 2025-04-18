@@ -1,3 +1,5 @@
+import { TRAIT_NAME_MAP } from '../personality/constants';
+
 // Voice recognition for commands and messaging
 class VoiceRecognition {
   constructor(onResult, onError, onEnd) {
@@ -191,16 +193,8 @@ export class VoiceCommandProcessor {
     } else if (/(more|less)/i.test(text)) {
       action = /more/i.test(text) ? "increase" : "decrease";
 
-      // Map simplified trait terms to actual traits
-      const traitMap = {
-        open: "openness",
-        conscientious: "conscientiousness",
-        extraverted: "extraversion",
-        agreeable: "agreeableness",
-        neurotic: "neuroticism",
-      };
-
-      for (const [key, mappedTrait] of Object.entries(traitMap)) {
+      // Use the imported trait map from constants
+      for (const [key, mappedTrait] of Object.entries(TRAIT_NAME_MAP)) {
         if (text.includes(key)) {
           trait = mappedTrait;
           break;
@@ -213,13 +207,8 @@ export class VoiceCommandProcessor {
       // Default increment/decrement amount
       const defaultChange = 0.5;
 
-      if (action === "increase") {
-        this.personalityHandler(trait, "increase", value || defaultChange);
-      } else if (action === "decrease") {
-        this.personalityHandler(trait, "decrease", value || defaultChange);
-      } else if (action === "set" && value !== undefined) {
-        this.personalityHandler(trait, "set", value);
-      }
+      // Use the handleTraitAction method from context
+      this.personalityHandler(trait, action, value || defaultChange);
 
       return {
         type: "personality",

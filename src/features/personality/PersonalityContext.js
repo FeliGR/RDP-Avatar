@@ -1,15 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { getPersonaProfile, updatePersonaTrait } from "../../services/api";
-
-// Default personality traits
-const DEFAULT_PERSONALITY = {
-  openness: 3.0,
-  conscientiousness: 3.0,
-  extraversion: 3.0,
-  agreeableness: 3.0,
-  neuroticism: 3.0,
-  userId: 1, // This would typically come from authentication
-};
+import { DEFAULT_PERSONALITY } from "./constants";
 
 // Create the context
 export const PersonalityContext = createContext();
@@ -19,8 +10,7 @@ export const usePersonality = () => useContext(PersonalityContext);
 
 // Provider component
 export const PersonalityProvider = ({ children }) => {
-  const [personalityTraits, setPersonalityTraits] =
-    useState(DEFAULT_PERSONALITY);
+  const [personalityTraits, setPersonalityTraits] = useState(DEFAULT_PERSONALITY);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [apiAvailable, setApiAvailable] = useState(true);
@@ -49,8 +39,19 @@ export const PersonalityProvider = ({ children }) => {
     fetchPersonalityData();
   }, []);
 
-  // Update a single personality trait
+  /**
+   * Update a single personality trait
+   * @param {string} trait - The trait name (e.g., "openness")
+   * @param {number} value - The new value for the trait
+   * @param {Object} options - Additional options
+   * @returns {Promise<boolean>} - Success status
+   */
   const updateTrait = async (trait, value, options = { showLoading: false }) => {
+    if (!trait || value === undefined) {
+      console.error(`Invalid trait update: ${trait}=${value}`);
+      return false;
+    }
+
     try {
       // Only show loading indicator if explicitly requested
       // This helps prevent flickering during slider interactions
@@ -83,16 +84,54 @@ export const PersonalityProvider = ({ children }) => {
     }
   };
 
+  /**
+   * Update personality trait based on voice commands
+   * @param {string} trait - The trait to update
+   * @param {string} action - "increase", "decrease", or "set" 
+   * @param {number} amount - Amount to change
+   * @returns {boolean} - Success status
+   */
+  const handleTraitAction = async (trait, action, amount = 0.5) => {
+    if (!trait || !action) {
+      return false;
+    }
+
+    try {
+      const currentValue = personalityTraits[trait] || 3;
+      let newValue;
+      
+      switch (action) {
+        case "increase":
+          newValue = Math.min(5, currentValue + amount);
+          break;
+        case "decrease":
+          newValue = Math.max(1, currentValue - amount);
+          break;
+        case "set":
+          newValue = Math.min(5, Math.max(1, amount));
+          break;
+        default:
+          return false;
+      }
+      
+      return await updateTrait(trait, newValue, { showLoading: true });
+    } catch (err) {
+      console.error(`Failed to handle trait action: ${trait} ${action}`, err);
+      return false;
+    }
+  };
+
+  const contextValue = {
+    personalityTraits,
+    isLoading,
+    error,
+    updateTrait,
+    handleTraitAction,
+    apiAvailable
+  };
+
   return (
-    <PersonalityContext.Provider
-      value={{
-        personalityTraits,
-        isLoading,
-        error,
-        updateTrait,
-        apiAvailable
-      }}
-    >
+    <PersonalityContext.Provider value={contextValue}>
       {children}
     </PersonalityContext.Provider>
   );

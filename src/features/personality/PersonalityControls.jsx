@@ -1,11 +1,11 @@
 import React from "react";
 import { usePersonality } from "./PersonalityContext";
 import "./PersonalityControls.css";
+import ErrorMessage from "./components/ErrorMessage";
+import TraitSlider from "./components/TraitSlider";
+import { BIG_FIVE_TRAITS } from "./constants";
 import useDebounce from "./hooks/useDebounce";
 import useLocalTraits from "./hooks/useLocalTraits";
-import TraitSlider from "./components/TraitSlider";
-import ErrorMessage from "./components/ErrorMessage";
-import { BIG_FIVE_TRAITS } from "./constants";
 
 /**
  * Component for controlling personality traits

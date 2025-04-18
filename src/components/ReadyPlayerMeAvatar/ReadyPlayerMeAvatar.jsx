@@ -2,7 +2,6 @@ import { AvatarCreator } from "@readyplayerme/react-avatar-creator";
 import * as BABYLON from "babylonjs";
 import "babylonjs-loaders";
 import React, { useEffect, useRef, useState } from "react";
-import { AVATAR_STATES, SENTIMENTS } from "../../features/babylon/avatarScene";
 import "./ReadyPlayerMeAvatar.css";
 
 // Default subdomain for Ready Player Me
@@ -23,7 +22,6 @@ const ReadyPlayerMeAvatar = ({
   const [avatarError, setAvatarError] = useState(null);
   const avatarRef = useRef(null);
   const sceneRef = useRef(null);
-  const animationsRef = useRef({});
 
   // Initialize Babylon.js scene
   useEffect(() => {
@@ -183,8 +181,8 @@ const ReadyPlayerMeAvatar = ({
         fullUrl,
         "",
         scene,
-        (meshes, particleSystems, skeletons) => {
-          console.log("Avatar loaded successfully:", meshes.length, "meshes and", skeletons.length, "skeletons");
+        (meshes, particleSystems, skeletons, animationGroups) => {
+          console.log("Avatar loaded successfully:", meshes.length, "meshes and", skeletons.length, "skeletons", animationGroups.length);
           
           if (meshes.length === 0) {
             setAvatarError("Avatar loaded but no meshes were found");
@@ -196,15 +194,6 @@ const ReadyPlayerMeAvatar = ({
           avatarMesh.scaling = new BABYLON.Vector3(1, 1, 1);
           avatarMesh.position = new BABYLON.Vector3(0, 0, 0);
           
-          // Setup animations with skeleton if available
-          const skeleton = skeletons.length > 0 ? skeletons[0] : null;
-          if (skeleton) {
-            console.log("Setting up animations with skeleton");
-            setupAnimations(skeleton, scene);
-          } else {
-            console.warn("No skeleton found in the imported avatar");
-          }
-          
           avatarRef.current = avatarMesh;
           
           // Notify parent that avatar is loaded
@@ -212,8 +201,6 @@ const ReadyPlayerMeAvatar = ({
             onAvatarLoaded(avatarMesh);
           }
           
-          // Start idle animation
-          playAnimation(AVATAR_STATES.IDLE);
           setIsLoading(false);
         },
         (progressEvent) => {
@@ -234,62 +221,6 @@ const ReadyPlayerMeAvatar = ({
       setIsLoading(false);
     }
   };
-
-  // Setup animations from the avatar's skeleton
-  const setupAnimations = (skeleton, scene) => {
-    const animations = {
-      [AVATAR_STATES.IDLE]: createIdleAnimation(skeleton, scene),
-      [AVATAR_STATES.SPEAKING]: createSpeakingAnimation(skeleton, scene),
-      [AVATAR_STATES.LISTENING]: createListeningAnimation(skeleton, scene),
-      [AVATAR_STATES.THINKING]: createThinkingAnimation(skeleton, scene)
-    };
-    
-    animationsRef.current = animations;
-  };
-
-  // Create idle animation
-  const createIdleAnimation = (skeleton, scene) => {
-    // ...existing code...
-  };
-
-  // Create speaking animation
-  const createSpeakingAnimation = (skeleton, scene) => {
-    // ...existing code...
-  };
-
-  // Create listening animation
-  const createListeningAnimation = (skeleton, scene) => {
-    // ...existing code...
-  };
-
-  // Create thinking animation
-  const createThinkingAnimation = (skeleton, scene) => {
-    // ...existing code...
-  };
-
-  // Find bone by name in skeleton
-  const findBone = (skeleton, boneName) => {
-    return skeleton.bones.find(
-      bone => bone.name.toLowerCase().includes(boneName.toLowerCase())
-    );
-  };
-
-  // Play animation based on state
-  const playAnimation = (state, sentimentValue = SENTIMENTS.NEUTRAL) => {
-    // ...existing code...
-  };
-
-  // Apply facial expressions based on sentiment
-  const applyFacialExpression = (skeleton, sentiment) => {
-    // ...existing code...
-  };
-
-  // Handle state and sentiment changes
-  useEffect(() => {
-    if (avatarRef.current && sceneRef.current) {
-      playAnimation(avatarState, sentiment);
-    }
-  }, [avatarState, sentiment]);
 
   // Reset camera to default position
   const resetCamera = () => {

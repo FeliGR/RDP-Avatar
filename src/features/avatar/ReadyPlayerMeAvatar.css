@@ -5,7 +5,7 @@
   width: 100%;
   height: 100%;
   z-index: 5;
-  pointer-events: none; /* Allow interactions with the canvas beneath */
+  pointer-events: none;
 }
 
 /* Enable pointer events specifically for interactive elements */
@@ -13,7 +13,7 @@
 .avatar-error,
 .no-avatar-message,
 .avatar-creator-container {
-  pointer-events: auto; /* Re-enable pointer events for interactive elements */
+  pointer-events: auto;
 }
 
 .avatar-loading {
@@ -21,22 +21,21 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: rgba(0, 0, 0, 0.75);
-  color: white;
-  padding: 10px 20px;
-  border-radius: 20px;
+  background: rgba(15, 23, 42, 0.85);
+  color: var(--text-primary);
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-lg);
   font-size: 0.9rem;
   z-index: 10;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(10px);
   text-align: center;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-md);
   min-width: 160px;
   white-space: nowrap;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  pointer-events: none; /* Prevent blocking interactions */
 }
 
 .avatar-loading::before {
@@ -45,7 +44,7 @@
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.2);
   border-top-color: white;
   animation: spin 1s infinite linear;
 }
@@ -64,11 +63,11 @@
   background-color: rgba(244, 67, 54, 0.7);
   color: white;
   padding: 12px 20px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 0.85rem;
   text-align: center;
   z-index: 10;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(10px);
   max-width: 80%;
   display: flex;
   flex-direction: column;
@@ -96,14 +95,14 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 15px 20px;
-  border-radius: 8px;
+  background-color: rgba(15, 23, 42, 0.85);
+  color: var(--text-primary);
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
   font-size: 0.9rem;
   text-align: center;
   z-index: 10;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(10px);
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -112,46 +111,49 @@
 
 .customize-avatar-button {
   position: absolute;
-  bottom: 20px; /* Position at the bottom */
+  bottom: 20px;
   left: 50%;
-  transform: translateX(-50%); /* Center horizontally only */
-  background: rgba(33, 150, 243, 0.8);
+  transform: translateX(-50%);
+  background: var(--primary);
   color: white;
   border: none;
-  border-radius: 30px;
-  padding: 12px 24px;
-  font-size: 1rem;
+  border-radius: var(--radius-lg);
+  padding: 0.875rem 1.5rem;
+  font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--transition);
   z-index: 10;
-  backdrop-filter: blur(4px);
-  opacity: 1;
+  opacity: 0.9;
   white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  text-align: center;
-  width: auto;
-  min-width: 180px;
-  max-width: 90%;
-  pointer-events: auto; /* Enable interactions with button */
+  font-family: inherit;
+  letter-spacing: 0.01em;
+  box-shadow: var(--shadow-md);
 }
 
 .customize-avatar-button:hover {
-  background: rgba(33, 150, 243, 1);
-  transform: translateX(-50%) translateY(-2px); /* Adjust hover animation for bottom positioning */
-  box-shadow: 0 6px 16px rgba(33, 150, 243, 0.4);
+  background: var(--primary-dark);
+  transform: translateX(-50%) translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  opacity: 1;
 }
 
-/* Add responsive adjustments for mobile devices */
+/* Responsive adjustments */
 @media (max-width: 768px) {
   .customize-avatar-button {
-    bottom: 30px; /* Increase bottom margin on mobile for better visibility */
-    padding: 14px 28px;
-    font-size: 1.1rem;
+    bottom: 30px;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
+  }
+  
+  .close-creator-button {
+    width: 36px;
+    height: 36px;
+    top: 15px;
+    right: 15px;
   }
 }
 
-/* New styling for the avatar creator container to fit inside the canvas area */
 .avatar-creator-container {
   position: absolute;
   top: 0;
@@ -160,13 +162,13 @@
   bottom: 0;
   width: 100%;
   height: 100%;
-  background: rgba(25, 35, 60, 0.9);
+  background: rgba(15, 23, 42, 0.9);
   z-index: 20;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   overflow: hidden;
 }
 
@@ -191,13 +193,13 @@
   justify-content: center;
   font-size: 1rem;
   cursor: pointer;
-  transition: all 0.2s ease;
-  z-index: 30; /* Increased z-index to ensure it's above other elements */
+  transition: var(--transition);
+  z-index: 30;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .close-creator-button:hover {
-  background: rgba(244, 67, 54, 1);
+  background: rgb(244, 67, 54);
   transform: scale(1.1);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
 }
@@ -206,17 +208,4 @@
   content: "×";
   font-size: 24px;
   line-height: 24px;
-}
-
-@media (max-width: 768px) {
-  .close-creator-button {
-    width: 36px;
-    height: 36px;
-    top: 15px;
-    right: 15px;
-  }
-
-  .close-creator-button::after {
-    font-size: 20px;
-  }
 }

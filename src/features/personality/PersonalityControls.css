@@ -34,16 +34,17 @@
   border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border-color);
-  transition: var(--transition);
+  transition: all 0.25s ease; /* Smoother transition */
   transform: translateZ(0);
-  will-change: transform;
+  will-change: transform, box-shadow, border-color, background; /* Specify properties */
+  backface-visibility: hidden; /* Add hint for rendering */
 }
 
 .trait-control:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.06); /* Slightly brighter hover */
   border-color: var(--border-hover);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-3px); /* Removed scale */
+  box-shadow: var(--shadow-lg); /* Use larger shadow on hover */
 }
 
 .trait-control label {
@@ -92,28 +93,28 @@
 
 .trait-control input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 22px; /* Larger touch target */
-  height: 22px; /* Larger touch target */
+  width: 24px; /* Slightly larger */
+  height: 24px; /* Slightly larger */
   background: var(--primary);
   border-radius: 50%;
   cursor: pointer;
-  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.15);
-  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Improved animation curve */
+  box-shadow: 0 0 0 4px rgba(33, 150, 243, 0.18); /* Adjusted shadow */
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
   z-index: 2;
-  border: 2px solid rgba(255, 255, 255, 0.9);
-  margin-top: -7px; /* Better vertical alignment */
+  border: 2px solid rgba(255, 255, 255, 0.95); /* Slightly more opaque border */
+  margin-top: -8px; /* Adjusted vertical alignment */
 }
 
 .trait-control input[type="range"]::-moz-range-thumb {
-  width: 22px; /* Larger touch target */
-  height: 22px; /* Larger touch target */
+  width: 24px; /* Slightly larger */
+  height: 24px; /* Slightly larger */
   background: var(--primary);
   border-radius: 50%;
   cursor: pointer;
-  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.15);
-  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Improved animation curve */
-  border: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 0 4px rgba(33, 150, 243, 0.18); /* Adjusted shadow */
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 2px solid rgba(255, 255, 255, 0.95); /* Slightly more opaque border */
 }
 
 .trait-control input[type="range"]::-webkit-slider-runnable-track {
@@ -129,23 +130,23 @@
 }
 
 .trait-control input[type="range"]:hover::-webkit-slider-thumb {
-  box-shadow: 0 0 0 5px rgba(33, 150, 243, 0.25);
-  transform: scale(1.15);
+  box-shadow: 0 0 0 6px rgba(33, 150, 243, 0.3); /* Enhanced hover shadow */
+  transform: scale(1.18); /* Slightly increased scale */
 }
 
 .trait-control input[type="range"]:hover::-moz-range-thumb {
-  box-shadow: 0 0 0 5px rgba(33, 150, 243, 0.25);
-  transform: scale(1.15);
+  box-shadow: 0 0 0 6px rgba(33, 150, 243, 0.3); /* Enhanced hover shadow */
+  transform: scale(1.18); /* Slightly increased scale */
 }
 
 .trait-control input[type="range"]:active::-webkit-slider-thumb {
-  transform: scale(1.2);
-  box-shadow: 0 0 0 6px rgba(33, 150, 243, 0.3);
+  transform: scale(1.25); /* Slightly increased scale */
+  box-shadow: 0 0 0 7px rgba(33, 150, 243, 0.35); /* Enhanced active shadow */
 }
 
 .trait-control input[type="range"]:active::-moz-range-thumb {
-  transform: scale(1.2);
-  box-shadow: 0 0 0 6px rgba(33, 150, 243, 0.3);
+  transform: scale(1.25); /* Slightly increased scale */
+  box-shadow: 0 0 0 7px rgba(33, 150, 243, 0.35); /* Enhanced active shadow */
 }
 
 .trait-progress {
@@ -220,12 +221,13 @@
   background: rgba(255, 255, 255, 0.1);
   color: var(--text-primary);
   font-size: 12px;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease; /* Smoother transition */
 }
 
 .trait-info-icon:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.15); /* Brighter hover */
+  transform: scale(1.15); /* Slightly increased scale */
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
 }
 
 /* Responsive adjustments */

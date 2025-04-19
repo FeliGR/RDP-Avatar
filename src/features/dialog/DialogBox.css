@@ -22,13 +22,13 @@
 .clear-button {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md); /* Increased radius */
   padding: 8px 14px;
   font-size: 0.85rem;
   font-family: inherit;
   color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.25s ease; /* Smoother transition */
   display: flex;
   align-items: center;
   gap: 6px;
@@ -49,10 +49,11 @@
 }
 
 .clear-button:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08); /* Slightly softer hover */
   color: #fff;
   padding-left: 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  transform: scale(1.03); /* Add subtle scale */
 }
 
 .clear-button:active:not(:disabled) {
@@ -207,7 +208,7 @@
   flex: 1;
   padding: 12px 18px;
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-lg); /* Ensure consistency */
   outline: none;
   font-size: 0.9rem;
   font-family: inherit;
@@ -230,19 +231,19 @@
 .message-input:focus {
   border-color: var(--primary);
   background: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.15), inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.2), inset 0 1px 3px rgba(0, 0, 0, 0.1); /* Softer focus ring */
 }
 
 .send-button {
   background: var(--primary);
   color: white;
   border: none;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-lg); /* Ensure consistency */
   padding: 12px 20px;
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.25s ease; /* Smoother transition */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -253,14 +254,15 @@
 }
 
 .send-button:hover:not(:disabled) {
-  background: var(--primary-dark);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  background: var(--primary-light); /* Brighter hover */
+  transform: translateY(-2px) scale(1.02); /* Lift and slightly scale */
+  box-shadow: 0 5px 12px rgba(33, 150, 243, 0.25); /* Enhanced shadow */
 }
 
 .send-button:active:not(:disabled) {
-  transform: translateY(0);
+  transform: translateY(0) scale(1); /* Reset scale on active */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: var(--primary-dark);
 }
 
 /* Voice input button styling */
@@ -276,7 +278,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.25s ease; /* Smoother transition */
   position: relative;
   overflow: hidden;
 }
@@ -284,11 +286,12 @@
 .voice-input-button:hover:not(:disabled) {
   color: #fff;
   border-color: rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.12); /* Slightly more visible hover */
+  transform: scale(1.05); /* Add scale effect */
 }
 
 .voice-input-button:active:not(:disabled) {
-  transform: scale(0.96);
+  transform: scale(0.98); /* Slightly shrink on active */
 }
 
 .voice-input-button svg {
@@ -301,18 +304,21 @@
   background: rgba(244, 67, 54, 0.2);
   color: rgb(244, 67, 54);
   border-color: rgba(244, 67, 54, 0.5);
-  animation: pulse 1.5s infinite;
+  animation: pulse-listening 1.8s infinite ease-in-out; /* Changed animation */
 }
 
-@keyframes pulse {
+@keyframes pulse-listening {
   0% {
-    box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.4);
+    box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.3);
+    transform: scale(1);
   }
-  70% {
-    box-shadow: 0 0 0 10px rgba(244, 67, 54, 0);
+  50% {
+    box-shadow: 0 0 0 8px rgba(244, 67, 54, 0);
+    transform: scale(1.05);
   }
   100% {
     box-shadow: 0 0 0 0 rgba(244, 67, 54, 0);
+    transform: scale(1);
   }
 }
 

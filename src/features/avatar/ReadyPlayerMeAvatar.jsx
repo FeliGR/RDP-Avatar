@@ -293,16 +293,20 @@ const ReadyPlayerMeAvatar = ({
         </button>
       )}
 
+      {/* Close button rendered outside the container, at the top level */}
+      {showCreator && (
+        <button
+          className="creator-close-button"
+          onClick={() => setShowCreator(false)}
+          aria-label="Close avatar creator"
+        >
+          Close Editor
+        </button>
+      )}
+
+      {/* Avatar creator container without the close button inside */}
       {showCreator && (
         <div className="avatar-creator-container">
-          <button
-            className="close-creator-button"
-            onClick={() => setShowCreator(false)}
-            aria-label="Close avatar creator"
-          >
-            <span className="visually-hidden">Close</span>
-          </button>
-
           <AvatarCreator
             subdomain={RPM_SUBDOMAIN}
             className="avatar-creator"

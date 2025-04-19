@@ -9,6 +9,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  pointer-events: none; /* Allow clicking through container but not children */
 }
 
 .trait-modal-overlay {
@@ -20,6 +21,7 @@
   background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(8px);
   animation: fade-in 0.3s ease forwards;
+  pointer-events: auto; /* Ensure overlay catches clicks */
 }
 
 .trait-modal {
@@ -34,11 +36,12 @@
   display: flex;
   flex-direction: column;
   animation: modal-in 0.4s cubic-bezier(0.2, 0.85, 0.4, 1) forwards;
-  resize: both;
   min-width: 300px;
   min-height: 300px;
   box-shadow: var(--shadow-lg);
   transform-origin: center bottom;
+  pointer-events: auto; /* Ensure modal catches clicks */
+  z-index: 1001; /* Ensure modal is above overlay */
 }
 
 /* Animation keyframes */

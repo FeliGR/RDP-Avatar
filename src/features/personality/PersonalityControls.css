@@ -78,45 +78,74 @@
 
 .trait-control input[type="range"] {
   width: 100%;
-  height: 4px;
+  height: 8px; /* Increased height for better touch area */
   -webkit-appearance: none;
   appearance: none;
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 2px;
+  border-radius: 4px; /* Increased radius for smoother appearance */
   outline: none;
   cursor: pointer;
   position: relative;
   margin: 0.75rem 0;
+  transition: all 0.2s ease; /* Added transition for smoother interaction */
 }
 
 .trait-control input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 16px;
-  height: 16px;
+  width: 22px; /* Larger touch target */
+  height: 22px; /* Larger touch target */
   background: var(--primary);
   border-radius: 50%;
   cursor: pointer;
   box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.15);
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Improved animation curve */
   position: relative;
   z-index: 2;
   border: 2px solid rgba(255, 255, 255, 0.9);
+  margin-top: -7px; /* Better vertical alignment */
 }
 
 .trait-control input[type="range"]::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
+  width: 22px; /* Larger touch target */
+  height: 22px; /* Larger touch target */
   background: var(--primary);
   border-radius: 50%;
   cursor: pointer;
   box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.15);
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Improved animation curve */
   border: 2px solid rgba(255, 255, 255, 0.9);
 }
 
+.trait-control input[type="range"]::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.trait-control input[type="range"]::-moz-range-track {
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
 .trait-control input[type="range"]:hover::-webkit-slider-thumb {
-  box-shadow: 0 0 0 4px rgba(33, 150, 243, 0.25);
-  transform: scale(1.1);
+  box-shadow: 0 0 0 5px rgba(33, 150, 243, 0.25);
+  transform: scale(1.15);
+}
+
+.trait-control input[type="range"]:hover::-moz-range-thumb {
+  box-shadow: 0 0 0 5px rgba(33, 150, 243, 0.25);
+  transform: scale(1.15);
+}
+
+.trait-control input[type="range"]:active::-webkit-slider-thumb {
+  transform: scale(1.2);
+  box-shadow: 0 0 0 6px rgba(33, 150, 243, 0.3);
+}
+
+.trait-control input[type="range"]:active::-moz-range-thumb {
+  transform: scale(1.2);
+  box-shadow: 0 0 0 6px rgba(33, 150, 243, 0.3);
 }
 
 .trait-progress {

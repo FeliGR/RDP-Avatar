@@ -1,12 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { usePersonality } from "../../features/personality/PersonalityContext";
-import { SENTIMENTS } from "./avatarScene";
 import "./AvatarViewer.css";
 import ReadyPlayerMeAvatar from "./ReadyPlayerMeAvatar";
 
 const AvatarViewer = () => {
   const canvasRef = useRef(null);
-  const [currentSentiment, setCurrentSentiment] = useState(SENTIMENTS.NEUTRAL);
   const [isLoading, setIsLoading] = useState(false);
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);

@@ -118,14 +118,18 @@ const ReadyPlayerMeAvatar = ({
     if (avatarRef.current && animationsInitialized && avatarUrl && !animationsLoadedRef.current) {
       console.log("Both avatar and animation system ready, loading animations...");
       animationsLoadedRef.current = true;
-      loadAvatarAnimations(avatarUrl).then((result) => {
-        if (result.success) {
-          console.log("Animations loaded and started successfully");
-        } else {
-          console.warn("Failed to load animations:", result.error);
-          animationsLoadedRef.current = false; // Reset on failure to allow retry
-        }
-      });
+      
+      // Add a small delay to ensure the avatar is fully loaded and all meshes are in the scene
+      setTimeout(() => {
+        loadAvatarAnimations(avatarUrl).then((result) => {
+          if (result.success) {
+            console.log("Animations loaded and started successfully");
+          } else {
+            console.warn("Failed to load animations:", result.error);
+            animationsLoadedRef.current = false; // Reset on failure to allow retry
+          }
+        });
+      }, 200); // Small delay to ensure avatar is fully settled in scene
     }
   }, [avatarRef.current, animationsInitialized, avatarUrl, loadAvatarAnimations]);
 
@@ -301,6 +305,7 @@ const ReadyPlayerMeAvatar = ({
           }
 
           const avatarMesh = meshes[0];
+          avatarMesh.name = "_Character_"; // Set the name to match reference code pattern
           avatarMesh.scaling = new BABYLON.Vector3(1, 1, 1);
           avatarMesh.position = new BABYLON.Vector3(0, 0, 0);
 

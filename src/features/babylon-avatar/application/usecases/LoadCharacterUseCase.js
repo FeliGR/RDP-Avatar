@@ -233,15 +233,14 @@ export class LoadCharacterUseCase {
   }
   
   /**
-   * Clone animation to character using the proven approach from reference code
-   * This method follows the pattern from the working BabylonJS implementation
+   * Clone animation to character using the EXACT pattern from reference code
    */
   _cloneAnimationToCharacter(originalGroup, character) {
     console.log('Cloning animation to character:', originalGroup.name);
     
-    // Find the main character mesh
+    // Find the character mesh - exactly like reference code
     const characterMesh = character.meshes.find(mesh => 
-      mesh.name === '_Character_' || mesh.name.includes('Character') || mesh.skeleton
+      mesh.name === '_Character_'
     ) || character.meshes[0];
 
     if (!characterMesh) {
@@ -249,66 +248,50 @@ export class LoadCharacterUseCase {
       return null;
     }
 
-    // Get all transform nodes from the character (this is key from the reference code)
-    const modelTransformNodes = characterMesh.getChildTransformNodes ? 
-      characterMesh.getChildTransformNodes() : [];
+    // Get all transform nodes from the character - exactly like reference code
+    const modelTransformNodes = characterMesh.getChildTransformNodes();
     
+    console.log('Character mesh name:', characterMesh.name);
     console.log('Character transform nodes found:', modelTransformNodes.length);
-    console.log('Transform node names:', modelTransformNodes.map(n => n.name).slice(0, 10));
+    console.log('Transform node names:', modelTransformNodes.map(n => n.name));
 
     try {
-      // Clone the animation group with target mapping (following reference code pattern)
+      // Clone animation with exact mapping strategy from reference code
       const clonedGroup = originalGroup.clone(
-        originalGroup.name.replace('M_Standing_', '').replace('M_Talking_', '').replace('M_', ''), 
+        "player_" + originalGroup.name, // Name similar to reference code pattern
         (oldTarget) => {
           const oldTargetName = oldTarget?.name || 'unknown';
-          console.log('Mapping animation target:', oldTargetName);
           
-          // Find matching transform node by name (primary strategy)
+          // Find matching transform node by exact name - exactly like reference code
           const matchingNode = modelTransformNodes.find((node) => 
             node.name === oldTargetName
           );
           
           if (matchingNode) {
-            console.log(`✓ Mapped to transform node: ${oldTargetName} → ${matchingNode.name}`);
+            console.log(`✓ Mapped: ${oldTargetName} → ${matchingNode.name}`);
             return matchingNode;
+          } else {
+            console.log(`⚠ No match for ${oldTargetName} in ${modelTransformNodes.length} transform nodes`);
+            // In the reference code, unmatched targets would be left as-is
+            return oldTarget;
           }
-          
-          // If no exact match, try to find by skeleton bones (secondary strategy)
-          if (characterMesh.skeleton) {
-            const matchingBone = this._findBestBoneMatch(oldTargetName, characterMesh.skeleton.bones);
-            if (matchingBone) {
-              console.log(`✓ Mapped to skeleton bone: ${oldTargetName} → ${matchingBone.name}`);
-              return matchingBone;
-            }
-          }
-          
-          // Fallback to character mesh
-          console.log(`⚠ No specific match for ${oldTargetName}, using character mesh as fallback`);
-          return characterMesh;
         }
       );
 
       if (clonedGroup && clonedGroup.targetedAnimations.length > 0) {
-        console.log(`Successfully cloned animation with ${clonedGroup.targetedAnimations.length} targeted animations`);
+        console.log(`Cloned animation '${clonedGroup.name}' with ${clonedGroup.targetedAnimations.length} targets`);
         
-        // Log the mapped targets for debugging
-        clonedGroup.targetedAnimations.forEach((ta, index) => {
-          console.log(`Cloned animation ${index}:`, {
-            animationName: ta.animation?.name,
-            targetName: ta.target?.name,
-            targetType: ta.target?.constructor?.name
-          });
-        });
+        // Dispose the original animation like in reference code
+        originalGroup.dispose();
         
         return clonedGroup;
       } else {
-        console.warn('Cloned animation group is empty or invalid');
+        console.warn('Cloned animation group is empty');
         return null;
       }
       
     } catch (error) {
-      console.error('Error cloning animation to character:', error);
+      console.error('Error cloning animation:', error);
       return null;
     }
   }

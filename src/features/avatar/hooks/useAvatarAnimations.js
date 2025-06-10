@@ -85,7 +85,7 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
               // Clean up any remaining animation meshes after everything is loaded
               setTimeout(() => {
                 _cleanupDuplicateAvatars();
-              }, 1000);
+              }, 500); // Reduced delay since duplicates are prevented at source
             } else {
               console.warn('Failed to start idle animations:', idleResult.error);
             }

@@ -25,6 +25,48 @@ export class BabylonAnimationRepository extends IAnimationRepository {
 
   async loadCharacterModel(modelPath) {
     try {
+      // First, check if there's already a character mesh in the scene
+      // This prevents duplicate loading when the avatar is already loaded by ReadyPlayerMeAvatar
+      const existingMeshes = this.scene.meshes.filter(mesh => 
+        mesh.name.includes('Wolf3D') || 
+        mesh.name.includes('_Character_') ||
+        mesh.name.includes('Armature')
+      );
+
+      if (existingMeshes.length > 0) {
+        console.log('Found existing character meshes in scene, using existing avatar instead of loading duplicate');
+        
+        // Create character entity from existing meshes
+        const character = new Character({
+          id: `character_${Date.now()}`,
+          name: 'ExistingAvatar',
+          meshes: existingMeshes,
+          animationGroups: []
+        });
+
+        // Setup mesh properties
+        existingMeshes.forEach(mesh => {
+          console.log('Using existing character mesh:', mesh.name);
+          if (mesh.name !== '_Character_') {
+            mesh.isPickable = false;
+          }
+        });
+        
+        // Ensure the root mesh is named _Character_
+        const rootMesh = existingMeshes.find(mesh => 
+          mesh.name.includes('Wolf3D') || mesh.name.includes('Armature')
+        ) || existingMeshes[0];
+        
+        if (rootMesh && rootMesh.name !== '_Character_') {
+          console.log('Renaming existing root mesh from', rootMesh.name, 'to _Character_');
+          rootMesh.name = '_Character_';
+        }
+
+        return character;
+      }
+
+      // If no existing character found, load as before (fallback)
+      console.log('No existing character found in scene, loading new one');
       const result = await BABYLON.SceneLoader.ImportMeshAsync(
         null, 
         this._getBasePath(modelPath), 
@@ -243,25 +285,19 @@ export class BabylonAnimationRepository extends IAnimationRepository {
     
     console.log('Found', characterMeshes.length, 'potential character meshes');
     
-    // If we have more than one set of character meshes, remove duplicates
-    if (characterMeshes.length > 1) {
-      // Keep only meshes at origin (0,0,0) and remove any that are positioned elsewhere
-      characterMeshes.forEach(mesh => {
-        const pos = mesh.position;
-        const isAtOrigin = Math.abs(pos.x) < 10 && Math.abs(pos.y) < 10 && Math.abs(pos.z) < 10;
-        const isVisible = mesh.isEnabled() && mesh.isVisible && mesh.visibility > 0;
-        
-        // Remove meshes that are:
-        // - Far from origin (likely hidden animation meshes)
-        // - Not visible
-        // - Scaled down significantly
-        if (!isAtOrigin || !isVisible || mesh.scaling.x < 0.01) {
-          meshesToRemove.push(mesh);
-        }
-      });
-    }
+    // Remove any meshes that are positioned far away or hidden (likely animation meshes)
+    characterMeshes.forEach(mesh => {
+      const pos = mesh.position;
+      const isFarAway = Math.abs(pos.x) > 5000 || Math.abs(pos.y) > 5000 || Math.abs(pos.z) > 5000;
+      const isHidden = !mesh.isVisible || mesh.visibility === 0;
+      const isScaledDown = mesh.scaling.x < 0.01;
+      
+      if (isFarAway || isHidden || isScaledDown) {
+        meshesToRemove.push(mesh);
+      }
+    });
     
-    console.log('Found', meshesToRemove.length, 'duplicate meshes to remove');
+    console.log('Found', meshesToRemove.length, 'hidden/duplicate meshes to remove');
     
     meshesToRemove.forEach(mesh => {
       try {

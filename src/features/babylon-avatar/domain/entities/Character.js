@@ -24,13 +24,6 @@ export class Character {
 
   // Domain business rules
   canPlayAnimation(animationName) {
-    const result = {
-      animationName,
-      isLoaded: this.isLoaded,
-      hasAnimation: this.hasAnimation(animationName),
-      animationGroups: this.animationGroups.map(g => g.name)
-    };
-    console.log('canPlayAnimation check:', result);
     return this.isLoaded && this.hasAnimation(animationName);
   }
 

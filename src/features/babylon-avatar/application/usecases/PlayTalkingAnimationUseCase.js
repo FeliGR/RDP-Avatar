@@ -51,97 +51,136 @@ export class PlayTalkingAnimationUseCase {
 
     return {
       success: true,
-      isTalking: true
+      message: 'Started talking animations'
     };
   }
 
-  async stop(character) {
+  /**
+   * Stop talking animations
+   */
+  stop(character) {
     this.isTalking = false;
 
-    // Remove audio morph callback
+    // Remove animation observers
+    this.animationController.removeObservers(character);
+
+    // Stop audio analysis
+    if (this.audioAnalyzer && this.audioAnalyzer.isAnalyzing()) {
+      this.audioAnalyzer.stop();
+    }
+
+    // Remove morph callback
     if (this.morphCallback) {
       this.audioAnalyzer.removeCallback(this.morphCallback);
       this.morphCallback = null;
     }
 
-    // Transition back to idle
-    const idleAnim = character.getAnimationGroup('M_Standing_Idle_Variations_001');
-    if (idleAnim) {
-      const blendConfig = new AnimationBlend({
-        fromAnimation: character.currentAnimation,
-        toAnimation: idleAnim,
-        blendSpeed: 0.02,
-        maxWeight: 0.7
-      });
-
-      await this.animationController.blendAnimations(character, blendConfig);
-    }
+    // Reset mouth morph targets
+    this._resetMouthMorphTargets(character);
 
     return {
       success: true,
-      isTalking: false
+      message: 'Stopped talking animations'
     };
   }
 
-  async _playRandomTalkingAnimation(character, availableAnimations) {
-    // Choose random animation different from current
-    let randomAnim;
-    do {
-      const randomIndex = Math.floor(Math.random() * availableAnimations.length);
-      randomAnim = availableAnimations[randomIndex];
-    } while (character.currentAnimation?.name.includes(randomAnim));
-
-    const animationGroup = character.getAnimationGroup(randomAnim);
-    const animationOffset = 50; // Frame offset from your original code
-
-    const blendConfig = new AnimationBlend({
-      fromAnimation: character.currentAnimation,
-      toAnimation: animationGroup,
-      blendSpeed: 0.02,
-      maxWeight: 0.75,
-      frameRange: {
-        start: animationOffset,
-        end: animationGroup.duration - animationOffset
-      }
+  /**
+   * Play random talking animation
+   * @private
+   */
+  async _playRandomTalkingAnimation(character, talkingAnimations) {
+    const randomAnimation = talkingAnimations[Math.floor(Math.random() * talkingAnimations.length)];
+    
+    return this.animationController.playAnimation(character, randomAnimation, {
+      isLooping: false,
+      speedRatio: 1.0
     });
-
-    await this.animationController.blendAnimations(character, blendConfig);
   }
 
+  /**
+   * Setup audio-driven morph targets
+   * @private
+   */
   _setupAudioMorphTargets(character, audioSource) {
-    const morphMultiplier = 0.65; // From your original code
-
     this.morphCallback = (frequencyData) => {
       if (!this.isTalking) return;
 
-      // Calculate jaw movement based on audio frequency
-      const jawValue = (frequencyData[5] / 512) * morphMultiplier;
-
-      // Apply morph targets for mouth movement
-      this.morphTargetController.animateMorphTarget(character, 'jawOpen', jawValue * 2, 0);
-      this.morphTargetController.animateMorphTarget(character, 'mouthOpen', jawValue, 0);
+      // Calculate volume from frequency data
+      const volume = this._calculateVolume(frequencyData);
+      
+      // Map volume to mouth movements
+      this._updateMouthMorphTargets(character, volume);
     };
 
     this.audioAnalyzer.addCallback(this.morphCallback);
   }
 
-  _setupTalkingLoop(character, availableAnimations) {
-    const checkAndPlayNext = () => {
-      if (!this.isTalking) return;
-
-      if (!character.currentAnimation?.isPlaying) {
-        this._playRandomTalkingAnimation(character, availableAnimations)
-          .then(() => {
-            // Schedule next check
-            setTimeout(checkAndPlayNext, 100);
-          });
-      } else {
-        // Check again soon
-        setTimeout(checkAndPlayNext, 100);
+  /**
+   * Setup talking animation loop
+   * @private
+   */
+  _setupTalkingLoop(character, talkingAnimations) {
+    this.animationController.setupIdleObservers(character, () => {
+      if (this.isTalking) {
+        // Play next random talking animation
+        this._playRandomTalkingAnimation(character, talkingAnimations);
       }
-    };
+    });
+  }
 
-    // Start the loop
-    setTimeout(checkAndPlayNext, 100);
+  /**
+   * Calculate volume from frequency data
+   * @private
+   */
+  _calculateVolume(frequencyData) {
+    let sum = 0;
+    for (let i = 0; i < frequencyData.length; i++) {
+      sum += frequencyData[i];
+    }
+    return sum / (frequencyData.length * 255); // Normalize to 0-1
+  }
+
+  /**
+   * Update mouth morph targets based on audio volume
+   * @private
+   */
+  _updateMouthMorphTargets(character, volume) {
+    const jawOpen = character.getMorphTarget('jawOpen');
+    const mouthOpen = character.getMorphTarget('mouthOpen');
+    const teethMouthOpen = character.getMorphTarget('teethMouthOpen');
+
+    if (jawOpen) {
+      jawOpen.influence = Math.min(1, volume * 2.5);
+    }
+
+    if (mouthOpen) {
+      mouthOpen.influence = Math.min(1, volume * 2.0);
+    }
+
+    if (teethMouthOpen) {
+      teethMouthOpen.influence = Math.min(1, volume * 1.5);
+    }
+  }
+
+  /**
+   * Reset mouth morph targets to default
+   * @private
+   */
+  _resetMouthMorphTargets(character) {
+    const jawOpen = character.getMorphTarget('jawOpen');
+    const mouthOpen = character.getMorphTarget('mouthOpen');
+    const teethMouthOpen = character.getMorphTarget('teethMouthOpen');
+
+    if (jawOpen) {
+      jawOpen.influence = 0;
+    }
+
+    if (mouthOpen) {
+      mouthOpen.influence = 0;
+    }
+
+    if (teethMouthOpen) {
+      teethMouthOpen.influence = 0;
+    }
   }
 }

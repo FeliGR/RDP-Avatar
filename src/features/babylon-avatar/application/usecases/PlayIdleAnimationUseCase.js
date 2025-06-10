@@ -14,8 +14,6 @@ export class PlayIdleAnimationUseCase {
   }
 
   async execute(character) {
-    console.log('PlayIdleAnimationUseCase.execute called');
-    
     if (!character.canPlayAnimation('idle')) {
       throw new Error('Character cannot play idle animations');
     }
@@ -37,56 +35,83 @@ export class PlayIdleAnimationUseCase {
     idleAnimationNames.forEach(name => {
       if (character.hasAnimation(name)) {
         availableAnimations.push(name);
-        console.log('Found idle animation:', name);
       }
     });
-
-    console.log('Available idle animations:', availableAnimations);
-    console.log('All character animations:', character.animationGroups.map(ag => ag.name));
 
     if (availableAnimations.length === 0) {
       throw new Error('No idle animations available');
     }
 
     // Play first available idle animation with looping
-    const firstIdle = availableAnimations[0];
-    console.log('Playing first idle animation:', firstIdle);
+    const selectedAnimation = availableAnimations[0];
     
-    await this.animationController.playAnimation(character, firstIdle, {
-      isLooping: true,  // Changed to true for continuous idle
-      speedRatio: 1.0
-    });
+    try {
+      await this.animationController.playAnimation(character, selectedAnimation, {
+        isLooping: true,
+        speedRatio: 1.0
+      });
 
-    // Setup idle chain observers
-    this.animationController.setupIdleObservers(character, (currentAnim) => {
-      this._handleIdleTransition(character, currentAnim, availableAnimations);
-    });
+      // Start automatic facial animations for more lifelike idle state
+      this.morphTargetController.startAutomaticFacialAnimations(character);
 
-    // Start automatic facial animations
-    this.morphTargetController.startAutomaticFacialAnimations(character);
+      // Setup observers to cycle through idle variations
+      this._setupIdleVariationCycling(character, availableAnimations);
 
-    return {
-      success: true,
-      currentAnimation: firstIdle
-    };
+      return {
+        success: true,
+        message: `Started idle animation: ${selectedAnimation}`
+      };
+
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message
+      };
+    }
   }
 
-  async _handleIdleTransition(character, currentAnim, availableIdles) {
-    // Find next idle animation (cycle through them)
-    const currentIndex = availableIdles.findIndex(name => 
-      currentAnim.name.includes(name)
-    );
-    const nextIndex = (currentIndex + 1) % availableIdles.length;
-    const nextIdle = availableIdles[nextIndex];
+  /**
+   * Setup cycling between different idle animation variations
+   * @private
+   */
+  _setupIdleVariationCycling(character, availableAnimations) {
+    if (availableAnimations.length <= 1) {
+      return; // No variations to cycle through
+    }
 
-    // Create blend configuration
-    const blendConfig = new AnimationBlend({
-      fromAnimation: currentAnim,
-      toAnimation: character.getAnimationGroup(nextIdle),
-      blendSpeed: 0.02,
-      maxWeight: 0.8
+    let currentIndex = 0;
+
+    // Setup observer to switch to next animation when current one ends
+    this.animationController.setupIdleObservers(character, () => {
+      // Move to next animation
+      currentIndex = (currentIndex + 1) % availableAnimations.length;
+      const nextAnimation = availableAnimations[currentIndex];
+      
+      this.animationController.playAnimation(character, nextAnimation, {
+        isLooping: true,
+        speedRatio: 1.0
+      });
     });
+  }
 
-    await this.animationController.blendAnimations(character, blendConfig);
+  /**
+   * Stop idle animations
+   */
+  stop(character) {
+    try {
+      this.animationController.removeObservers(character);
+      this.animationController.stopAnimation(character);
+      this.morphTargetController.stopAutomaticFacialAnimations(character);
+
+      return {
+        success: true,
+        message: 'Idle animations stopped'
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message
+      };
+    }
   }
 }

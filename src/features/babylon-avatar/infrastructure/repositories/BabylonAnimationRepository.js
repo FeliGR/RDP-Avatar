@@ -11,7 +11,7 @@ export class BabylonAnimationRepository extends IAnimationRepository {
     super();
     this.scene = scene;
     this.animationsGLB = [];
-    this.animationMeshesToCleanup = []; // Restored for controlled cleanup
+    this.animationMeshesToCleanup = [];
   }
 
   async loadAnimations(animationPaths) {
@@ -34,8 +34,6 @@ export class BabylonAnimationRepository extends IAnimationRepository {
       );
 
       if (existingMeshes.length > 0) {
-        console.log('Found existing character meshes in scene, using existing avatar instead of loading duplicate');
-        
         // Create character entity from existing meshes
         const character = new Character({
           id: `character_${Date.now()}`,
@@ -46,7 +44,6 @@ export class BabylonAnimationRepository extends IAnimationRepository {
 
         // Setup mesh properties
         existingMeshes.forEach(mesh => {
-          console.log('Using existing character mesh:', mesh.name);
           if (mesh.name !== '_Character_') {
             mesh.isPickable = false;
           }
@@ -58,15 +55,13 @@ export class BabylonAnimationRepository extends IAnimationRepository {
         ) || existingMeshes[0];
         
         if (rootMesh && rootMesh.name !== '_Character_') {
-          console.log('Renaming existing root mesh from', rootMesh.name, 'to _Character_');
           rootMesh.name = '_Character_';
         }
 
         return character;
       }
 
-      // If no existing character found, load as before (fallback)
-      console.log('No existing character found in scene, loading new one');
+      // If no existing character found, load as fallback
       const result = await BABYLON.SceneLoader.ImportMeshAsync(
         null, 
         this._getBasePath(modelPath), 
@@ -87,30 +82,25 @@ export class BabylonAnimationRepository extends IAnimationRepository {
 
       // Setup mesh properties and ensure main mesh is named correctly
       result.meshes.forEach(mesh => {
-        console.log('Character mesh loaded:', mesh.name, 'hasChildren:', mesh.getChildMeshes?.()?.length || 0);
         if (mesh.name !== '_Character_') {
           mesh.isPickable = false;
         }
       });
       
-      // Ensure the root mesh is named _Character_ (following reference code)
+      // Ensure the root mesh is named _Character_
       if (result.meshes[0] && result.meshes[0].name !== '_Character_') {
-        console.log('Renaming root mesh from', result.meshes[0].name, 'to _Character_');
         result.meshes[0].name = '_Character_';
       }
 
       return character;
 
     } catch (error) {
-      console.error('Error loading character model:', error);
-      throw error;
+      throw new Error(`Failed to load character model: ${error.message}`);
     }
   }
 
   async _importAnimation(animationPath) {
     try {
-      console.log('Importing animation from:', animationPath);
-      
       const result = await BABYLON.SceneLoader.ImportMeshAsync(
         null, 
         this._getBasePath(animationPath), 
@@ -119,38 +109,14 @@ export class BabylonAnimationRepository extends IAnimationRepository {
       );
 
       if (!result.animationGroups || result.animationGroups.length === 0) {
-        console.warn('No animation groups found in:', animationPath);
         return null;
       }
 
       const animationGroup = result.animationGroups[0];
-      console.log('Found animation group:', animationGroup.name, 'with', animationGroup.targetedAnimations.length, 'targeted animations');
 
-      // Log detailed animation information
-      animationGroup.targetedAnimations.forEach((ta, index) => {
-        console.log(`Animation ${index}:`, {
-          name: ta.animation?.name,
-          targetName: ta.target?.name,
-          targetProperty: ta.animation?.targetProperty,
-          from: ta.animation?.from,
-          to: ta.animation?.to,
-          dataType: ta.animation?.dataType
-        });
-      });
-
-      // Store reference to original targeted animations before processing meshes
-      const originalTargets = animationGroup.targetedAnimations.map(ta => ({
-        animation: ta.animation,
-        targetName: ta.target?.name || 'unknown'
-      }));
-
-      console.log('Original animation targets:', originalTargets.map(t => t.targetName));
-
-      // Store mesh references for controlled disposal after cloning
+      // Store loaded meshes for cleanup and hide them
       if (result.meshes && result.meshes.length > 0) {
-        const animationMeshes = [...result.meshes];
-        
-        // Store meshes for later cleanup but keep them accessible for now
+        const animationMeshes = result.meshes.filter(mesh => mesh);
         this._storeAnimationMeshesForCleanup(animationMeshes);
         
         // Make meshes invisible but keep them functional for cloning
@@ -171,16 +137,13 @@ export class BabylonAnimationRepository extends IAnimationRepository {
               childMesh.visibility = 0;
               childMesh.isPickable = false;
             });
-            
-            console.log(`Animation mesh ${mesh.name} hidden but preserved for cloning`);
           }
         });
       }
 
-      // Return the animation group (meshes have been disposed immediately)
       return animationGroup;
+
     } catch (error) {
-      console.error(`Error loading animation ${animationPath}:`, error);
       return null;
     }
   }
@@ -200,7 +163,6 @@ export class BabylonAnimationRepository extends IAnimationRepository {
    */
   _storeAnimationMeshesForCleanup(meshes) {
     this.animationMeshesToCleanup.push(...meshes);
-    console.log('Stored', meshes.length, 'animation meshes for later cleanup');
   }
 
   dispose(character) {
@@ -224,13 +186,9 @@ export class BabylonAnimationRepository extends IAnimationRepository {
    * Clean up animation meshes after cloning is complete
    */
   cleanupAnimationMeshes() {
-    console.log('Cleaning up', this.animationMeshesToCleanup.length, 'stored animation meshes...');
-    
     // First, dispose stored animation meshes
     this.animationMeshesToCleanup.forEach(mesh => {
       if (mesh && !mesh.isDisposed()) {
-        console.log('Disposing stored animation mesh:', mesh.name);
-        
         try {
           // Dispose child meshes first
           const childMeshes = mesh.getChildMeshes();
@@ -247,7 +205,7 @@ export class BabylonAnimationRepository extends IAnimationRepository {
           }
           mesh.dispose();
         } catch (error) {
-          console.warn('Error disposing stored mesh:', mesh.name, error);
+          // Silently handle disposal errors
         }
       }
     });
@@ -257,16 +215,12 @@ export class BabylonAnimationRepository extends IAnimationRepository {
     
     // Then scan for any remaining duplicates
     this._forceRemoveDuplicateAvatars();
-    
-    console.log('Animation mesh cleanup complete');
   }
 
   /**
    * Force removal of any duplicate avatar meshes that might still be visible
    */
   _forceRemoveDuplicateAvatars() {
-    console.log('Scanning scene for duplicate avatar meshes...');
-    
     const scene = this.scene;
     const meshesToRemove = [];
     const characterMeshes = [];
@@ -274,7 +228,7 @@ export class BabylonAnimationRepository extends IAnimationRepository {
     // First, identify all potential character meshes
     scene.meshes.forEach(mesh => {
       if (mesh && mesh.name && (
-        mesh.name.includes('Wolf3D') ||  // Ready Player Me parts
+        mesh.name.includes('Wolf3D') ||
         mesh.name.includes('Character') ||
         mesh.name.includes('Armature') ||
         mesh.name === '_Character_'
@@ -282,8 +236,6 @@ export class BabylonAnimationRepository extends IAnimationRepository {
         characterMeshes.push(mesh);
       }
     });
-    
-    console.log('Found', characterMeshes.length, 'potential character meshes');
     
     // Remove any meshes that are positioned far away or hidden (likely animation meshes)
     characterMeshes.forEach(mesh => {
@@ -297,12 +249,8 @@ export class BabylonAnimationRepository extends IAnimationRepository {
       }
     });
     
-    console.log('Found', meshesToRemove.length, 'hidden/duplicate meshes to remove');
-    
     meshesToRemove.forEach(mesh => {
       try {
-        console.log('Force removing duplicate mesh:', mesh.name, 'at position:', mesh.position);
-        
         // Dispose child meshes
         const childMeshes = mesh.getChildMeshes();
         childMeshes.forEach(childMesh => {
@@ -318,10 +266,8 @@ export class BabylonAnimationRepository extends IAnimationRepository {
         }
         mesh.dispose();
       } catch (error) {
-        console.warn('Error force removing mesh:', mesh.name, error);
+        // Silently handle disposal errors
       }
     });
-    
-    console.log('Duplicate removal complete');
   }
 }

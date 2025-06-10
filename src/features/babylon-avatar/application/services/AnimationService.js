@@ -29,7 +29,6 @@ export class AnimationService {
       
       return result;
     } catch (error) {
-      console.error('Error loading character:', error);
       return {
         success: false,
         error: error.message
@@ -51,7 +50,6 @@ export class AnimationService {
       const result = await playIdleUseCase.execute(this.currentCharacter);
       return result;
     } catch (error) {
-      console.error('Error starting idle animations:', error);
       return {
         success: false,
         error: error.message
@@ -81,7 +79,6 @@ export class AnimationService {
       const result = await playTalkingUseCase.execute(this.currentCharacter, audioSource);
       return result;
     } catch (error) {
-      console.error('Error starting talking animations:', error);
       return {
         success: false,
         error: error.message
@@ -109,7 +106,6 @@ export class AnimationService {
       
       return result;
     } catch (error) {
-      console.error('Error stopping talking animations:', error);
       return {
         success: false,
         error: error.message
@@ -134,7 +130,6 @@ export class AnimationService {
       
       return { success: true };
     } catch (error) {
-      console.error('Error playing animation:', error);
       return {
         success: false,
         error: error.message
@@ -160,7 +155,6 @@ export class AnimationService {
       
       return { success: true };
     } catch (error) {
-      console.error('Error setting morph target:', error);
       return {
         success: false,
         error: error.message
@@ -196,7 +190,11 @@ export class AnimationService {
     this.isInitialized = false;
   }
 
-  // Private helper methods
+  /**
+   * Check if service is initialized with a character
+   * @private
+   * @returns {boolean}
+   */
   _checkInitialized() {
     return this.isInitialized && this.currentCharacter !== null;
   }

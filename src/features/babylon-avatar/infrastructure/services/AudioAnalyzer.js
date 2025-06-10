@@ -73,14 +73,14 @@ export class AudioAnalyzer {
           try {
             callback(frequencyData);
           } catch (error) {
-            console.error('Error in audio analysis callback:', error);
+            // Silently handle callback errors
           }
         });
 
         // Schedule next analysis
         requestAnimationFrame(analysisLoop);
       } catch (error) {
-        console.error('Error in audio analysis:', error);
+        // Silently handle analysis errors
       }
     };
 

@@ -108,7 +108,6 @@ const ReadyPlayerMeAvatar = ({
   // Load avatar when URL changes and scene is ready
   useEffect(() => {
     if (avatarUrl && sceneRef.current && sceneReady && !loadingRef.current) {
-      console.log("Loading avatar - effect triggered");
       loadAvatar(avatarUrl);
     }
   }, [avatarUrl, sceneReady]);
@@ -116,16 +115,12 @@ const ReadyPlayerMeAvatar = ({
   // Effect to load animations when both avatar and animation system are ready
   useEffect(() => {
     if (avatarRef.current && animationsInitialized && avatarUrl && !animationsLoadedRef.current) {
-      console.log("Both avatar and animation system ready, loading animations...");
       animationsLoadedRef.current = true;
       
       // Add a small delay to ensure the avatar is fully loaded and all meshes are in the scene
       setTimeout(() => {
         loadAvatarAnimations(avatarUrl).then((result) => {
-          if (result.success) {
-            console.log("Animations loaded and started successfully");
-          } else {
-            console.warn("Failed to load animations:", result.error);
+          if (!result.success) {
             animationsLoadedRef.current = false; // Reset on failure to allow retry
           }
         });
@@ -152,7 +147,6 @@ const ReadyPlayerMeAvatar = ({
 
   // Handle avatar creator completion
   const handleAvatarExported = (response) => {
-    console.log("Avatar created with URL:", response);
 
     // Extract the URL from the response object
     // The response can be either a direct URL string (old API) or an object with data.url (new API)
@@ -171,8 +165,6 @@ const ReadyPlayerMeAvatar = ({
     const cacheBustedUrl = avatarUrl.includes("?")
       ? `${avatarUrl}&t=${Date.now()}`
       : `${avatarUrl}?t=${Date.now()}`;
-
-    console.log("Saving new avatar URL:", cacheBustedUrl);
 
     // Save to localStorage and update state
     localStorage.setItem("rpmAvatarUrl", cacheBustedUrl);
@@ -202,12 +194,10 @@ const ReadyPlayerMeAvatar = ({
     setAvatarError(null);
 
     try {
-      console.log("Loading avatar from URL:", url);
       const { scene } = sceneRef.current;
 
       // More thorough cleanup of existing avatar and all its children
       if (avatarRef.current) {
-        console.log("Disposing previous avatar...");
         // Dispose all meshes associated with the previous avatar
         if (Array.isArray(avatarRef.current.getChildMeshes)) {
           const childMeshes = avatarRef.current.getChildMeshes();
@@ -225,7 +215,6 @@ const ReadyPlayerMeAvatar = ({
 
       // Clear any other meshes in the scene that might be from previous loads or animations
       const sceneMeshes = scene.meshes.slice(); // Create a copy to avoid modification during iteration
-      console.log("Cleaning up previous meshes, found:", sceneMeshes.length, "meshes");
       
       let disposedCount = 0;
       sceneMeshes.forEach((mesh) => {
@@ -267,19 +256,15 @@ const ReadyPlayerMeAvatar = ({
             mesh.dispose();
             disposedCount++;
           } catch (error) {
-            console.warn("Error disposing mesh:", mesh.name, error);
+            // Silently handle disposal errors
           }
         }
       });
-      
-      console.log(`Disposed ${disposedCount} meshes from scene cleanup`);
 
       // Ensure we have a full URL
       const fullUrl = url.startsWith("http")
         ? url
         : `https://models.readyplayer.me/${url}`;
-
-      console.log("Loading new avatar from:", fullUrl);
 
       // Load avatar using ImportMesh for better error handling
       BABYLON.SceneLoader.ImportMesh(
@@ -288,15 +273,6 @@ const ReadyPlayerMeAvatar = ({
         "",
         scene,
         (meshes, particleSystems, skeletons, animationGroups) => {
-          console.log(
-            "Avatar loaded successfully:",
-            meshes.length,
-            "meshes and",
-            skeletons.length,
-            "skeletons",
-            animationGroups.length
-          );
-
           if (meshes.length === 0) {
             setAvatarError("Avatar loaded but no meshes were found");
             setIsLoading(false);
@@ -310,9 +286,6 @@ const ReadyPlayerMeAvatar = ({
           avatarMesh.position = new BABYLON.Vector3(0, 0, 0);
 
           avatarRef.current = avatarMesh;
-          console.log("Avatar mesh stored in ref");
-          console.log("Total meshes in scene:", scene.meshes.length);
-          console.log("Scene meshes:", scene.meshes.map(m => m.name));
 
           // Notify parent that avatar is loaded
           if (onAvatarLoaded) {
@@ -323,21 +296,18 @@ const ReadyPlayerMeAvatar = ({
           loadingRef.current = false;
         },
         (progressEvent) => {
-          // Progress update
+          // Progress update (silent)
           const loadProgress = progressEvent.lengthComputable
             ? Math.round((progressEvent.loaded / progressEvent.total) * 100)
             : 0;
-          console.log(`Loading avatar: ${loadProgress}%`);
         },
         (scene, message, exception) => {
-          console.error("Error loading avatar:", message, exception);
           setAvatarError(`Failed to load avatar: ${message}`);
           setIsLoading(false);
           loadingRef.current = false;
         }
       );
     } catch (error) {
-      console.error("Error loading Ready Player Me avatar:", error);
       setAvatarError(`Failed to load avatar: ${error.message}`);
       setIsLoading(false);
       loadingRef.current = false;
@@ -400,9 +370,8 @@ const ReadyPlayerMeAvatar = ({
             subdomain={RPM_SUBDOMAIN}
             className="avatar-creator"
             onAvatarExported={handleAvatarExported}
-            onUserSet={() => console.log("User is set in AvatarCreator")}
+            onUserSet={() => {}}
             onError={(error) => {
-              console.error("Avatar Creator error:", error);
               // Even if there's an error with the creator, keep it open
               // so the user can try again instead of going back to an error state
               setShowCreator(true);

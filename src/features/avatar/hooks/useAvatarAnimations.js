@@ -38,8 +38,6 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
    * @param {Object} options - Loading options
    */
   const loadAvatarAnimations = useCallback(async (avatarUrl, options = {}) => {
-    console.log('loadAvatarAnimations called with:', avatarUrl, 'service:', !!animationServiceRef.current);
-    
     if (!animationServiceRef.current) {
       setError('Animation service not initialized');
       return { success: false, error: 'Animation service not initialized' };
@@ -175,7 +173,6 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
   const _cleanupDuplicateAvatars = useCallback(() => {
     if (!scene) return;
     
-    console.log('Checking for duplicate avatar meshes...');
     const meshes = scene.meshes.slice();
     let cleanedCount = 0;
     
@@ -193,7 +190,6 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
       );
       
       if ((isHidden && isFarAway) || isScaledDown) {
-        console.log('Cleaning up duplicate avatar mesh:', mesh.name);
         try {
           if (mesh.material) {
             mesh.material.dispose();
@@ -201,12 +197,10 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
           mesh.dispose();
           cleanedCount++;
         } catch (error) {
-          console.warn('Error cleaning duplicate mesh:', mesh.name, error);
+          // Silently handle cleanup errors
         }
       }
     });
-    
-    console.log(`Cleaned up ${cleanedCount} duplicate avatar meshes`);
   }, [scene]);
 
   /**

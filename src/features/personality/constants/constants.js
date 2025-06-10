@@ -88,10 +88,3 @@ export const TRAIT_NAME_MAP = {
   agreeable: "agreeableness",
   neurotic: "neuroticism",
 };
-
-/**
- * Helper function to format trait for display (capitalize first letter)
- */
-export const formatTrait = (trait) => {
-  return trait.charAt(0).toUpperCase() + trait.slice(1);
-};

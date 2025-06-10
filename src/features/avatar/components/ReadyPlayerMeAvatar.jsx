@@ -10,7 +10,6 @@ const RPM_SUBDOMAIN = "demo";
 const ReadyPlayerMeAvatar = ({
   canvasRef,
   onAvatarLoaded,
-  personalityTraits,
 }) => {
   // Get avatar URL from localStorage or use null
   const savedAvatarUrl = localStorage.getItem("rpmAvatarUrl");

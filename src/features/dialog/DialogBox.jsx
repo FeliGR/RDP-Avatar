@@ -1,7 +1,7 @@
 import React from "react";
-import { usePersonality } from "../personality/PersonalityContext";
+import { usePersonality } from "../personality";
 import "./DialogBox.css";
-import { useDialog } from "./DialogContext";
+import { useDialog } from "./context/DialogContext";
 import ErrorMessage from "./components/ErrorMessage";
 import MessageInput from "./components/MessageInput";
 import MessageList from "./components/MessageList";

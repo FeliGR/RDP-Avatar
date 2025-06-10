@@ -1,9 +1,9 @@
 import React from "react";
-import { usePersonality } from "./PersonalityContext";
+import { usePersonality } from "./context/PersonalityContext";
 import "./PersonalityControls.css";
 import ErrorMessage from "./components/ErrorMessage";
 import TraitSlider from "./components/TraitSlider";
-import { BIG_FIVE_TRAITS } from "./constants";
+import { BIG_FIVE_TRAITS } from "./constants/constants";
 import useDebounce from "./hooks/useDebounce";
 import useLocalTraits from "./hooks/useLocalTraits";
 

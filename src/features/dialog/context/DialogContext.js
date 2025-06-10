@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useContext, useState } from "react";
-import { sendMessage } from "../../services/api";
-import { usePersonality } from "../personality/PersonalityContext";
+import { sendMessage } from "../../../services/api";
+import { usePersonality } from "../../personality";
 
 /**
  * Dialog context for managing conversation state and API interactions

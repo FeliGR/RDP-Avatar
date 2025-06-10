@@ -61,7 +61,7 @@ const DEFAULT_CONFIG = {
   headers: {
     "Content-Type": "application/json",
   },
-  timeout: 5000, // 5 second timeout
+  timeout: 30000, // 30 second timeout - Increased for AI processing
 };
 
 // API Client Factory

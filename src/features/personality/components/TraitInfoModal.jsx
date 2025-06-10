@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { formatTrait } from '../constants';
+import { formatTrait } from '../../../shared/utils';
 
 /**
  * Modal dialog component for displaying detailed trait information

@@ -1,10 +1,9 @@
 import React, { useEffect, useRef } from "react";
 import "./App.css";
-import AvatarViewer from "./features/avatar/AvatarViewer";
-import DialogBox from "./features/dialog/DialogBox";
-import { DialogProvider } from "./features/dialog/DialogContext";
-import { PersonalityProvider } from "./features/personality/PersonalityContext";
-import PersonalityControls from "./features/personality/PersonalityControls";
+import { AppProviders } from "./app/providers";
+import { AvatarViewer } from "./features/avatar";
+import { DialogBox } from "./features/dialog";
+import { PersonalityControls } from "./features/personality";
 
 function AppContent() {
   const headerRef = useRef(null);
@@ -97,11 +96,9 @@ function AppContent() {
 
 function App() {
   return (
-    <PersonalityProvider>
-      <DialogProvider>
-        <AppContent />
-      </DialogProvider>
-    </PersonalityProvider>
+    <AppProviders>
+      <AppContent />
+    </AppProviders>
   );
 }
 

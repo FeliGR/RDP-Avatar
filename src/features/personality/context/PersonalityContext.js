@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { getPersonaProfile, updatePersonaTrait } from "../../services/api";
-import { DEFAULT_PERSONALITY } from "./constants";
+import { getPersonaProfile, updatePersonaTrait } from "../../../services/api";
+import { DEFAULT_PERSONALITY } from "../constants/constants";
 
 // Create the context
 export const PersonalityContext = createContext();

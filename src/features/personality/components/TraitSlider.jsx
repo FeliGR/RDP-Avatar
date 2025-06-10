@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { DETAILED_TRAIT_DESCRIPTIONS, formatTrait, TRAIT_DESCRIPTIONS } from "../constants";
+import { DETAILED_TRAIT_DESCRIPTIONS, TRAIT_DESCRIPTIONS } from "../constants/constants";
+import { formatTrait } from "../../../shared/utils";
 import TraitInfoModal from "./TraitInfoModal";
 import "./TraitInfoModal.css";
 

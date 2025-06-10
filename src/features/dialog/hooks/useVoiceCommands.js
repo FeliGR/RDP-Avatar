@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import VoiceCommandProcessor from "../../voice/voiceCommands";
-import { TYPING_EVENTS } from "../constants";
+import VoiceCommandProcessor from "../../voice/services/voiceCommands";
+import { TYPING_EVENTS } from "../constants/constants";
 
 /**
  * A hook for voice command processing functionality

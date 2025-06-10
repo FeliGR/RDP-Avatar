@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { TYPING_DEBOUNCE_DELAY, TYPING_EVENTS } from "../constants";
+import { TYPING_DEBOUNCE_DELAY, TYPING_EVENTS } from "../constants/constants";
 import VoiceInput from "./VoiceInput";
 
 /**

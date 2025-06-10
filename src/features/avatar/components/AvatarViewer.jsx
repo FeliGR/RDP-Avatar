@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { usePersonality } from "../../features/personality/PersonalityContext";
+import { usePersonality } from "../../personality/context/PersonalityContext";
 import "./AvatarViewer.css";
 import ReadyPlayerMeAvatar from "./ReadyPlayerMeAvatar";
 

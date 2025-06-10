@@ -5,3 +5,6 @@ export { default as Avatar } from './Avatar';
 // Component exports
 export { default as AvatarViewer } from './components/AvatarViewer';
 export { default as ReadyPlayerMeAvatar } from './components/ReadyPlayerMeAvatar';
+
+// Hook exports
+export { useAvatarAnimations } from './hooks/useAvatarAnimations';

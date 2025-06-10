@@ -2,6 +2,7 @@ import { AvatarCreator } from "@readyplayerme/react-avatar-creator";
 import * as BABYLON from "babylonjs";
 import "babylonjs-loaders";
 import React, { useEffect, useRef, useState } from "react";
+import { useAvatarAnimations } from "../hooks/useAvatarAnimations.js";
 import "./ReadyPlayerMeAvatar.css";
 
 // Default subdomain for Ready Player Me
@@ -19,6 +20,19 @@ const ReadyPlayerMeAvatar = ({
   const [avatarError, setAvatarError] = useState(null);
   const avatarRef = useRef(null);
   const sceneRef = useRef(null);
+  const shadowGeneratorRef = useRef(null);
+  const [sceneReady, setSceneReady] = useState(false);
+  const loadingRef = useRef(false); // Flag to prevent duplicate loads
+  const animationsLoadedRef = useRef(false); // Flag to prevent duplicate animation loads
+
+  // Animation system integration - se inicializa cuando la escena está lista
+  const {
+    isInitialized: animationsInitialized,
+    loadAvatarAnimations,
+  } = useAvatarAnimations(
+    sceneReady ? sceneRef.current?.scene : null, 
+    sceneReady ? shadowGeneratorRef.current : null
+  );
 
   // Initialize Babylon.js scene
   useEffect(() => {
@@ -58,6 +72,14 @@ const ReadyPlayerMeAvatar = ({
     );
     light2.intensity = 0.5;
 
+    // Create shadow generator for animations
+    const shadowGenerator = new BABYLON.ShadowGenerator(1024, light2, true);
+    shadowGenerator.darkness = 0.4;
+    shadowGenerator.bias = 0.001;
+    shadowGenerator.usePercentageCloserFiltering = true;
+    shadowGenerator.filteringQuality = 1;
+    shadowGeneratorRef.current = shadowGenerator;
+
     // Run render loop
     engine.runRenderLoop(() => {
       scene.render();
@@ -69,11 +91,11 @@ const ReadyPlayerMeAvatar = ({
     });
 
     sceneRef.current = { scene, engine };
+    
+    // Marcar la escena como lista para las animaciones
+    setSceneReady(true);
 
-    // Load avatar if URL exists
-    if (avatarUrl) {
-      loadAvatar(avatarUrl);
-    }
+    // Note: Avatar loading is handled by the separate effect when sceneReady becomes true
 
     // Cleanup on unmount
     return () => {
@@ -83,12 +105,29 @@ const ReadyPlayerMeAvatar = ({
     };
   }, [canvasRef]);
 
-  // Load avatar when URL changes
+  // Load avatar when URL changes and scene is ready
   useEffect(() => {
-    if (avatarUrl && sceneRef.current) {
+    if (avatarUrl && sceneRef.current && sceneReady && !loadingRef.current) {
+      console.log("Loading avatar - effect triggered");
       loadAvatar(avatarUrl);
     }
-  }, [avatarUrl]);
+  }, [avatarUrl, sceneReady]);
+
+  // Effect to load animations when both avatar and animation system are ready
+  useEffect(() => {
+    if (avatarRef.current && animationsInitialized && avatarUrl && !animationsLoadedRef.current) {
+      console.log("Both avatar and animation system ready, loading animations...");
+      animationsLoadedRef.current = true;
+      loadAvatarAnimations(avatarUrl).then((result) => {
+        if (result.success) {
+          console.log("Animations loaded and started successfully");
+        } else {
+          console.warn("Failed to load animations:", result.error);
+          animationsLoadedRef.current = false; // Reset on failure to allow retry
+        }
+      });
+    }
+  }, [avatarRef.current, animationsInitialized, avatarUrl, loadAvatarAnimations]);
 
   // Effect to handle avatar errors by showing the avatar creator
   useEffect(() => {
@@ -151,8 +190,10 @@ const ReadyPlayerMeAvatar = ({
 
   // Load Ready Player Me avatar
   const loadAvatar = async (url) => {
-    if (!sceneRef.current || !sceneRef.current.scene) return;
+    if (!sceneRef.current || !sceneRef.current.scene || loadingRef.current) return;
 
+    loadingRef.current = true;
+    animationsLoadedRef.current = false; // Reset animations flag for new avatar
     setIsLoading(true);
     setAvatarError(null);
 
@@ -178,17 +219,56 @@ const ReadyPlayerMeAvatar = ({
         avatarRef.current = null;
       }
 
-      // Clear any other meshes in the scene that might be from previous loads
+      // Clear any other meshes in the scene that might be from previous loads or animations
       const sceneMeshes = scene.meshes.slice(); // Create a copy to avoid modification during iteration
+      console.log("Cleaning up previous meshes, found:", sceneMeshes.length, "meshes");
+      
+      let disposedCount = 0;
       sceneMeshes.forEach((mesh) => {
         // Only dispose meshes that aren't part of the scene infrastructure
-        if (mesh.name !== "camera" && !mesh.name.includes("light")) {
-          if (mesh.material) {
-            mesh.material.dispose();
+        // Also clean up any animation meshes that might be lingering
+        const shouldKeep = mesh.name === "camera" || 
+                          mesh.name.includes("light") || 
+                          mesh.name.includes("__root__") ||
+                          mesh.name === "ground" ||
+                          mesh.name === "skybox" ||
+                          mesh.name.includes("Sphere") || // Keep environment spheres
+                          mesh.name.includes("Base") ||   // Keep base/ground elements
+                          mesh.name.includes("TV");       // Keep TV elements
+        
+        // Also check if mesh is positioned very far away (likely animation mesh)
+        const isFarAway = mesh.position && (
+          Math.abs(mesh.position.x) > 50000 || 
+          Math.abs(mesh.position.y) > 50000 || 
+          Math.abs(mesh.position.z) > 50000
+        );
+        
+        if (!shouldKeep || isFarAway) {
+          console.log("Disposing mesh:", mesh.name, isFarAway ? "(far away)" : "");
+          
+          try {
+            // Dispose child meshes first
+            const childMeshes = mesh.getChildMeshes();
+            childMeshes.forEach(childMesh => {
+              if (childMesh.material) {
+                childMesh.material.dispose();
+              }
+              childMesh.dispose();
+            });
+            
+            // Dispose the mesh itself
+            if (mesh.material) {
+              mesh.material.dispose();
+            }
+            mesh.dispose();
+            disposedCount++;
+          } catch (error) {
+            console.warn("Error disposing mesh:", mesh.name, error);
           }
-          mesh.dispose();
         }
       });
+      
+      console.log(`Disposed ${disposedCount} meshes from scene cleanup`);
 
       // Ensure we have a full URL
       const fullUrl = url.startsWith("http")
@@ -216,6 +296,7 @@ const ReadyPlayerMeAvatar = ({
           if (meshes.length === 0) {
             setAvatarError("Avatar loaded but no meshes were found");
             setIsLoading(false);
+            loadingRef.current = false;
             return;
           }
 
@@ -224,6 +305,9 @@ const ReadyPlayerMeAvatar = ({
           avatarMesh.position = new BABYLON.Vector3(0, 0, 0);
 
           avatarRef.current = avatarMesh;
+          console.log("Avatar mesh stored in ref");
+          console.log("Total meshes in scene:", scene.meshes.length);
+          console.log("Scene meshes:", scene.meshes.map(m => m.name));
 
           // Notify parent that avatar is loaded
           if (onAvatarLoaded) {
@@ -231,6 +315,7 @@ const ReadyPlayerMeAvatar = ({
           }
 
           setIsLoading(false);
+          loadingRef.current = false;
         },
         (progressEvent) => {
           // Progress update
@@ -243,12 +328,14 @@ const ReadyPlayerMeAvatar = ({
           console.error("Error loading avatar:", message, exception);
           setAvatarError(`Failed to load avatar: ${message}`);
           setIsLoading(false);
+          loadingRef.current = false;
         }
       );
     } catch (error) {
       console.error("Error loading Ready Player Me avatar:", error);
       setAvatarError(`Failed to load avatar: ${error.message}`);
       setIsLoading(false);
+      loadingRef.current = false;
     }
   };
 

@@ -5,8 +5,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { useAvatarAnimations } from "../hooks/useAvatarAnimations.js";
 import "./ReadyPlayerMeAvatar.css";
 
-// Default subdomain for Ready Player Me
-const RPM_SUBDOMAIN = "demo";
+// Get RPM Client ID from environment variable
+const RPM_CLIENT_ID = process.env.REACT_APP_RPM_CLIENT_ID || "684b2978d8c346fff8566d83";
 
 const ReadyPlayerMeAvatar = ({
   canvasRef,
@@ -367,7 +367,7 @@ const ReadyPlayerMeAvatar = ({
       {showCreator && (
         <div className="avatar-creator-container">
           <AvatarCreator
-            subdomain={RPM_SUBDOMAIN}
+            clientId={RPM_CLIENT_ID}
             className="avatar-creator"
             onAvatarExported={handleAvatarExported}
             onUserSet={() => {}}

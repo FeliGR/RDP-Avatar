@@ -5,13 +5,13 @@ import React, { useEffect, useRef, useState } from "react";
 import { useAvatarAnimations } from "../hooks/useAvatarAnimations.js";
 import "./ReadyPlayerMeAvatar.css";
 
-// Get RPM Client ID from environment variable
-const RPM_CLIENT_ID = process.env.REACT_APP_RPM_CLIENT_ID || "684b2978d8c346fff8566d83";
+// Get RPM Client ID from environment variable (runtime or build-time)
+const RPM_CLIENT_ID =
+  (window.ENV && window.ENV.REACT_APP_RPM_CLIENT_ID) ||
+  process.env.REACT_APP_RPM_CLIENT_ID ||
+  "684b2978d8c346fff8566d83";
 
-const ReadyPlayerMeAvatar = ({
-  canvasRef,
-  onAvatarLoaded,
-}) => {
+const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
   // Get avatar URL from localStorage or use null
   const savedAvatarUrl = localStorage.getItem("rpmAvatarUrl");
   const [avatarUrl, setAvatarUrl] = useState(savedAvatarUrl || null);
@@ -26,13 +26,11 @@ const ReadyPlayerMeAvatar = ({
   const animationsLoadedRef = useRef(false); // Flag to prevent duplicate animation loads
 
   // Animation system integration - se inicializa cuando la escena está lista
-  const {
-    isInitialized: animationsInitialized,
-    loadAvatarAnimations,
-  } = useAvatarAnimations(
-    sceneReady ? sceneRef.current?.scene : null, 
-    sceneReady ? shadowGeneratorRef.current : null
-  );
+  const { isInitialized: animationsInitialized, loadAvatarAnimations } =
+    useAvatarAnimations(
+      sceneReady ? sceneRef.current?.scene : null,
+      sceneReady ? shadowGeneratorRef.current : null
+    );
 
   // Initialize Babylon.js scene
   useEffect(() => {
@@ -91,7 +89,7 @@ const ReadyPlayerMeAvatar = ({
     });
 
     sceneRef.current = { scene, engine };
-    
+
     // Marcar la escena como lista para las animaciones
     setSceneReady(true);
 
@@ -114,9 +112,14 @@ const ReadyPlayerMeAvatar = ({
 
   // Effect to load animations when both avatar and animation system are ready
   useEffect(() => {
-    if (avatarRef.current && animationsInitialized && avatarUrl && !animationsLoadedRef.current) {
+    if (
+      avatarRef.current &&
+      animationsInitialized &&
+      avatarUrl &&
+      !animationsLoadedRef.current
+    ) {
       animationsLoadedRef.current = true;
-      
+
       // Add a small delay to ensure the avatar is fully loaded and all meshes are in the scene
       setTimeout(() => {
         loadAvatarAnimations(avatarUrl).then((result) => {
@@ -126,7 +129,12 @@ const ReadyPlayerMeAvatar = ({
         });
       }, 200); // Small delay to ensure avatar is fully settled in scene
     }
-  }, [avatarRef.current, animationsInitialized, avatarUrl, loadAvatarAnimations]);
+  }, [
+    avatarRef.current,
+    animationsInitialized,
+    avatarUrl,
+    loadAvatarAnimations,
+  ]);
 
   // Effect to handle avatar errors by showing the avatar creator
   useEffect(() => {
@@ -147,7 +155,6 @@ const ReadyPlayerMeAvatar = ({
 
   // Handle avatar creator completion
   const handleAvatarExported = (response) => {
-
     // Extract the URL from the response object
     // The response can be either a direct URL string (old API) or an object with data.url (new API)
     const urlValue =
@@ -186,7 +193,8 @@ const ReadyPlayerMeAvatar = ({
 
   // Load Ready Player Me avatar
   const loadAvatar = async (url) => {
-    if (!sceneRef.current || !sceneRef.current.scene || loadingRef.current) return;
+    if (!sceneRef.current || !sceneRef.current.scene || loadingRef.current)
+      return;
 
     loadingRef.current = true;
     animationsLoadedRef.current = false; // Reset animations flag for new avatar
@@ -215,40 +223,45 @@ const ReadyPlayerMeAvatar = ({
 
       // Clear any other meshes in the scene that might be from previous loads or animations
       const sceneMeshes = scene.meshes.slice(); // Create a copy to avoid modification during iteration
-      
+
       let disposedCount = 0;
       sceneMeshes.forEach((mesh) => {
         // Only dispose meshes that aren't part of the scene infrastructure
         // Also clean up any animation meshes that might be lingering
-        const shouldKeep = mesh.name === "camera" || 
-                          mesh.name.includes("light") || 
-                          mesh.name.includes("__root__") ||
-                          mesh.name === "ground" ||
-                          mesh.name === "skybox" ||
-                          mesh.name.includes("Sphere") || // Keep environment spheres
-                          mesh.name.includes("Base") ||   // Keep base/ground elements
-                          mesh.name.includes("TV");       // Keep TV elements
-        
+        const shouldKeep =
+          mesh.name === "camera" ||
+          mesh.name.includes("light") ||
+          mesh.name.includes("__root__") ||
+          mesh.name === "ground" ||
+          mesh.name === "skybox" ||
+          mesh.name.includes("Sphere") || // Keep environment spheres
+          mesh.name.includes("Base") || // Keep base/ground elements
+          mesh.name.includes("TV"); // Keep TV elements
+
         // Also check if mesh is positioned very far away (likely animation mesh)
-        const isFarAway = mesh.position && (
-          Math.abs(mesh.position.x) > 50000 || 
-          Math.abs(mesh.position.y) > 50000 || 
-          Math.abs(mesh.position.z) > 50000
-        );
-        
+        const isFarAway =
+          mesh.position &&
+          (Math.abs(mesh.position.x) > 50000 ||
+            Math.abs(mesh.position.y) > 50000 ||
+            Math.abs(mesh.position.z) > 50000);
+
         if (!shouldKeep || isFarAway) {
-          console.log("Disposing mesh:", mesh.name, isFarAway ? "(far away)" : "");
-          
+          console.log(
+            "Disposing mesh:",
+            mesh.name,
+            isFarAway ? "(far away)" : ""
+          );
+
           try {
             // Dispose child meshes first
             const childMeshes = mesh.getChildMeshes();
-            childMeshes.forEach(childMesh => {
+            childMeshes.forEach((childMesh) => {
               if (childMesh.material) {
                 childMesh.material.dispose();
               }
               childMesh.dispose();
             });
-            
+
             // Dispose the mesh itself
             if (mesh.material) {
               mesh.material.dispose();
@@ -368,22 +381,15 @@ const ReadyPlayerMeAvatar = ({
         <div className="avatar-creator-container">
           <AvatarCreator
             clientId={RPM_CLIENT_ID}
-            className="avatar-creator"
+            subdomain="ar-avatar-39283x" // ← your project’s subdomain
+            style={{ width: "100%", height: "100%" }}
             onAvatarExported={handleAvatarExported}
-            onUserSet={() => {}}
-            onError={(error) => {
-              // Even if there's an error with the creator, keep it open
-              // so the user can try again instead of going back to an error state
-              setShowCreator(true);
-            }}
-            // Pass the current avatar URL to load it for editing
+            onError={() => setShowCreator(true)}
             avatarId={
               avatarUrl &&
               avatarUrl.split("/").pop().split(".")[0].split("?")[0]
             }
-            // Allow editing full body avatar
             bodyType="fullbody"
-            // Ensure the latest version of the avatar is loaded (avoid caching)
             clearCache={true}
           />
         </div>

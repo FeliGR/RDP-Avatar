@@ -10,6 +10,7 @@ services:
     environment:
       - REACT_APP_PERSONA_ENGINE_URL=http://localhost:5001
       - REACT_APP_DIALOG_ORCHESTRATOR_URL=http://localhost:5002
+      - REACT_APP_RPM_CLIENT_ID=684b2978d8c346fff8566d83
     networks:
       - persona_network
 

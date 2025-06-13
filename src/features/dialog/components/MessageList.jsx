@@ -32,9 +32,7 @@ const MessageList = ({ messages, isLoading }) => {
       {messages.map((message) => (
         <div
           key={message.id}
-          className={`message ${
-            message.sender === "user" ? "user-message" : "bot-message"
-          }`}
+          className={`message ${message.sender === "user" ? "user-message" : "bot-message"}`}
         >
           <div className="message-content">
             <p>{message.text}</p>

@@ -46,8 +46,12 @@
 
 /* Animation keyframes */
 @keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes modal-in {
@@ -77,10 +81,12 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, 
-    rgba(var(--primary), 0) 0%, 
-    rgba(var(--primary), 0.15) 50%, 
-    rgba(var(--primary), 0) 100%);
+  background: linear-gradient(
+    90deg,
+    rgba(var(--primary), 0) 0%,
+    rgba(var(--primary), 0.15) 50%,
+    rgba(var(--primary), 0) 100%
+  );
   z-index: 2;
 }
 
@@ -95,7 +101,9 @@
   justify-content: center;
   border-radius: 50%;
   box-shadow: 0 0 10px rgba(33, 150, 243, 0.15);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .trait-modal:hover .trait-modal-icon {
@@ -200,9 +208,7 @@
   flex: 1;
   margin-left: 0.75rem;
   height: 1px;
-  background: linear-gradient(90deg, 
-    rgba(33, 150, 243, 0.3) 0%, 
-    rgba(33, 150, 243, 0) 100%);
+  background: linear-gradient(90deg, rgba(33, 150, 243, 0.3) 0%, rgba(33, 150, 243, 0) 100%);
 }
 
 .trait-modal-text {
@@ -264,10 +270,12 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, 
-    rgba(255, 255, 255, 0) 0%, 
-    rgba(255, 255, 255, 0.08) 50%, 
-    rgba(255, 255, 255, 0) 100%);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
 }
 
 .trait-modal-button {

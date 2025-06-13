@@ -2,29 +2,31 @@
  * Shared UI Button component
  * Reusable button with consistent styling and behavior
  */
-import React from 'react';
-import './Button.css';
+import React from "react";
+import "./Button.css";
 
 const Button = ({
   children,
-  variant = 'primary',
-  size = 'medium',
+  variant = "primary",
+  size = "medium",
   disabled = false,
   loading = false,
   onClick,
-  type = 'button',
-  className = '',
+  type = "button",
+  className = "",
   ...props
 }) => {
-  const baseClass = 'shared-button';
+  const baseClass = "shared-button";
   const classes = [
     baseClass,
     `${baseClass}--${variant}`,
     `${baseClass}--${size}`,
     disabled && `${baseClass}--disabled`,
     loading && `${baseClass}--loading`,
-    className
-  ].filter(Boolean).join(' ');
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <button
@@ -35,9 +37,7 @@ const Button = ({
       {...props}
     >
       {loading && <span className={`${baseClass}__spinner`}>⟳</span>}
-      <span className={`${baseClass}__content`}>
-        {children}
-      </span>
+      <span className={`${baseClass}__content`}>{children}</span>
     </button>
   );
 };

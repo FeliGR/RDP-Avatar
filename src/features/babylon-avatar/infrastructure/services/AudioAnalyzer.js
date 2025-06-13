@@ -1,4 +1,4 @@
-import * as BABYLON from 'babylonjs';
+import * as BABYLON from "babylonjs";
 
 /**
  * Audio Analyzer for real-time audio processing
@@ -19,7 +19,7 @@ export class AudioAnalyzer {
    */
   initialize(sound) {
     if (!sound) {
-      throw new Error('Sound object is required');
+      throw new Error("Sound object is required");
     }
 
     // Create sound track and connect to analyzer
@@ -29,7 +29,7 @@ export class AudioAnalyzer {
     // Create analyzer
     this.analyser = new BABYLON.Analyser(this.scene);
     this.soundTrack.connectToAnalyser(this.analyser);
-    
+
     // Configure analyzer settings
     this.analyser.FFT_SIZE = 64;
     this.analyser.SMOOTHING = 0.03;
@@ -43,7 +43,7 @@ export class AudioAnalyzer {
    * @param {Function} callback - Function to call with frequency data
    */
   addCallback(callback) {
-    if (typeof callback === 'function') {
+    if (typeof callback === "function") {
       this.callbacks.add(callback);
     }
   }
@@ -67,9 +67,9 @@ export class AudioAnalyzer {
 
       try {
         const frequencyData = this.analyser.getByteFrequencyData();
-        
+
         // Notify all callbacks
-        this.callbacks.forEach(callback => {
+        this.callbacks.forEach((callback) => {
           try {
             callback(frequencyData);
           } catch (error) {
@@ -94,12 +94,12 @@ export class AudioAnalyzer {
   stop() {
     this.isActive = false;
     this.callbacks.clear();
-    
+
     if (this.soundTrack) {
       this.soundTrack.dispose();
       this.soundTrack = null;
     }
-    
+
     if (this.analyser) {
       this.analyser = null;
     }

@@ -1,15 +1,11 @@
-import { AnimationBlend } from '../../domain/entities/Animation.js';
+import { AnimationBlend } from "../../domain/entities/Animation.js";
 
 /**
  * Play Talking Animation Use Case
  * Handles the business logic for playing talking animations with morph target sync
  */
 export class PlayTalkingAnimationUseCase {
-  constructor({
-    animationController,
-    morphTargetController,
-    audioAnalyzer
-  }) {
+  constructor({ animationController, morphTargetController, audioAnalyzer }) {
     this.animationController = animationController;
     this.morphTargetController = morphTargetController;
     this.audioAnalyzer = audioAnalyzer;
@@ -18,21 +14,21 @@ export class PlayTalkingAnimationUseCase {
   }
 
   async execute(character, audioSource = null) {
-    if (!character.canPlayAnimation('talking')) {
-      throw new Error('Character cannot play talking animations');
+    if (!character.canPlayAnimation("talking")) {
+      throw new Error("Character cannot play talking animations");
     }
 
     this.isTalking = true;
 
     // Get available talking animations
     const talkingAnimations = [
-      'M_Talking_Variations_005',
-      'M_Talking_Variations_006',
-      'M_Talking_Variations_007'
-    ].filter(name => character.hasAnimation(name));
+      "M_Talking_Variations_005",
+      "M_Talking_Variations_006",
+      "M_Talking_Variations_007",
+    ].filter((name) => character.hasAnimation(name));
 
     if (talkingAnimations.length === 0) {
-      throw new Error('No talking animations available');
+      throw new Error("No talking animations available");
     }
 
     // Stop idle animation observers
@@ -51,7 +47,7 @@ export class PlayTalkingAnimationUseCase {
 
     return {
       success: true,
-      message: 'Started talking animations'
+      message: "Started talking animations",
     };
   }
 
@@ -80,7 +76,7 @@ export class PlayTalkingAnimationUseCase {
 
     return {
       success: true,
-      message: 'Stopped talking animations'
+      message: "Stopped talking animations",
     };
   }
 
@@ -90,10 +86,10 @@ export class PlayTalkingAnimationUseCase {
    */
   async _playRandomTalkingAnimation(character, talkingAnimations) {
     const randomAnimation = talkingAnimations[Math.floor(Math.random() * talkingAnimations.length)];
-    
+
     return this.animationController.playAnimation(character, randomAnimation, {
       isLooping: false,
-      speedRatio: 1.0
+      speedRatio: 1.0,
     });
   }
 
@@ -107,7 +103,7 @@ export class PlayTalkingAnimationUseCase {
 
       // Calculate volume from frequency data
       const volume = this._calculateVolume(frequencyData);
-      
+
       // Map volume to mouth movements
       this._updateMouthMorphTargets(character, volume);
     };
@@ -145,9 +141,9 @@ export class PlayTalkingAnimationUseCase {
    * @private
    */
   _updateMouthMorphTargets(character, volume) {
-    const jawOpen = character.getMorphTarget('jawOpen');
-    const mouthOpen = character.getMorphTarget('mouthOpen');
-    const teethMouthOpen = character.getMorphTarget('teethMouthOpen');
+    const jawOpen = character.getMorphTarget("jawOpen");
+    const mouthOpen = character.getMorphTarget("mouthOpen");
+    const teethMouthOpen = character.getMorphTarget("teethMouthOpen");
 
     if (jawOpen) {
       jawOpen.influence = Math.min(1, volume * 2.5);
@@ -167,9 +163,9 @@ export class PlayTalkingAnimationUseCase {
    * @private
    */
   _resetMouthMorphTargets(character) {
-    const jawOpen = character.getMorphTarget('jawOpen');
-    const mouthOpen = character.getMorphTarget('mouthOpen');
-    const teethMouthOpen = character.getMorphTarget('teethMouthOpen');
+    const jawOpen = character.getMorphTarget("jawOpen");
+    const mouthOpen = character.getMorphTarget("mouthOpen");
+    const teethMouthOpen = character.getMorphTarget("teethMouthOpen");
 
     if (jawOpen) {
       jawOpen.influence = 0;

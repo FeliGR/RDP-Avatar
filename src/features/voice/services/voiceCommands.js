@@ -12,17 +12,13 @@ class VoiceRecognition {
   }
 
   initRecognition() {
-    if (
-      !("webkitSpeechRecognition" in window) &&
-      !("SpeechRecognition" in window)
-    ) {
+    if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
       console.error("Speech recognition not supported in this browser");
       return;
     }
 
     // Use the appropriate speech recognition API
-    const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     this.recognition = new SpeechRecognition();
 
     // Configure recognition

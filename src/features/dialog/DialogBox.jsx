@@ -11,8 +11,7 @@ import useVoiceCommands from "./hooks/useVoiceCommands";
  * Main dialog box component that integrates all chat functionality
  */
 const DialogBox = () => {
-  const { messages, sendUserMessage, isLoading, error, clearConversation } =
-    useDialog();
+  const { messages, sendUserMessage, isLoading, error, clearConversation } = useDialog();
   const { updateTrait, personalityTraits } = usePersonality();
 
   // Voice command functionality
@@ -34,9 +33,7 @@ const DialogBox = () => {
         >
           Clear Chat
         </button>
-        {statusMessage && (
-          <div className="voice-status-message">{statusMessage}</div>
-        )}
+        {statusMessage && <div className="voice-status-message">{statusMessage}</div>}
       </div>
 
       {/* Error display */}

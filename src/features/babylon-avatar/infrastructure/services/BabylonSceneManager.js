@@ -1,4 +1,4 @@
-import { ISceneManager } from '../../domain/interfaces/index.js';
+import { ISceneManager } from "../../domain/interfaces/index.js";
 
 /**
  * Babylon.js implementation of Scene Manager
@@ -22,7 +22,7 @@ export class BabylonSceneManager extends ISceneManager {
   }
 
   registerBeforeRender(callback) {
-    if (callback && typeof callback === 'function') {
+    if (callback && typeof callback === "function") {
       this.beforeRenderCallbacks.add(callback);
       this.scene.registerBeforeRender(callback);
     }
@@ -37,7 +37,7 @@ export class BabylonSceneManager extends ISceneManager {
 
   dispose() {
     // Clean up all registered callbacks
-    this.beforeRenderCallbacks.forEach(callback => {
+    this.beforeRenderCallbacks.forEach((callback) => {
       this.scene.unregisterBeforeRender(callback);
     });
     this.beforeRenderCallbacks.clear();

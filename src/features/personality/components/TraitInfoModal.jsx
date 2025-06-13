@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import { createPortal } from 'react-dom';
-import { formatTrait } from '../../../shared/utils';
+import React, { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
+import { formatTrait } from "../../../shared/utils";
 
 /**
  * Modal dialog component for displaying detailed trait information
@@ -12,15 +12,15 @@ const TraitInfoModal = ({ trait, traitInfo, isOpen, onClose }) => {
   // Handle ESC key press to close modal
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === "Escape") onClose();
     };
 
     if (isOpen) {
-      document.addEventListener('keydown', handleKeyDown);
+      document.addEventListener("keydown", handleKeyDown);
     }
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen, onClose]);
 
@@ -35,12 +35,12 @@ const TraitInfoModal = ({ trait, traitInfo, isOpen, onClose }) => {
     if (isOpen) {
       // Small delay to avoid immediate trigger
       setTimeout(() => {
-        overlayRef.current?.addEventListener('mousedown', handleOutsideClick);
+        overlayRef.current?.addEventListener("mousedown", handleOutsideClick);
       }, 10);
     }
 
     return () => {
-      overlayRef.current?.removeEventListener('mousedown', handleOutsideClick);
+      overlayRef.current?.removeEventListener("mousedown", handleOutsideClick);
     };
   }, [isOpen, onClose]);
 
@@ -59,30 +59,26 @@ const TraitInfoModal = ({ trait, traitInfo, isOpen, onClose }) => {
   return createPortal(
     <div className="trait-modal-container" aria-modal="true" role="dialog">
       <div className="trait-modal-overlay" ref={overlayRef}></div>
-      <div 
-        className={`trait-modal ${trait}`} 
-        ref={modalRef}
-        tabIndex={-1}
-      >
+      <div className={`trait-modal ${trait}`} ref={modalRef} tabIndex={-1}>
         <div className="trait-modal-header">
-          <div className="trait-modal-icon">{detailedInfo.icon || '?'}</div>
+          <div className="trait-modal-icon">{detailedInfo.icon || "?"}</div>
           <h3 className="trait-modal-title">{detailedInfo.title || formatTrait(trait)}</h3>
           <button className="trait-modal-close" onClick={onClose} aria-label="Close">
             ✕
           </button>
         </div>
-        
+
         <div className="trait-modal-content">
           <div className="trait-modal-section">
             <h4 className="trait-modal-section-title">What is it?</h4>
             <p className="trait-modal-text">{detailedInfo.description}</p>
           </div>
-          
+
           <div className="trait-modal-section">
             <h4 className="trait-modal-section-title">How it affects AI responses</h4>
             <p className="trait-modal-text">{detailedInfo.effects}</p>
           </div>
-          
+
           <div className="trait-modal-section">
             <h4 className="trait-modal-section-title">Examples</h4>
             <div className="trait-modal-examples">

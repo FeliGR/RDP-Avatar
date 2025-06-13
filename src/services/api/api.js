@@ -28,8 +28,7 @@ const getRuntimeEnv = (key, defaultValue) => {
  * Determines if we're running in development or production
  */
 const isLocalDevelopment =
-  window.location.hostname === "localhost" ||
-  window.location.hostname === "127.0.0.1";
+  window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
 
 // Global API configuration
 // -----------------------------------------------------------------------------
@@ -40,15 +39,11 @@ const isLocalDevelopment =
 const API_ENDPOINTS = {
   personaEngine: getRuntimeEnv(
     "REACT_APP_PERSONA_ENGINE_URL",
-    isLocalDevelopment
-      ? "http://localhost:5001"
-      : "http://persona-engine-service:5001"
+    isLocalDevelopment ? "http://localhost:5001" : "http://persona-engine-service:5001"
   ),
   dialogOrchestrator: getRuntimeEnv(
     "REACT_APP_DIALOG_ORCHESTRATOR_URL",
-    isLocalDevelopment
-      ? "http://localhost:5002"
-      : "http://dialog-orchestrator-service:5002"
+    isLocalDevelopment ? "http://localhost:5002" : "http://dialog-orchestrator-service:5002"
   ),
 };
 
@@ -117,8 +112,7 @@ export const handleApiError = (error) => {
     return {
       status: 0,
       data: null,
-      message:
-        "No response received from server. Please check your connection.",
+      message: "No response received from server. Please check your connection.",
     };
   } else {
     // Something happened in setting up the request that triggered an Error

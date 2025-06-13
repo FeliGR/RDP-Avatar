@@ -9,8 +9,7 @@ const AvatarViewer = () => {
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
 
-  const { personalityTraits, isLoading: isPersonalityLoading } =
-    usePersonality();
+  const { personalityTraits, isLoading: isPersonalityLoading } = usePersonality();
 
   // Handle interaction for tooltip
   useEffect(() => {

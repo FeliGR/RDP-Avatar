@@ -13,9 +13,8 @@ const TraitSlider = ({ trait, value, onChange, disabled = false }) => {
   const [isPulse, setIsPulse] = useState(false);
   const prevValueRef = useRef(value);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
-  const numericValue =
-    typeof value === "number" ? Math.round(value) : parseInt(value, 10) || 3;
+
+  const numericValue = typeof value === "number" ? Math.round(value) : parseInt(value, 10) || 3;
 
   // Calculate percentage for progress bar width
   const calculatePercentage = (value) => {
@@ -64,13 +63,43 @@ const TraitSlider = ({ trait, value, onChange, disabled = false }) => {
   // Get descriptive text based on value
   const getValueDescription = (trait, value) => {
     const descriptions = {
-      openness: ["Very conventional", "Somewhat conventional", "Balanced", "Somewhat open", "Very open"],
-      conscientiousness: ["Very disorganized", "Somewhat disorganized", "Balanced", "Somewhat conscientious", "Very conscientious"],
-      extraversion: ["Very introverted", "Somewhat introverted", "Balanced", "Somewhat extraverted", "Very extraverted"],
-      agreeableness: ["Very direct", "Somewhat direct", "Balanced", "Somewhat agreeable", "Very agreeable"],
-      neuroticism: ["Very stable", "Somewhat stable", "Balanced", "Somewhat sensitive", "Very sensitive"]
+      openness: [
+        "Very conventional",
+        "Somewhat conventional",
+        "Balanced",
+        "Somewhat open",
+        "Very open",
+      ],
+      conscientiousness: [
+        "Very disorganized",
+        "Somewhat disorganized",
+        "Balanced",
+        "Somewhat conscientious",
+        "Very conscientious",
+      ],
+      extraversion: [
+        "Very introverted",
+        "Somewhat introverted",
+        "Balanced",
+        "Somewhat extraverted",
+        "Very extraverted",
+      ],
+      agreeableness: [
+        "Very direct",
+        "Somewhat direct",
+        "Balanced",
+        "Somewhat agreeable",
+        "Very agreeable",
+      ],
+      neuroticism: [
+        "Very stable",
+        "Somewhat stable",
+        "Balanced",
+        "Somewhat sensitive",
+        "Very sensitive",
+      ],
     };
-    
+
     return descriptions[trait] ? descriptions[trait][value - 1] : "";
   };
 
@@ -90,8 +119,8 @@ const TraitSlider = ({ trait, value, onChange, disabled = false }) => {
       <label htmlFor={trait}>
         <div style={{ display: "flex", alignItems: "center" }}>
           {formatTrait(trait)}
-          <div 
-            className="trait-info-icon" 
+          <div
+            className="trait-info-icon"
             onClick={openTraitInfoModal}
             ref={infoIconRef}
             aria-label={`Show information about ${formatTrait(trait)}`}
@@ -106,10 +135,7 @@ const TraitSlider = ({ trait, value, onChange, disabled = false }) => {
       <p className="trait-description">{TRAIT_DESCRIPTIONS[trait]}</p>
 
       <div className="trait-progress">
-        <div
-          className={`trait-progress-bar ${trait}-bar`}
-          style={{ width: `${percentage}%` }}
-        />
+        <div className={`trait-progress-bar ${trait}-bar`} style={{ width: `${percentage}%` }} />
       </div>
 
       <input
@@ -126,7 +152,7 @@ const TraitSlider = ({ trait, value, onChange, disabled = false }) => {
         className={isPulse ? "pulse" : ""}
         aria-valuetext={`${numericValue} - ${getValueDescription(trait, numericValue)}`}
       />
-      
+
       <div className="trait-range">
         <span>{getValueDescription(trait, 1)}</span>
         <span>{getValueDescription(trait, 5)}</span>

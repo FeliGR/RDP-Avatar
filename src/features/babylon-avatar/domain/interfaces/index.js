@@ -9,7 +9,7 @@ export class IAnimationRepository {
    * @returns {Promise<AnimationGroup[]>}
    */
   async loadAnimations(animationPaths) {
-    throw new Error('Method not implemented');
+    throw new Error("Method not implemented");
   }
 
   /**
@@ -18,7 +18,7 @@ export class IAnimationRepository {
    * @returns {Promise<Character>}
    */
   async loadCharacterModel(modelPath) {
-    throw new Error('Method not implemented');
+    throw new Error("Method not implemented");
   }
 
   /**
@@ -26,7 +26,7 @@ export class IAnimationRepository {
    * @param {Character} character
    */
   dispose(character) {
-    throw new Error('Method not implemented');
+    throw new Error("Method not implemented");
   }
 }
 
@@ -42,7 +42,7 @@ export class IAnimationController {
    * @param {Object} options
    */
   playAnimation(character, animationName, options = {}) {
-    throw new Error('Method not implemented');
+    throw new Error("Method not implemented");
   }
 
   /**
@@ -52,7 +52,7 @@ export class IAnimationController {
    * @returns {Promise<void>}
    */
   async blendAnimations(character, blendConfig) {
-    throw new Error('Method not implemented');
+    throw new Error("Method not implemented");
   }
 
   /**
@@ -60,7 +60,7 @@ export class IAnimationController {
    * @param {Character} character
    */
   stopAnimation(character) {
-    throw new Error('Method not implemented');
+    throw new Error("Method not implemented");
   }
 
   /**
@@ -69,7 +69,7 @@ export class IAnimationController {
    * @param {Function} onIdleEnd
    */
   setupIdleObservers(character, onIdleEnd) {
-    throw new Error('Method not implemented');
+    throw new Error("Method not implemented");
   }
 
   /**
@@ -77,7 +77,7 @@ export class IAnimationController {
    * @param {Character} character
    */
   removeObservers(character) {
-    throw new Error('Method not implemented');
+    throw new Error("Method not implemented");
   }
 }
 
@@ -94,7 +94,7 @@ export class IMorphTargetController {
    * @param {number} duration
    */
   animateMorphTarget(character, morphName, targetValue, duration) {
-    throw new Error('Method not implemented');
+    throw new Error("Method not implemented");
   }
 
   /**
@@ -102,7 +102,7 @@ export class IMorphTargetController {
    * @param {Character} character
    */
   startAutomaticFacialAnimations(character) {
-    throw new Error('Method not implemented');
+    throw new Error("Method not implemented");
   }
 
   /**
@@ -110,7 +110,7 @@ export class IMorphTargetController {
    * @param {Character} character
    */
   stopAutomaticFacialAnimations(character) {
-    throw new Error('Method not implemented');
+    throw new Error("Method not implemented");
   }
 }
 
@@ -124,7 +124,7 @@ export class ISceneManager {
    * @returns {Scene}
    */
   getScene() {
-    throw new Error('Method not implemented');
+    throw new Error("Method not implemented");
   }
 
   /**
@@ -132,7 +132,7 @@ export class ISceneManager {
    * @param {Mesh} mesh
    */
   addShadowCaster(mesh) {
-    throw new Error('Method not implemented');
+    throw new Error("Method not implemented");
   }
 
   /**
@@ -140,7 +140,7 @@ export class ISceneManager {
    * @param {Function} callback
    */
   registerBeforeRender(callback) {
-    throw new Error('Method not implemented');
+    throw new Error("Method not implemented");
   }
 
   /**
@@ -148,6 +148,6 @@ export class ISceneManager {
    * @param {Function} callback
    */
   unregisterBeforeRender(callback) {
-    throw new Error('Method not implemented');
+    throw new Error("Method not implemented");
   }
 }

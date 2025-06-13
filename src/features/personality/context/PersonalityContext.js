@@ -10,8 +10,7 @@ export const usePersonality = () => useContext(PersonalityContext);
 
 // Provider component
 export const PersonalityProvider = ({ children }) => {
-  const [personalityTraits, setPersonalityTraits] =
-    useState(DEFAULT_PERSONALITY);
+  const [personalityTraits, setPersonalityTraits] = useState(DEFAULT_PERSONALITY);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [apiAvailable, setApiAvailable] = useState(true);
@@ -47,11 +46,7 @@ export const PersonalityProvider = ({ children }) => {
    * @param {Object} options - Additional options
    * @returns {Promise<boolean>} - Success status
    */
-  const updateTrait = async (
-    trait,
-    value,
-    options = { showLoading: false }
-  ) => {
+  const updateTrait = async (trait, value, options = { showLoading: false }) => {
     if (!trait || value === undefined) {
       console.error(`Invalid trait update: ${trait}=${value}`);
       return false;
@@ -79,9 +74,7 @@ export const PersonalityProvider = ({ children }) => {
     } catch (err) {
       console.error(`Failed to update ${trait}:`, err);
       setApiAvailable(false);
-      setError(
-        `Personality trait updated locally only (API server unavailable)`
-      );
+      setError(`Personality trait updated locally only (API server unavailable)`);
       // We still return true since we updated the UI state
       return true;
     } finally {
@@ -137,9 +130,5 @@ export const PersonalityProvider = ({ children }) => {
     apiAvailable,
   };
 
-  return (
-    <PersonalityContext.Provider value={contextValue}>
-      {children}
-    </PersonalityContext.Provider>
-  );
+  return <PersonalityContext.Provider value={contextValue}>{children}</PersonalityContext.Provider>;
 };

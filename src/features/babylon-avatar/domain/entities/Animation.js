@@ -9,7 +9,7 @@ export class Animation {
     speedRatio = 1.0,
     weight = 1.0,
     isLooping = false,
-    frameRange = null
+    frameRange = null,
   }) {
     this.name = name;
     this.type = type; // 'idle', 'talking', 'expression', 'dance', etc.
@@ -23,28 +23,28 @@ export class Animation {
   static createIdle(name, duration) {
     return new Animation({
       name,
-      type: 'idle',
+      type: "idle",
       duration,
-      isLooping: true
+      isLooping: true,
     });
   }
 
   static createTalking(name, duration) {
     return new Animation({
       name,
-      type: 'talking',
+      type: "talking",
       duration,
       isLooping: false,
-      weight: 0.75
+      weight: 0.75,
     });
   }
 
   static createExpression(name, duration) {
     return new Animation({
       name,
-      type: 'expression',
+      type: "expression",
       duration,
-      isLooping: false
+      isLooping: false,
     });
   }
 }
@@ -58,7 +58,7 @@ export class AnimationBlend {
     toAnimation,
     blendSpeed = 0.02,
     maxWeight = 1.0,
-    frameRange = null
+    frameRange = null,
   }) {
     this.fromAnimation = fromAnimation;
     this.toAnimation = toAnimation;

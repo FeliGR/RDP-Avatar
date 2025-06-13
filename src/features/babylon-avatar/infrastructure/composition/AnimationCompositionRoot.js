@@ -1,12 +1,12 @@
-import { LoadCharacterUseCase } from '../../application/usecases/LoadCharacterUseCase.js';
-import { PlayIdleAnimationUseCase } from '../../application/usecases/PlayIdleAnimationUseCase.js';
-import { PlayTalkingAnimationUseCase } from '../../application/usecases/PlayTalkingAnimationUseCase.js';
+import { LoadCharacterUseCase } from "../../application/usecases/LoadCharacterUseCase.js";
+import { PlayIdleAnimationUseCase } from "../../application/usecases/PlayIdleAnimationUseCase.js";
+import { PlayTalkingAnimationUseCase } from "../../application/usecases/PlayTalkingAnimationUseCase.js";
 
-import { BabylonAnimationRepository } from '../repositories/BabylonAnimationRepository.js';
-import { BabylonAnimationController } from '../controllers/BabylonAnimationController.js';
-import { BabylonMorphTargetController } from '../controllers/BabylonMorphTargetController.js';
-import { BabylonSceneManager } from '../services/BabylonSceneManager.js';
-import { AudioAnalyzer } from '../services/AudioAnalyzer.js';
+import { BabylonAnimationRepository } from "../repositories/BabylonAnimationRepository.js";
+import { BabylonAnimationController } from "../controllers/BabylonAnimationController.js";
+import { BabylonMorphTargetController } from "../controllers/BabylonMorphTargetController.js";
+import { BabylonSceneManager } from "../services/BabylonSceneManager.js";
+import { AudioAnalyzer } from "../services/AudioAnalyzer.js";
 
 /**
  * Composition Root - Dependency Injection Container
@@ -16,10 +16,10 @@ export class AnimationCompositionRoot {
   constructor(scene, shadowGenerator = null) {
     this.scene = scene;
     this.shadowGenerator = shadowGenerator;
-    
+
     // Initialize infrastructure services
     this._setupInfrastructure();
-    
+
     // Initialize use cases
     this._setupUseCases();
   }
@@ -28,10 +28,10 @@ export class AnimationCompositionRoot {
     // Core services
     this.sceneManager = new BabylonSceneManager(this.scene, this.shadowGenerator);
     this.audioAnalyzer = new AudioAnalyzer(this.scene);
-    
+
     // Repositories
     this.animationRepository = new BabylonAnimationRepository(this.scene);
-    
+
     // Controllers
     this.animationController = new BabylonAnimationController(this.scene);
     this.morphTargetController = new BabylonMorphTargetController(this.scene);
@@ -41,20 +41,20 @@ export class AnimationCompositionRoot {
     // Load Character Use Case
     this.loadCharacterUseCase = new LoadCharacterUseCase({
       animationRepository: this.animationRepository,
-      sceneManager: this.sceneManager
+      sceneManager: this.sceneManager,
     });
 
     // Play Idle Animation Use Case
     this.playIdleAnimationUseCase = new PlayIdleAnimationUseCase({
       animationController: this.animationController,
-      morphTargetController: this.morphTargetController
+      morphTargetController: this.morphTargetController,
     });
 
     // Play Talking Animation Use Case
     this.playTalkingAnimationUseCase = new PlayTalkingAnimationUseCase({
       animationController: this.animationController,
       morphTargetController: this.morphTargetController,
-      audioAnalyzer: this.audioAnalyzer
+      audioAnalyzer: this.audioAnalyzer,
     });
   }
 

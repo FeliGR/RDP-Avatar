@@ -7,26 +7,26 @@ import { PersonalityControls } from "./features/personality";
 
 function AppContent() {
   const headerRef = useRef(null);
-  
+
   useEffect(() => {
     // Add interactive effect to header
     const handleMouseMove = (e) => {
       if (!headerRef.current) return;
-      
+
       const rect = headerRef.current.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      
+
       // Update CSS variables for parallax effect
-      headerRef.current.style.setProperty('--mouse-x', `${x}px`);
-      headerRef.current.style.setProperty('--mouse-y', `${y}px`);
+      headerRef.current.style.setProperty("--mouse-x", `${x}px`);
+      headerRef.current.style.setProperty("--mouse-y", `${y}px`);
     };
-    
+
     const header = headerRef.current;
     if (header) {
-      header.addEventListener('mousemove', handleMouseMove);
+      header.addEventListener("mousemove", handleMouseMove);
       return () => {
-        header.removeEventListener('mousemove', handleMouseMove);
+        header.removeEventListener("mousemove", handleMouseMove);
       };
     }
   }, []);
@@ -46,13 +46,14 @@ function AppContent() {
         <div className="header-content">
           <div className="logo-container">
             <div className="logo-circle"></div>
-            <h1>Persona <span className="text-highlight">Dynamics </span>AI</h1>
+            <h1>
+              Persona <span className="text-highlight">Dynamics </span>AI
+            </h1>
           </div>
           <p className="app-description">
-            Experience next-generation digital identity with AI-powered avatar
-            personalization. Our advanced platform enables seamless voice and text
-            interactions while dynamically adapting to your unique personality
-            traits.
+            Experience next-generation digital identity with AI-powered avatar personalization. Our
+            advanced platform enables seamless voice and text interactions while dynamically
+            adapting to your unique personality traits.
           </p>
           <div className="header-tech-line"></div>
         </div>

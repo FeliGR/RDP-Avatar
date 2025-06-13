@@ -26,11 +26,10 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
   const animationsLoadedRef = useRef(false); // Flag to prevent duplicate animation loads
 
   // Animation system integration - se inicializa cuando la escena está lista
-  const { isInitialized: animationsInitialized, loadAvatarAnimations } =
-    useAvatarAnimations(
-      sceneReady ? sceneRef.current?.scene : null,
-      sceneReady ? shadowGeneratorRef.current : null
-    );
+  const { isInitialized: animationsInitialized, loadAvatarAnimations } = useAvatarAnimations(
+    sceneReady ? sceneRef.current?.scene : null,
+    sceneReady ? shadowGeneratorRef.current : null
+  );
 
   // Initialize Babylon.js scene
   useEffect(() => {
@@ -56,18 +55,10 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
     camera.upperRadiusLimit = 8;
 
     // Add lighting
-    const light1 = new BABYLON.HemisphericLight(
-      "light1",
-      new BABYLON.Vector3(0, 1, 0),
-      scene
-    );
+    const light1 = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
     light1.intensity = 0.7;
 
-    const light2 = new BABYLON.DirectionalLight(
-      "light2",
-      new BABYLON.Vector3(0, -1, 1),
-      scene
-    );
+    const light2 = new BABYLON.DirectionalLight("light2", new BABYLON.Vector3(0, -1, 1), scene);
     light2.intensity = 0.5;
 
     // Create shadow generator for animations
@@ -112,12 +103,7 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
 
   // Effect to load animations when both avatar and animation system are ready
   useEffect(() => {
-    if (
-      avatarRef.current &&
-      animationsInitialized &&
-      avatarUrl &&
-      !animationsLoadedRef.current
-    ) {
+    if (avatarRef.current && animationsInitialized && avatarUrl && !animationsLoadedRef.current) {
       animationsLoadedRef.current = true;
 
       // Add a small delay to ensure the avatar is fully loaded and all meshes are in the scene
@@ -129,12 +115,7 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
         });
       }, 200); // Small delay to ensure avatar is fully settled in scene
     }
-  }, [
-    avatarRef.current,
-    animationsInitialized,
-    avatarUrl,
-    loadAvatarAnimations,
-  ]);
+  }, [avatarRef.current, animationsInitialized, avatarUrl, loadAvatarAnimations]);
 
   // Effect to handle avatar errors by showing the avatar creator
   useEffect(() => {
@@ -157,16 +138,11 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
   const handleAvatarExported = (response) => {
     // Extract the URL from the response object
     // The response can be either a direct URL string (old API) or an object with data.url (new API)
-    const urlValue =
-      typeof response === "object" && response.data
-        ? response.data.url
-        : response;
+    const urlValue = typeof response === "object" && response.data ? response.data.url : response;
 
     // Ensure the URL points to a GLB file
     const avatarUrl =
-      typeof urlValue === "string" && urlValue.endsWith(".glb")
-        ? urlValue
-        : `${urlValue}.glb`;
+      typeof urlValue === "string" && urlValue.endsWith(".glb") ? urlValue : `${urlValue}.glb`;
 
     // Add cache-busting parameter to force reload of the model
     const cacheBustedUrl = avatarUrl.includes("?")
@@ -193,8 +169,7 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
 
   // Load Ready Player Me avatar
   const loadAvatar = async (url) => {
-    if (!sceneRef.current || !sceneRef.current.scene || loadingRef.current)
-      return;
+    if (!sceneRef.current || !sceneRef.current.scene || loadingRef.current) return;
 
     loadingRef.current = true;
     animationsLoadedRef.current = false; // Reset animations flag for new avatar
@@ -246,11 +221,7 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
             Math.abs(mesh.position.z) > 50000);
 
         if (!shouldKeep || isFarAway) {
-          console.log(
-            "Disposing mesh:",
-            mesh.name,
-            isFarAway ? "(far away)" : ""
-          );
+          console.log("Disposing mesh:", mesh.name, isFarAway ? "(far away)" : "");
 
           try {
             // Dispose child meshes first
@@ -275,9 +246,7 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
       });
 
       // Ensure we have a full URL
-      const fullUrl = url.startsWith("http")
-        ? url
-        : `https://models.readyplayer.me/${url}`;
+      const fullUrl = url.startsWith("http") ? url : `https://models.readyplayer.me/${url}`;
 
       // Load avatar using ImportMesh for better error handling
       BABYLON.SceneLoader.ImportMesh(
@@ -347,20 +316,14 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
       {!avatarUrl && !showCreator && !isLoading && (
         <div className="no-avatar-message">
           <p>No avatar created yet</p>
-          <button
-            className="customize-avatar-button"
-            onClick={() => setShowCreator(true)}
-          >
+          <button className="customize-avatar-button" onClick={() => setShowCreator(true)}>
             Create Avatar
           </button>
         </div>
       )}
 
       {avatarUrl && !showCreator && (
-        <button
-          className="customize-avatar-button"
-          onClick={() => setShowCreator(true)}
-        >
+        <button className="customize-avatar-button" onClick={() => setShowCreator(true)}>
           Customize Avatar
         </button>
       )}
@@ -385,10 +348,7 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
             style={{ width: "100%", height: "100%" }}
             onAvatarExported={handleAvatarExported}
             onError={() => setShowCreator(true)}
-            avatarId={
-              avatarUrl &&
-              avatarUrl.split("/").pop().split(".")[0].split("?")[0]
-            }
+            avatarId={avatarUrl && avatarUrl.split("/").pop().split(".")[0].split("?")[0]}
             bodyType="fullbody"
             clearCache={true}
           />

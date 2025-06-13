@@ -9,9 +9,9 @@
  */
 export const formatTrait = (trait) => {
   return trait
-    .split('_')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ');
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
 };
 
 /**
@@ -61,8 +61,8 @@ export const clamp = (value, min, max) => {
  */
 export const formatTime = (timestamp) => {
   return new Date(timestamp).toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
+    hour: "2-digit",
+    minute: "2-digit",
   });
 };
 
@@ -72,10 +72,10 @@ export const formatTime = (timestamp) => {
  * @returns {Object} Cloned object
  */
 export const deepClone = (obj) => {
-  if (obj === null || typeof obj !== 'object') return obj;
+  if (obj === null || typeof obj !== "object") return obj;
   if (obj instanceof Date) return new Date(obj.getTime());
-  if (obj instanceof Array) return obj.map(item => deepClone(item));
-  if (typeof obj === 'object') {
+  if (obj instanceof Array) return obj.map((item) => deepClone(item));
+  if (typeof obj === "object") {
     const clonedObj = {};
     for (const key in obj) {
       if (obj.hasOwnProperty(key)) {

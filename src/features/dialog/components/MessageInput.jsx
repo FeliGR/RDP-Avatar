@@ -11,12 +11,7 @@ import VoiceInput from "./VoiceInput";
  * @param {boolean} props.isListening - Whether voice recognition is active
  * @param {Function} props.onToggleVoice - Function to toggle voice recognition
  */
-const MessageInput = ({
-  onSendMessage,
-  isLoading,
-  isListening,
-  onToggleVoice,
-}) => {
+const MessageInput = ({ onSendMessage, isLoading, isListening, onToggleVoice }) => {
   const [inputText, setInputText] = useState("");
   const typingTimeoutRef = useRef(null);
 
@@ -80,11 +75,7 @@ const MessageInput = ({
 
   return (
     <form onSubmit={handleSubmit} className="message-input-form">
-      <VoiceInput
-        isListening={isListening}
-        disabled={isLoading}
-        onClick={onToggleVoice}
-      />
+      <VoiceInput isListening={isListening} disabled={isLoading} onClick={onToggleVoice} />
 
       <input
         type="text"

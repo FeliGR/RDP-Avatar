@@ -1,4 +1,4 @@
-import { IAnimationController } from '../../domain/interfaces/index.js';
+import { IAnimationController } from "../../domain/interfaces/index.js";
 
 /**
  * Babylon.js implementation of Animation Controller
@@ -16,36 +16,25 @@ export class BabylonAnimationController extends IAnimationController {
       throw new Error(`Animation '${animationName}' not found`);
     }
 
-    const { 
-      isLooping = false, 
-      speedRatio = 1.0,
-      frameStart = 0,
-      frameEnd = null
-    } = options;
+    const { isLooping = false, speedRatio = 1.0, frameStart = 0, frameEnd = null } = options;
 
     animationGroup.speedRatio = speedRatio;
-    
+
     animationGroup.start(
-      isLooping, 
-      speedRatio, 
-      frameStart, 
-      frameEnd || animationGroup.duration, 
+      isLooping,
+      speedRatio,
+      frameStart,
+      frameEnd || animationGroup.duration,
       false
     );
-    
+
     character.setCurrentAnimation(animationGroup);
 
     return Promise.resolve();
   }
 
   async blendAnimations(character, blendConfig) {
-    const { 
-      fromAnimation, 
-      toAnimation, 
-      blendSpeed, 
-      maxWeight,
-      frameRange 
-    } = blendConfig;
+    const { fromAnimation, toAnimation, blendSpeed, maxWeight, frameRange } = blendConfig;
 
     return new Promise((resolve) => {
       // Start the blend coroutine
@@ -63,10 +52,10 @@ export class BabylonAnimationController extends IAnimationController {
     });
   }
 
-  * _animationBlendingCoroutine(
-    fromAnim, 
-    toAnim, 
-    speed, 
+  *_animationBlendingCoroutine(
+    fromAnim,
+    toAnim,
+    speed,
     maxWeight = 1,
     frameRange = null,
     character = null,
@@ -85,10 +74,10 @@ export class BabylonAnimationController extends IAnimationController {
     while (newWeight < maxWeight) {
       newWeight += speed;
       currentWeight -= speed;
-      
+
       toAnim.setWeightForAllAnimatables(newWeight);
       fromAnim.setWeightForAllAnimatables(currentWeight);
-      
+
       yield;
     }
 
@@ -115,14 +104,14 @@ export class BabylonAnimationController extends IAnimationController {
     this.removeObservers(character);
 
     const idleAnimations = [
-      'M_Standing_Idle_Variations_001',
-      'M_Standing_Idle_Variations_002', 
-      'M_Standing_Idle_Variations_003'
+      "M_Standing_Idle_Variations_001",
+      "M_Standing_Idle_Variations_002",
+      "M_Standing_Idle_Variations_003",
     ];
 
     const observers = [];
 
-    idleAnimations.forEach(animName => {
+    idleAnimations.forEach((animName) => {
       const animGroup = character.getAnimationGroup(animName);
       if (animGroup) {
         const observer = animGroup.onAnimationEndObservable.add(() => {

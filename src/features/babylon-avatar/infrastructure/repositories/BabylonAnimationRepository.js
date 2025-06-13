@@ -1,7 +1,7 @@
-import * as BABYLON from 'babylonjs';
-import 'babylonjs-loaders';
-import { Character } from '../../domain/entities/Character.js';
-import { IAnimationRepository } from '../../domain/interfaces/index.js';
+import * as BABYLON from "babylonjs";
+import "babylonjs-loaders";
+import { Character } from "../../domain/entities/Character.js";
+import { IAnimationRepository } from "../../domain/interfaces/index.js";
 
 /**
  * Babylon.js implementation of Animation Repository
@@ -15,47 +15,47 @@ export class BabylonAnimationRepository extends IAnimationRepository {
   }
 
   async loadAnimations(animationPaths) {
-    const animationPromises = animationPaths.map(path => 
-      this._importAnimation(path)
-    );
+    const animationPromises = animationPaths.map((path) => this._importAnimation(path));
 
     const animations = await Promise.all(animationPromises);
-    return animations.filter(anim => anim !== null);
+    return animations.filter((anim) => anim !== null);
   }
 
   async loadCharacterModel(modelPath) {
     try {
       // First, check if there's already a character mesh in the scene
       // This prevents duplicate loading when the avatar is already loaded by ReadyPlayerMeAvatar
-      const existingMeshes = this.scene.meshes.filter(mesh => 
-        mesh.name.includes('Wolf3D') || 
-        mesh.name.includes('_Character_') ||
-        mesh.name.includes('Armature')
+      const existingMeshes = this.scene.meshes.filter(
+        (mesh) =>
+          mesh.name.includes("Wolf3D") ||
+          mesh.name.includes("_Character_") ||
+          mesh.name.includes("Armature")
       );
 
       if (existingMeshes.length > 0) {
         // Create character entity from existing meshes
         const character = new Character({
           id: `character_${Date.now()}`,
-          name: 'ExistingAvatar',
+          name: "ExistingAvatar",
           meshes: existingMeshes,
-          animationGroups: []
+          animationGroups: [],
         });
 
         // Setup mesh properties
-        existingMeshes.forEach(mesh => {
-          if (mesh.name !== '_Character_') {
+        existingMeshes.forEach((mesh) => {
+          if (mesh.name !== "_Character_") {
             mesh.isPickable = false;
           }
         });
-        
+
         // Ensure the root mesh is named _Character_
-        const rootMesh = existingMeshes.find(mesh => 
-          mesh.name.includes('Wolf3D') || mesh.name.includes('Armature')
-        ) || existingMeshes[0];
-        
-        if (rootMesh && rootMesh.name !== '_Character_') {
-          rootMesh.name = '_Character_';
+        const rootMesh =
+          existingMeshes.find(
+            (mesh) => mesh.name.includes("Wolf3D") || mesh.name.includes("Armature")
+          ) || existingMeshes[0];
+
+        if (rootMesh && rootMesh.name !== "_Character_") {
+          rootMesh.name = "_Character_";
         }
 
         return character;
@@ -63,37 +63,36 @@ export class BabylonAnimationRepository extends IAnimationRepository {
 
       // If no existing character found, load as fallback
       const result = await BABYLON.SceneLoader.ImportMeshAsync(
-        null, 
-        this._getBasePath(modelPath), 
-        this._getFileName(modelPath), 
+        null,
+        this._getBasePath(modelPath),
+        this._getFileName(modelPath),
         this.scene
       );
 
       if (!result.meshes || result.meshes.length === 0) {
-        throw new Error('No meshes found in model');
+        throw new Error("No meshes found in model");
       }
 
       const character = new Character({
         id: `character_${Date.now()}`,
-        name: this._getFileName(modelPath).replace('.glb', ''),
+        name: this._getFileName(modelPath).replace(".glb", ""),
         meshes: result.meshes,
-        animationGroups: result.animationGroups || []
+        animationGroups: result.animationGroups || [],
       });
 
       // Setup mesh properties and ensure main mesh is named correctly
-      result.meshes.forEach(mesh => {
-        if (mesh.name !== '_Character_') {
+      result.meshes.forEach((mesh) => {
+        if (mesh.name !== "_Character_") {
           mesh.isPickable = false;
         }
       });
-      
+
       // Ensure the root mesh is named _Character_
-      if (result.meshes[0] && result.meshes[0].name !== '_Character_') {
-        result.meshes[0].name = '_Character_';
+      if (result.meshes[0] && result.meshes[0].name !== "_Character_") {
+        result.meshes[0].name = "_Character_";
       }
 
       return character;
-
     } catch (error) {
       throw new Error(`Failed to load character model: ${error.message}`);
     }
@@ -102,9 +101,9 @@ export class BabylonAnimationRepository extends IAnimationRepository {
   async _importAnimation(animationPath) {
     try {
       const result = await BABYLON.SceneLoader.ImportMeshAsync(
-        null, 
-        this._getBasePath(animationPath), 
-        this._getFileName(animationPath), 
+        null,
+        this._getBasePath(animationPath),
+        this._getFileName(animationPath),
         this.scene
       );
 
@@ -116,23 +115,23 @@ export class BabylonAnimationRepository extends IAnimationRepository {
 
       // Store loaded meshes for cleanup and hide them
       if (result.meshes && result.meshes.length > 0) {
-        const animationMeshes = result.meshes.filter(mesh => mesh);
+        const animationMeshes = result.meshes.filter((mesh) => mesh);
         this._storeAnimationMeshesForCleanup(animationMeshes);
-        
+
         // Make meshes invisible but keep them functional for cloning
-        animationMeshes.forEach(mesh => {
+        animationMeshes.forEach((mesh) => {
           if (mesh) {
             // Make invisible but keep enabled for transform node access
             mesh.isVisible = false;
             mesh.visibility = 0;
             mesh.isPickable = false;
-            
+
             // Move far away but don't scale down (preserves transform structure)
             mesh.position = new BABYLON.Vector3(50000, 50000, 50000);
-            
+
             // Hide child meshes but keep structure
             const childMeshes = mesh.getChildMeshes();
-            childMeshes.forEach(childMesh => {
+            childMeshes.forEach((childMesh) => {
               childMesh.isVisible = false;
               childMesh.visibility = 0;
               childMesh.isPickable = false;
@@ -142,19 +141,18 @@ export class BabylonAnimationRepository extends IAnimationRepository {
       }
 
       return animationGroup;
-
     } catch (error) {
       return null;
     }
   }
 
   _getBasePath(fullPath) {
-    const lastSlash = fullPath.lastIndexOf('/');
-    return lastSlash > -1 ? fullPath.substring(0, lastSlash + 1) : './';
+    const lastSlash = fullPath.lastIndexOf("/");
+    return lastSlash > -1 ? fullPath.substring(0, lastSlash + 1) : "./";
   }
 
   _getFileName(fullPath) {
-    const lastSlash = fullPath.lastIndexOf('/');
+    const lastSlash = fullPath.lastIndexOf("/");
     return lastSlash > -1 ? fullPath.substring(lastSlash + 1) : fullPath;
   }
 
@@ -167,7 +165,7 @@ export class BabylonAnimationRepository extends IAnimationRepository {
 
   dispose(character) {
     if (character && character.meshes) {
-      character.meshes.forEach(mesh => {
+      character.meshes.forEach((mesh) => {
         if (mesh.material) {
           mesh.material.dispose();
         }
@@ -176,7 +174,7 @@ export class BabylonAnimationRepository extends IAnimationRepository {
     }
 
     if (character && character.animationGroups) {
-      character.animationGroups.forEach(group => {
+      character.animationGroups.forEach((group) => {
         group.dispose();
       });
     }
@@ -187,18 +185,18 @@ export class BabylonAnimationRepository extends IAnimationRepository {
    */
   cleanupAnimationMeshes() {
     // First, dispose stored animation meshes
-    this.animationMeshesToCleanup.forEach(mesh => {
+    this.animationMeshesToCleanup.forEach((mesh) => {
       if (mesh && !mesh.isDisposed()) {
         try {
           // Dispose child meshes first
           const childMeshes = mesh.getChildMeshes();
-          childMeshes.forEach(childMesh => {
+          childMeshes.forEach((childMesh) => {
             if (childMesh.material) {
               childMesh.material.dispose();
             }
             childMesh.dispose();
           });
-          
+
           // Dispose the mesh itself
           if (mesh.material) {
             mesh.material.dispose();
@@ -209,10 +207,10 @@ export class BabylonAnimationRepository extends IAnimationRepository {
         }
       }
     });
-    
+
     // Clear the cleanup list
     this.animationMeshesToCleanup = [];
-    
+
     // Then scan for any remaining duplicates
     this._forceRemoveDuplicateAvatars();
   }
@@ -224,42 +222,44 @@ export class BabylonAnimationRepository extends IAnimationRepository {
     const scene = this.scene;
     const meshesToRemove = [];
     const characterMeshes = [];
-    
+
     // First, identify all potential character meshes
-    scene.meshes.forEach(mesh => {
-      if (mesh && mesh.name && (
-        mesh.name.includes('Wolf3D') ||
-        mesh.name.includes('Character') ||
-        mesh.name.includes('Armature') ||
-        mesh.name === '_Character_'
-      )) {
+    scene.meshes.forEach((mesh) => {
+      if (
+        mesh &&
+        mesh.name &&
+        (mesh.name.includes("Wolf3D") ||
+          mesh.name.includes("Character") ||
+          mesh.name.includes("Armature") ||
+          mesh.name === "_Character_")
+      ) {
         characterMeshes.push(mesh);
       }
     });
-    
+
     // Remove any meshes that are positioned far away or hidden (likely animation meshes)
-    characterMeshes.forEach(mesh => {
+    characterMeshes.forEach((mesh) => {
       const pos = mesh.position;
       const isFarAway = Math.abs(pos.x) > 5000 || Math.abs(pos.y) > 5000 || Math.abs(pos.z) > 5000;
       const isHidden = !mesh.isVisible || mesh.visibility === 0;
       const isScaledDown = mesh.scaling.x < 0.01;
-      
+
       if (isFarAway || isHidden || isScaledDown) {
         meshesToRemove.push(mesh);
       }
     });
-    
-    meshesToRemove.forEach(mesh => {
+
+    meshesToRemove.forEach((mesh) => {
       try {
         // Dispose child meshes
         const childMeshes = mesh.getChildMeshes();
-        childMeshes.forEach(childMesh => {
+        childMeshes.forEach((childMesh) => {
           if (childMesh.material) {
             childMesh.material.dispose();
           }
           childMesh.dispose();
         });
-        
+
         // Dispose the mesh
         if (mesh.material) {
           mesh.material.dispose();

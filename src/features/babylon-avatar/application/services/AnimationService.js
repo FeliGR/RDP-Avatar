@@ -1,4 +1,4 @@
-import { AnimationCompositionRoot } from '../../infrastructure/composition/AnimationCompositionRoot.js';
+import { AnimationCompositionRoot } from "../../infrastructure/composition/AnimationCompositionRoot.js";
 
 /**
  * Animation Service - High-level facade for animation system
@@ -21,17 +21,17 @@ export class AnimationService {
     try {
       const loadCharacterUseCase = this.compositionRoot.getLoadCharacterUseCase();
       const result = await loadCharacterUseCase.execute(modelPath, animationPaths);
-      
+
       if (result.success) {
         this.currentCharacter = result.character;
         this.isInitialized = true;
       }
-      
+
       return result;
     } catch (error) {
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -42,7 +42,7 @@ export class AnimationService {
    */
   async startIdleAnimations() {
     if (!this._checkInitialized()) {
-      return { success: false, error: 'Character not loaded' };
+      return { success: false, error: "Character not loaded" };
     }
 
     try {
@@ -52,7 +52,7 @@ export class AnimationService {
     } catch (error) {
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -64,24 +64,24 @@ export class AnimationService {
    */
   async startTalkingAnimations(audioSource = null) {
     if (!this._checkInitialized()) {
-      return { success: false, error: 'Character not loaded' };
+      return { success: false, error: "Character not loaded" };
     }
 
     try {
       const playTalkingUseCase = this.compositionRoot.getPlayTalkingAnimationUseCase();
-      
+
       // Initialize audio analyzer if audio source provided
       if (audioSource) {
         const audioAnalyzer = this.compositionRoot.getAudioAnalyzer();
         audioAnalyzer.initialize(audioSource);
       }
-      
+
       const result = await playTalkingUseCase.execute(this.currentCharacter, audioSource);
       return result;
     } catch (error) {
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -92,23 +92,23 @@ export class AnimationService {
    */
   async stopTalkingAnimations() {
     if (!this._checkInitialized()) {
-      return { success: false, error: 'Character not loaded' };
+      return { success: false, error: "Character not loaded" };
     }
 
     try {
       const playTalkingUseCase = this.compositionRoot.getPlayTalkingAnimationUseCase();
       const result = await playTalkingUseCase.stop(this.currentCharacter);
-      
+
       if (result.success) {
         // Restart idle animations
         await this.startIdleAnimations();
       }
-      
+
       return result;
     } catch (error) {
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -121,18 +121,18 @@ export class AnimationService {
    */
   async playAnimation(animationName, options = {}) {
     if (!this._checkInitialized()) {
-      return { success: false, error: 'Character not loaded' };
+      return { success: false, error: "Character not loaded" };
     }
 
     try {
       const animationController = this.compositionRoot.getAnimationController();
       await animationController.playAnimation(this.currentCharacter, animationName, options);
-      
+
       return { success: true };
     } catch (error) {
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -146,18 +146,18 @@ export class AnimationService {
    */
   setMorphTarget(morphName, value, duration = 0) {
     if (!this._checkInitialized()) {
-      return { success: false, error: 'Character not loaded' };
+      return { success: false, error: "Character not loaded" };
     }
 
     try {
       const morphController = this.compositionRoot.getMorphTargetController();
       morphController.animateMorphTarget(this.currentCharacter, morphName, value, duration);
-      
+
       return { success: true };
     } catch (error) {
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -185,7 +185,7 @@ export class AnimationService {
     if (this.compositionRoot) {
       this.compositionRoot.dispose();
     }
-    
+
     this.currentCharacter = null;
     this.isInitialized = false;
   }

@@ -1,2 +1,2 @@
 // Shared components barrel exports
-export * from './ui';
+export * from "./ui";

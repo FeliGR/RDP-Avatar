@@ -29,8 +29,7 @@ const FALLBACK_RESPONSES = [
  */
 export const DialogProvider = ({ children }) => {
   // Get personality context data
-  const { personalityTraits, apiAvailable: personalityApiAvailable } =
-    usePersonality();
+  const { personalityTraits, apiAvailable: personalityApiAvailable } = usePersonality();
 
   // Dialog state
   const [messages, setMessages] = useState([]);
@@ -122,12 +121,7 @@ export const DialogProvider = ({ children }) => {
         return getFallbackResponse();
       }
     },
-    [
-      dialogApiAvailable,
-      personalityApiAvailable,
-      parseApiResponse,
-      getFallbackResponse,
-    ]
+    [dialogApiAvailable, personalityApiAvailable, parseApiResponse, getFallbackResponse]
   );
 
   /**
@@ -146,17 +140,10 @@ export const DialogProvider = ({ children }) => {
         setMessages((prevMessages) => [...prevMessages, userMessage]);
 
         // Get response from API or fallback
-        const responseText = await fetchBotResponse(
-          personalityTraits.userId,
-          text
-        );
+        const responseText = await fetchBotResponse(personalityTraits.userId, text);
 
         // Create and add bot message
-        const botMessage = createMessage(
-          responseText,
-          "bot",
-          !dialogApiAvailable
-        );
+        const botMessage = createMessage(responseText, "bot", !dialogApiAvailable);
 
         setMessages((prevMessages) => [...prevMessages, botMessage]);
         return botMessage;
@@ -168,12 +155,7 @@ export const DialogProvider = ({ children }) => {
         setIsLoading(false);
       }
     },
-    [
-      personalityTraits.userId,
-      dialogApiAvailable,
-      fetchBotResponse,
-      createMessage,
-    ]
+    [personalityTraits.userId, dialogApiAvailable, fetchBotResponse, createMessage]
   );
 
   /**
@@ -194,9 +176,5 @@ export const DialogProvider = ({ children }) => {
     apiAvailable: dialogApiAvailable,
   };
 
-  return (
-    <DialogContext.Provider value={contextValue}>
-      {children}
-    </DialogContext.Provider>
-  );
+  return <DialogContext.Provider value={contextValue}>{children}</DialogContext.Provider>;
 };

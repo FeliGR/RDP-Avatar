@@ -89,7 +89,7 @@ REACT_APP_RPM_CLIENT_ID=your_rpm_client_id_here
 ```
 src/
 ├── app/               # App configuration and providers
-├── components/        # Reusable UI components  
+├── components/        # Reusable UI components
 ├── features/          # Feature modules
 │   ├── avatar/        # Avatar creation and management
 │   ├── babylon-avatar/ # 3D rendering with Babylon.js
@@ -115,4 +115,3 @@ Find avatar animations in the `public/animations/` directory:
 [MIT License](LICENSE) - Feel free to use and modify according to your needs.
 
 ---
-

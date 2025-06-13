@@ -10,18 +10,15 @@ export class LoadCharacterUseCase {
 
   async execute(modelPath, animationPaths = []) {
     try {
-      // Load base character model
       const character = await this.animationRepository.loadCharacterModel(modelPath);
 
       if (!character) {
         throw new Error("Failed to load character model");
       }
 
-      // Load animations if provided
       if (animationPaths.length > 0) {
         const animations = await this.animationRepository.loadAnimations(animationPaths);
 
-        // Associate animations with character using the cloning approach
         animations.forEach((animGroup) => {
           if (animGroup) {
             const clonedGroup = this._cloneAnimationToCharacter(animGroup, character);
@@ -32,21 +29,17 @@ export class LoadCharacterUseCase {
           }
         });
 
-        // Schedule cleanup of animation meshes after cloning is complete
         setTimeout(() => {
           this.animationRepository.cleanupAnimationMeshes();
         }, 1000);
       }
 
-      // Setup shadow casting for character meshes
       character.meshes.forEach((mesh) => {
         this.sceneManager.addShadowCaster(mesh);
       });
 
-      // Setup morph targets if available
       this._setupMorphTargets(character);
 
-      // Mark character as loaded
       character.markAsLoaded();
 
       return {
@@ -68,7 +61,6 @@ export class LoadCharacterUseCase {
    * @private
    */
   _setupMorphTargets(character) {
-    // Find head mesh and setup morph targets
     const headMesh = character.meshes.find(
       (mesh) => mesh.name.includes("Wolf3D_Head") || mesh.name.includes("Head")
     );
@@ -76,7 +68,6 @@ export class LoadCharacterUseCase {
     if (headMesh && headMesh.morphTargetManager) {
       const morphManager = headMesh.morphTargetManager;
 
-      // Map common morph targets
       const morphTargetMap = {
         leftEye: 50,
         rightEye: 51,
@@ -103,14 +94,12 @@ export class LoadCharacterUseCase {
         }
       });
 
-      // Set initial jaw forward position
       const jawForward = character.getMorphTarget("jawForward");
       if (jawForward) {
         jawForward.influence = 0.4;
       }
     }
 
-    // Setup teeth morph targets if available
     const teethMesh = character.meshes.find(
       (mesh) => mesh.name.includes("Wolf3D_Teeth") || mesh.name.includes("Teeth")
     );
@@ -128,7 +117,6 @@ export class LoadCharacterUseCase {
    * @private
    */
   _cloneAnimationToCharacter(originalGroup, character) {
-    // Find the character mesh
     const characterMesh =
       character.meshes.find((mesh) => mesh.name === "_Character_") || character.meshes[0];
 
@@ -136,22 +124,18 @@ export class LoadCharacterUseCase {
       return null;
     }
 
-    // Get all transform nodes from the character
     const modelTransformNodes = characterMesh.getChildTransformNodes();
 
     try {
-      // Clone animation with transform node mapping
       const clonedGroup = originalGroup.clone("player_" + originalGroup.name, (oldTarget) => {
         const oldTargetName = oldTarget?.name || "unknown";
 
-        // Find matching transform node by exact name
         const matchingNode = modelTransformNodes.find((node) => node.name === oldTargetName);
 
         return matchingNode || oldTarget;
       });
 
       if (clonedGroup && clonedGroup.targetedAnimations.length > 0) {
-        // Dispose the original animation
         originalGroup.dispose();
         return clonedGroup;
       }

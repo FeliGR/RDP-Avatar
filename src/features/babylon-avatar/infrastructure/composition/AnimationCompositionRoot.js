@@ -17,40 +17,32 @@ export class AnimationCompositionRoot {
     this.scene = scene;
     this.shadowGenerator = shadowGenerator;
 
-    // Initialize infrastructure services
     this._setupInfrastructure();
 
-    // Initialize use cases
     this._setupUseCases();
   }
 
   _setupInfrastructure() {
-    // Core services
     this.sceneManager = new BabylonSceneManager(this.scene, this.shadowGenerator);
     this.audioAnalyzer = new AudioAnalyzer(this.scene);
 
-    // Repositories
     this.animationRepository = new BabylonAnimationRepository(this.scene);
 
-    // Controllers
     this.animationController = new BabylonAnimationController(this.scene);
     this.morphTargetController = new BabylonMorphTargetController(this.scene);
   }
 
   _setupUseCases() {
-    // Load Character Use Case
     this.loadCharacterUseCase = new LoadCharacterUseCase({
       animationRepository: this.animationRepository,
       sceneManager: this.sceneManager,
     });
 
-    // Play Idle Animation Use Case
     this.playIdleAnimationUseCase = new PlayIdleAnimationUseCase({
       animationController: this.animationController,
       morphTargetController: this.morphTargetController,
     });
 
-    // Play Talking Animation Use Case
     this.playTalkingAnimationUseCase = new PlayTalkingAnimationUseCase({
       animationController: this.animationController,
       morphTargetController: this.morphTargetController,
@@ -58,7 +50,6 @@ export class AnimationCompositionRoot {
     });
   }
 
-  // Public API - Use Case accessors
   getLoadCharacterUseCase() {
     return this.loadCharacterUseCase;
   }
@@ -71,7 +62,6 @@ export class AnimationCompositionRoot {
     return this.playTalkingAnimationUseCase;
   }
 
-  // Infrastructure accessors (for advanced usage)
   getSceneManager() {
     return this.sceneManager;
   }
@@ -88,19 +78,15 @@ export class AnimationCompositionRoot {
     return this.morphTargetController;
   }
 
-  // Cleanup
   dispose() {
-    // Stop audio analysis
     if (this.audioAnalyzer) {
       this.audioAnalyzer.stop();
     }
 
-    // Clean up scene manager
     if (this.sceneManager) {
       this.sceneManager.dispose();
     }
 
-    // Clear references
     this.scene = null;
     this.shadowGenerator = null;
   }

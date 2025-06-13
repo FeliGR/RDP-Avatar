@@ -12,7 +12,7 @@ export class Animation {
     frameRange = null,
   }) {
     this.name = name;
-    this.type = type; // 'idle', 'talking', 'expression', 'dance', etc.
+    this.type = type;
     this.duration = duration;
     this.speedRatio = speedRatio;
     this.weight = weight;

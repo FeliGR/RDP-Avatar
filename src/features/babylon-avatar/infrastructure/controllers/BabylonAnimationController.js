@@ -7,7 +7,7 @@ export class BabylonAnimationController extends IAnimationController {
   constructor(scene) {
     super();
     this.scene = scene;
-    this.observers = new Map(); // Store observers by character
+    this.observers = new Map();
   }
 
   playAnimation(character, animationName, options = {}) {
@@ -37,7 +37,6 @@ export class BabylonAnimationController extends IAnimationController {
     const { fromAnimation, toAnimation, blendSpeed, maxWeight, frameRange } = blendConfig;
 
     return new Promise((resolve) => {
-      // Start the blend coroutine
       this.scene.onBeforeRenderObservable.runCoroutineAsync(
         this._animationBlendingCoroutine(
           fromAnimation,
@@ -67,7 +66,6 @@ export class BabylonAnimationController extends IAnimationController {
     let currentWeight = 1;
     let newWeight = 0;
 
-    // Stop and restart animations
     fromAnim.stop();
     toAnim.start(false, toAnim.speedRatio, frameIn, frameOut, false);
 
@@ -81,12 +79,10 @@ export class BabylonAnimationController extends IAnimationController {
       yield;
     }
 
-    // Update character state
     if (character) {
       character.setCurrentAnimation(toAnim);
     }
 
-    // Call completion callback
     if (onComplete) {
       onComplete();
     }
@@ -100,7 +96,6 @@ export class BabylonAnimationController extends IAnimationController {
   }
 
   setupIdleObservers(character, onIdleEnd) {
-    // Remove existing observers first
     this.removeObservers(character);
 
     const idleAnimations = [
@@ -121,7 +116,6 @@ export class BabylonAnimationController extends IAnimationController {
       }
     });
 
-    // Store observers for later cleanup
     this.observers.set(character.id, observers);
   }
 

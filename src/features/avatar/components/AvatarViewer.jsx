@@ -11,7 +11,6 @@ const AvatarViewer = () => {
 
   const { personalityTraits, isLoading: isPersonalityLoading } = usePersonality();
 
-  // Handle interaction for tooltip
   useEffect(() => {
     if (canvasRef.current) {
       let interactionTimeout;
@@ -21,7 +20,6 @@ const AvatarViewer = () => {
           setHasInteracted(true);
           setTooltipVisible(true);
 
-          // Hide tooltip after 5 seconds
           interactionTimeout = setTimeout(() => {
             setTooltipVisible(false);
           }, 5000);
@@ -40,7 +38,6 @@ const AvatarViewer = () => {
     }
   }, [hasInteracted]);
 
-  // Track when the avatar is loaded
   const handleAvatarLoaded = (avatar) => {
     setIsLoading(false);
   };

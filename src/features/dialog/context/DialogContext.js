@@ -13,7 +13,6 @@ export const DialogContext = createContext();
  */
 export const useDialog = () => useContext(DialogContext);
 
-// Sample responses when API is unavailable
 const FALLBACK_RESPONSES = [
   "I'm here to help, but I seem to be disconnected from my brain at the moment.",
   "I'd love to chat more, but my backend service is currently unavailable.",
@@ -28,10 +27,8 @@ const FALLBACK_RESPONSES = [
  * @param {React.ReactNode} props.children - Child components
  */
 export const DialogProvider = ({ children }) => {
-  // Get personality context data
   const { personalityTraits, apiAvailable: personalityApiAvailable } = usePersonality();
 
-  // Dialog state
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -70,21 +67,17 @@ export const DialogProvider = ({ children }) => {
    */
   const parseApiResponse = useCallback((response) => {
     if (response.data && response.data.response) {
-      // New format: {"data":{"response":"Hello!"}, "status":"success"}
       return response.data.response;
     }
 
     if (response.text) {
-      // Old format: {"text":"Hello!"}
       return response.text;
     }
 
     if (typeof response === "string") {
-      // Plain string response
       return response;
     }
 
-    // Fallback for unexpected format
     console.warn("Unexpected response format:", response);
     return "Received a response in an unexpected format.";
   }, []);
@@ -97,20 +90,16 @@ export const DialogProvider = ({ children }) => {
    */
   const fetchBotResponse = useCallback(
     async (userId, messageText) => {
-      // Only try API if we believe it's available
       if (!dialogApiAvailable || !personalityApiAvailable) {
         console.log("Using fallback response - API known to be unavailable");
         return getFallbackResponse();
       }
 
       try {
-        // Send to Dialog Orchestrator
         const response = await sendMessage(userId, messageText);
 
-        // Parse the response into text
         const responseText = parseApiResponse(response);
 
-        // Mark API as available
         setDialogApiAvailable(true);
 
         return responseText;
@@ -135,14 +124,11 @@ export const DialogProvider = ({ children }) => {
         setIsLoading(true);
         setError(null);
 
-        // Create and add user message
         const userMessage = createMessage(text, "user");
         setMessages((prevMessages) => [...prevMessages, userMessage]);
 
-        // Get response from API or fallback
         const responseText = await fetchBotResponse(personalityTraits.userId, text);
 
-        // Create and add bot message
         const botMessage = createMessage(responseText, "bot", !dialogApiAvailable);
 
         setMessages((prevMessages) => [...prevMessages, botMessage]);
@@ -166,7 +152,6 @@ export const DialogProvider = ({ children }) => {
     setError(null);
   }, []);
 
-  // Context value with memoized functions
   const contextValue = {
     messages,
     isLoading,

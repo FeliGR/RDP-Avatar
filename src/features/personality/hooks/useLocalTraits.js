@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 const useLocalTraits = (contextTraits) => {
   const [localTraits, setLocalTraits] = useState({});
 
-  // Sync local traits with context when context changes
   useEffect(() => {
     if (contextTraits) {
       setLocalTraits(contextTraits);

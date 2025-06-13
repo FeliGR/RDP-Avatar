@@ -15,56 +15,45 @@ const MessageInput = ({ onSendMessage, isLoading, isListening, onToggleVoice }) 
   const [inputText, setInputText] = useState("");
   const typingTimeoutRef = useRef(null);
 
-  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!inputText.trim() || isLoading) return;
 
     const messageToSend = inputText.trim();
 
-    // Clear input text immediately
     setInputText("");
 
-    // Dispatch typing stop event
     document.dispatchEvent(new CustomEvent(TYPING_EVENTS.STOP));
 
-    // Clear any pending typing timeout
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
       typingTimeoutRef.current = null;
     }
 
-    // Send the message
     onSendMessage(messageToSend);
   };
 
-  // Handle typing events for the avatar
   const handleInputChange = (e) => {
     const text = e.target.value;
     setInputText(text);
 
-    // Dispatch typing start event
     document.dispatchEvent(new CustomEvent(TYPING_EVENTS.START));
 
-    // Clear existing timeout
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
     }
 
-    // Set timeout to stop typing after delay
     typingTimeoutRef.current = setTimeout(() => {
       document.dispatchEvent(new CustomEvent(TYPING_EVENTS.STOP));
     }, TYPING_DEBOUNCE_DELAY);
   };
 
-  // Send message on Ctrl+Enter or Cmd+Enter
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && (e.ctrlKey || e.metaKey) && inputText.trim()) {
       handleSubmit(e);
     }
   };
 
-  // Cleanup typing timeout on unmount
   useEffect(() => {
     return () => {
       if (typingTimeoutRef.current) {

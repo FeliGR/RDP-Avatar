@@ -20,7 +20,6 @@ export class PlayTalkingAnimationUseCase {
 
     this.isTalking = true;
 
-    // Get available talking animations
     const talkingAnimations = [
       "M_Talking_Variations_005",
       "M_Talking_Variations_006",
@@ -31,18 +30,14 @@ export class PlayTalkingAnimationUseCase {
       throw new Error("No talking animations available");
     }
 
-    // Stop idle animation observers
     this.animationController.removeObservers(character);
 
-    // Start first talking animation
     await this._playRandomTalkingAnimation(character, talkingAnimations);
 
-    // Setup audio-driven morph targets if audio source provided
     if (audioSource && this.audioAnalyzer) {
       this._setupAudioMorphTargets(character, audioSource);
     }
 
-    // Setup talking animation loop
     this._setupTalkingLoop(character, talkingAnimations);
 
     return {
@@ -57,21 +52,17 @@ export class PlayTalkingAnimationUseCase {
   stop(character) {
     this.isTalking = false;
 
-    // Remove animation observers
     this.animationController.removeObservers(character);
 
-    // Stop audio analysis
     if (this.audioAnalyzer && this.audioAnalyzer.isAnalyzing()) {
       this.audioAnalyzer.stop();
     }
 
-    // Remove morph callback
     if (this.morphCallback) {
       this.audioAnalyzer.removeCallback(this.morphCallback);
       this.morphCallback = null;
     }
 
-    // Reset mouth morph targets
     this._resetMouthMorphTargets(character);
 
     return {
@@ -101,10 +92,8 @@ export class PlayTalkingAnimationUseCase {
     this.morphCallback = (frequencyData) => {
       if (!this.isTalking) return;
 
-      // Calculate volume from frequency data
       const volume = this._calculateVolume(frequencyData);
 
-      // Map volume to mouth movements
       this._updateMouthMorphTargets(character, volume);
     };
 
@@ -118,7 +107,6 @@ export class PlayTalkingAnimationUseCase {
   _setupTalkingLoop(character, talkingAnimations) {
     this.animationController.setupIdleObservers(character, () => {
       if (this.isTalking) {
-        // Play next random talking animation
         this._playRandomTalkingAnimation(character, talkingAnimations);
       }
     });
@@ -133,7 +121,7 @@ export class PlayTalkingAnimationUseCase {
     for (let i = 0; i < frequencyData.length; i++) {
       sum += frequencyData[i];
     }
-    return sum / (frequencyData.length * 255); // Normalize to 0-1
+    return sum / (frequencyData.length * 255);
   }
 
   /**

@@ -9,7 +9,6 @@ function AppContent() {
   const headerRef = useRef(null);
 
   useEffect(() => {
-    // Add interactive effect to header
     const handleMouseMove = (e) => {
       if (!headerRef.current) return;
 
@@ -17,7 +16,6 @@ function AppContent() {
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
 
-      // Update CSS variables for parallax effect
       headerRef.current.style.setProperty("--mouse-x", `${x}px`);
       headerRef.current.style.setProperty("--mouse-y", `${y}px`);
     };

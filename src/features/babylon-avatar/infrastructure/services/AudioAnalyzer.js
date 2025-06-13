@@ -22,15 +22,12 @@ export class AudioAnalyzer {
       throw new Error("Sound object is required");
     }
 
-    // Create sound track and connect to analyzer
     this.soundTrack = new BABYLON.SoundTrack(this.scene);
     this.soundTrack.addSound(sound);
 
-    // Create analyzer
     this.analyser = new BABYLON.Analyser(this.scene);
     this.soundTrack.connectToAnalyser(this.analyser);
 
-    // Configure analyzer settings
     this.analyser.FFT_SIZE = 64;
     this.analyser.SMOOTHING = 0.03;
 
@@ -68,23 +65,16 @@ export class AudioAnalyzer {
       try {
         const frequencyData = this.analyser.getByteFrequencyData();
 
-        // Notify all callbacks
         this.callbacks.forEach((callback) => {
           try {
             callback(frequencyData);
-          } catch (error) {
-            // Silently handle callback errors
-          }
+          } catch (error) {}
         });
 
-        // Schedule next analysis
         requestAnimationFrame(analysisLoop);
-      } catch (error) {
-        // Silently handle analysis errors
-      }
+      } catch (error) {}
     };
 
-    // Start the loop
     requestAnimationFrame(analysisLoop);
   }
 

@@ -70,7 +70,6 @@ export class AnimationService {
     try {
       const playTalkingUseCase = this.compositionRoot.getPlayTalkingAnimationUseCase();
 
-      // Initialize audio analyzer if audio source provided
       if (audioSource) {
         const audioAnalyzer = this.compositionRoot.getAudioAnalyzer();
         audioAnalyzer.initialize(audioSource);
@@ -100,7 +99,6 @@ export class AnimationService {
       const result = await playTalkingUseCase.stop(this.currentCharacter);
 
       if (result.success) {
-        // Restart idle animations
         await this.startIdleAnimations();
       }
 

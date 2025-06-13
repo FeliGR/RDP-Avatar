@@ -9,12 +9,11 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
   const [isInitialized, setIsInitialized] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [currentCharacter, setCurrentCharacter] = useState(null);
-  const [animationState, setAnimationState] = useState("idle"); // 'idle', 'talking', 'loading'
+  const [animationState, setAnimationState] = useState("idle");
   const [error, setError] = useState(null);
 
   const animationServiceRef = useRef(null);
 
-  // Initialize animation service when scene is available
   useEffect(() => {
     console.log(
       "Animation hook effect triggered, scene:",
@@ -52,40 +51,35 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
     setError(null);
 
     try {
-      // Default animation paths - usando tus archivos reales
       const defaultAnimations = [
-        // Idle animations
         "/animations/masculine/idle/M_Standing_Idle_Variations_001.glb",
         "/animations/masculine/idle/M_Standing_Idle_Variations_002.glb",
         "/animations/masculine/idle/M_Standing_Idle_Variations_003.glb",
-        // Talking animations
+
         "/animations/masculine/expression/M_Talking_Variations_005.glb",
         "/animations/masculine/expression/M_Talking_Variations_006.glb",
         "/animations/masculine/expression/M_Talking_Variations_007.glb",
-        // Expression animation
+
         "/animations/masculine/expression/M_Standing_Expressions_013.glb",
       ];
 
       const animationPaths = options.animationPaths || defaultAnimations;
 
-      // Load character with animations
       const result = await animationServiceRef.current.loadCharacter(avatarUrl, animationPaths);
 
       if (result.success) {
         setCurrentCharacter(result.character);
         setAnimationState("idle");
 
-        // Start idle animations automatically
         setTimeout(async () => {
           try {
             const idleResult = await animationServiceRef.current.startIdleAnimations();
             if (idleResult.success) {
               console.log("Idle animations started successfully");
 
-              // Clean up any remaining animation meshes after everything is loaded
               setTimeout(() => {
                 _cleanupDuplicateAvatars();
-              }, 500); // Reduced delay since duplicates are prevented at source
+              }, 500);
             } else {
               console.warn("Failed to start idle animations:", idleResult.error);
             }
@@ -180,9 +174,7 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
     const meshes = scene.meshes.slice();
     let cleanedCount = 0;
 
-    // Look for meshes that might be duplicates
     meshes.forEach((mesh) => {
-      // Check if mesh is hidden, very far away, or scaled down (likely animation mesh)
       const isHidden = !mesh.isVisible || mesh.visibility === 0 || !mesh.isEnabled();
       const isFarAway =
         mesh.position &&
@@ -199,9 +191,7 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
           }
           mesh.dispose();
           cleanedCount++;
-        } catch (error) {
-          // Silently handle cleanup errors
-        }
+        } catch (error) {}
       }
     });
   }, [scene]);
@@ -259,7 +249,6 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
   }, []);
 
   return {
-    // State
     isInitialized,
     isLoading,
     currentCharacter,
@@ -267,7 +256,6 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
     error,
     isReady: isInitialized && currentCharacter !== null,
 
-    // Actions
     loadAvatarAnimations,
     startIdleAnimations,
     startTalkingAnimations,
@@ -276,7 +264,6 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
     setMorphTarget,
     clearError,
 
-    // Direct service access (for advanced usage)
     animationService: animationServiceRef.current,
   };
 };

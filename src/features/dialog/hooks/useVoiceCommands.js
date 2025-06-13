@@ -13,15 +13,12 @@ const useVoiceCommands = (sendMessage, updateTrait, traits) => {
   const [statusMessage, setStatusMessage] = useState("");
   const [commandProcessor, setCommandProcessor] = useState(null);
 
-  // Initialize voice command processor
   useEffect(() => {
     if (!commandProcessor) {
-      // Handle dialog command
       const handleDialog = (text) => {
         sendMessage(text);
       };
 
-      // Handle personality trait command
       const handlePersonality = (trait, action, value) => {
         let newValue;
         const currentValue = traits[trait];
@@ -38,22 +35,18 @@ const useVoiceCommands = (sendMessage, updateTrait, traits) => {
           updateTrait(trait, newValue);
           setStatusMessage(`Updated ${trait} to ${newValue.toFixed(1)}`);
 
-          // Clear status message after 2 seconds
           setTimeout(() => {
             setStatusMessage("");
           }, 2000);
         }
       };
 
-      // Handle recognition end
       const handleRecognitionEnd = () => {
         setIsListening(false);
         setStatusMessage("Voice recognition complete");
 
-        // Dispatch typing stop event
         document.dispatchEvent(new CustomEvent(TYPING_EVENTS.STOP));
 
-        // Clear status message after 2 seconds
         setTimeout(() => {
           setStatusMessage("");
         }, 2000);
@@ -68,17 +61,14 @@ const useVoiceCommands = (sendMessage, updateTrait, traits) => {
     }
   }, [commandProcessor, sendMessage, updateTrait, traits]);
 
-  // Toggle voice input functionality
   const toggleVoiceInput = useCallback(() => {
     if (isListening) {
       commandProcessor.stopListening();
       setStatusMessage("Voice recognition stopped");
       setIsListening(false);
 
-      // Dispatch typing stop event
       document.dispatchEvent(new CustomEvent(TYPING_EVENTS.STOP));
 
-      // Clear status message after 2 seconds
       setTimeout(() => {
         setStatusMessage("");
       }, 2000);
@@ -88,12 +78,10 @@ const useVoiceCommands = (sendMessage, updateTrait, traits) => {
         setStatusMessage("Listening...");
         setIsListening(true);
 
-        // Dispatch typing start event since voice is active
         document.dispatchEvent(new CustomEvent(TYPING_EVENTS.START));
       } else {
         setStatusMessage("Failed to start voice recognition");
 
-        // Clear error message after 2 seconds
         setTimeout(() => {
           setStatusMessage("");
         }, 2000);

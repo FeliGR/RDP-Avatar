@@ -19,7 +19,6 @@ const Modal = ({
   const modalRef = useRef(null);
   const overlayRef = useRef(null);
 
-  // Handle ESC key press
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape" && closeOnEsc) {
@@ -38,7 +37,6 @@ const Modal = ({
     };
   }, [isOpen, closeOnEsc, onClose]);
 
-  // Handle overlay click
   const handleOverlayClick = (e) => {
     if (closeOnOverlayClick && modalRef.current && !modalRef.current.contains(e.target)) {
       onClose();

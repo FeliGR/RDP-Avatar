@@ -9,7 +9,6 @@ const TraitInfoModal = ({ trait, traitInfo, isOpen, onClose }) => {
   const modalRef = useRef(null);
   const overlayRef = useRef(null);
 
-  // Handle ESC key press to close modal
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape") onClose();
@@ -24,7 +23,6 @@ const TraitInfoModal = ({ trait, traitInfo, isOpen, onClose }) => {
     };
   }, [isOpen, onClose]);
 
-  // Close when clicking outside the modal
   useEffect(() => {
     const handleOutsideClick = (e) => {
       if (modalRef.current && !modalRef.current.contains(e.target)) {
@@ -33,7 +31,6 @@ const TraitInfoModal = ({ trait, traitInfo, isOpen, onClose }) => {
     };
 
     if (isOpen) {
-      // Small delay to avoid immediate trigger
       setTimeout(() => {
         overlayRef.current?.addEventListener("mousedown", handleOutsideClick);
       }, 10);
@@ -44,7 +41,6 @@ const TraitInfoModal = ({ trait, traitInfo, isOpen, onClose }) => {
     };
   }, [isOpen, onClose]);
 
-  // Focus trap for accessibility
   useEffect(() => {
     if (isOpen && modalRef.current) {
       modalRef.current.focus();
@@ -55,7 +51,6 @@ const TraitInfoModal = ({ trait, traitInfo, isOpen, onClose }) => {
 
   const detailedInfo = traitInfo || {};
 
-  // Create portal to render modal at the document body level
   return createPortal(
     <div className="trait-modal-container" aria-modal="true" role="dialog">
       <div className="trait-modal-overlay" ref={overlayRef}></div>

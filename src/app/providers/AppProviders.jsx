@@ -1,4 +1,3 @@
-// App providers - centralized context providers
 import React from "react";
 import { PersonalityProvider } from "../../features/personality";
 import { DialogProvider } from "../../features/dialog";

@@ -3,28 +3,24 @@
  * Centralized place for app-wide constants and settings
  */
 
-// App metadata
 export const APP_CONFIG = {
   name: "Persona Dynamics AI",
   version: process.env.REACT_APP_VERSION || "1.0.0",
   description: "Experience next-generation digital identity with AI-powered avatar personalization",
 };
 
-// Environment configuration
 export const ENV_CONFIG = {
   isDevelopment: process.env.NODE_ENV === "development",
   isProduction: process.env.NODE_ENV === "production",
   isTest: process.env.NODE_ENV === "test",
 };
 
-// Feature flags
 export const FEATURE_FLAGS = {
   enableVoiceCommands: true,
   enableAdvancedPersonality: true,
-  enableARFeatures: false, // Future feature
+  enableARFeatures: false,
 };
 
-// UI Configuration
 export const UI_CONFIG = {
   theme: {
     primary: "rgb(33, 150, 243)",

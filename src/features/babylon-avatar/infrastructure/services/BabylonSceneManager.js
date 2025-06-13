@@ -36,7 +36,6 @@ export class BabylonSceneManager extends ISceneManager {
   }
 
   dispose() {
-    // Clean up all registered callbacks
     this.beforeRenderCallbacks.forEach((callback) => {
       this.scene.unregisterBeforeRender(callback);
     });

@@ -2,20 +2,16 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { getPersonaProfile, updatePersonaTrait } from "../../../services/api";
 import { DEFAULT_PERSONALITY } from "../constants/constants";
 
-// Create the context
 export const PersonalityContext = createContext();
 
-// Custom hook for accessing the context
 export const usePersonality = () => useContext(PersonalityContext);
 
-// Provider component
 export const PersonalityProvider = ({ children }) => {
   const [personalityTraits, setPersonalityTraits] = useState(DEFAULT_PERSONALITY);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [apiAvailable, setApiAvailable] = useState(true);
 
-  // Load initial personality data
   useEffect(() => {
     const fetchPersonalityData = async () => {
       try {
@@ -28,9 +24,8 @@ export const PersonalityProvider = ({ children }) => {
       } catch (err) {
         console.error("Failed to fetch personality data:", err);
         setApiAvailable(false);
-        // Use a more friendly error message
+
         setError("Using default personality settings (API server unavailable)");
-        // Keep using default values if API fails
       } finally {
         setIsLoading(false);
       }
@@ -53,16 +48,12 @@ export const PersonalityProvider = ({ children }) => {
     }
 
     try {
-      // Only show loading indicator if explicitly requested
-      // This helps prevent flickering during slider interactions
       if (options.showLoading) {
         setIsLoading(true);
       }
 
-      // Update local state immediately for responsive UI
       setPersonalityTraits((prev) => ({ ...prev, [trait]: value }));
 
-      // Only attempt API call if we believe the API is available
       if (apiAvailable) {
         const userId = personalityTraits.userId;
         await updatePersonaTrait(userId, trait, value);
@@ -75,7 +66,7 @@ export const PersonalityProvider = ({ children }) => {
       console.error(`Failed to update ${trait}:`, err);
       setApiAvailable(false);
       setError(`Personality trait updated locally only (API server unavailable)`);
-      // We still return true since we updated the UI state
+
       return true;
     } finally {
       if (options.showLoading) {

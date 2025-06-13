@@ -1,5 +1,4 @@
 module.exports = function override(config, env) {
-  // Add fallbacks for node modules
   config.resolve.fallback = {
     ...config.resolve.fallback,
     util: require.resolve("util/"),
@@ -16,7 +15,6 @@ module.exports = function override(config, env) {
     net: false,
   };
 
-  // Add process and buffer polyfills
   const webpack = require("webpack");
   config.plugins.push(
     new webpack.ProvidePlugin({

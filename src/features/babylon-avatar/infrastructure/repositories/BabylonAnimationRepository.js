@@ -23,8 +23,6 @@ export class BabylonAnimationRepository extends IAnimationRepository {
 
   async loadCharacterModel(modelPath) {
     try {
-      // First, check if there's already a character mesh in the scene
-      // This prevents duplicate loading when the avatar is already loaded by ReadyPlayerMeAvatar
       const existingMeshes = this.scene.meshes.filter(
         (mesh) =>
           mesh.name.includes("Wolf3D") ||
@@ -33,7 +31,6 @@ export class BabylonAnimationRepository extends IAnimationRepository {
       );
 
       if (existingMeshes.length > 0) {
-        // Create character entity from existing meshes
         const character = new Character({
           id: `character_${Date.now()}`,
           name: "ExistingAvatar",
@@ -41,14 +38,12 @@ export class BabylonAnimationRepository extends IAnimationRepository {
           animationGroups: [],
         });
 
-        // Setup mesh properties
         existingMeshes.forEach((mesh) => {
           if (mesh.name !== "_Character_") {
             mesh.isPickable = false;
           }
         });
 
-        // Ensure the root mesh is named _Character_
         const rootMesh =
           existingMeshes.find(
             (mesh) => mesh.name.includes("Wolf3D") || mesh.name.includes("Armature")
@@ -61,7 +56,6 @@ export class BabylonAnimationRepository extends IAnimationRepository {
         return character;
       }
 
-      // If no existing character found, load as fallback
       const result = await BABYLON.SceneLoader.ImportMeshAsync(
         null,
         this._getBasePath(modelPath),
@@ -80,14 +74,12 @@ export class BabylonAnimationRepository extends IAnimationRepository {
         animationGroups: result.animationGroups || [],
       });
 
-      // Setup mesh properties and ensure main mesh is named correctly
       result.meshes.forEach((mesh) => {
         if (mesh.name !== "_Character_") {
           mesh.isPickable = false;
         }
       });
 
-      // Ensure the root mesh is named _Character_
       if (result.meshes[0] && result.meshes[0].name !== "_Character_") {
         result.meshes[0].name = "_Character_";
       }
@@ -113,23 +105,18 @@ export class BabylonAnimationRepository extends IAnimationRepository {
 
       const animationGroup = result.animationGroups[0];
 
-      // Store loaded meshes for cleanup and hide them
       if (result.meshes && result.meshes.length > 0) {
         const animationMeshes = result.meshes.filter((mesh) => mesh);
         this._storeAnimationMeshesForCleanup(animationMeshes);
 
-        // Make meshes invisible but keep them functional for cloning
         animationMeshes.forEach((mesh) => {
           if (mesh) {
-            // Make invisible but keep enabled for transform node access
             mesh.isVisible = false;
             mesh.visibility = 0;
             mesh.isPickable = false;
 
-            // Move far away but don't scale down (preserves transform structure)
             mesh.position = new BABYLON.Vector3(50000, 50000, 50000);
 
-            // Hide child meshes but keep structure
             const childMeshes = mesh.getChildMeshes();
             childMeshes.forEach((childMesh) => {
               childMesh.isVisible = false;
@@ -184,11 +171,9 @@ export class BabylonAnimationRepository extends IAnimationRepository {
    * Clean up animation meshes after cloning is complete
    */
   cleanupAnimationMeshes() {
-    // First, dispose stored animation meshes
     this.animationMeshesToCleanup.forEach((mesh) => {
       if (mesh && !mesh.isDisposed()) {
         try {
-          // Dispose child meshes first
           const childMeshes = mesh.getChildMeshes();
           childMeshes.forEach((childMesh) => {
             if (childMesh.material) {
@@ -197,21 +182,16 @@ export class BabylonAnimationRepository extends IAnimationRepository {
             childMesh.dispose();
           });
 
-          // Dispose the mesh itself
           if (mesh.material) {
             mesh.material.dispose();
           }
           mesh.dispose();
-        } catch (error) {
-          // Silently handle disposal errors
-        }
+        } catch (error) {}
       }
     });
 
-    // Clear the cleanup list
     this.animationMeshesToCleanup = [];
 
-    // Then scan for any remaining duplicates
     this._forceRemoveDuplicateAvatars();
   }
 
@@ -223,7 +203,6 @@ export class BabylonAnimationRepository extends IAnimationRepository {
     const meshesToRemove = [];
     const characterMeshes = [];
 
-    // First, identify all potential character meshes
     scene.meshes.forEach((mesh) => {
       if (
         mesh &&
@@ -237,7 +216,6 @@ export class BabylonAnimationRepository extends IAnimationRepository {
       }
     });
 
-    // Remove any meshes that are positioned far away or hidden (likely animation meshes)
     characterMeshes.forEach((mesh) => {
       const pos = mesh.position;
       const isFarAway = Math.abs(pos.x) > 5000 || Math.abs(pos.y) > 5000 || Math.abs(pos.z) > 5000;
@@ -251,7 +229,6 @@ export class BabylonAnimationRepository extends IAnimationRepository {
 
     meshesToRemove.forEach((mesh) => {
       try {
-        // Dispose child meshes
         const childMeshes = mesh.getChildMeshes();
         childMeshes.forEach((childMesh) => {
           if (childMesh.material) {
@@ -260,14 +237,11 @@ export class BabylonAnimationRepository extends IAnimationRepository {
           childMesh.dispose();
         });
 
-        // Dispose the mesh
         if (mesh.material) {
           mesh.material.dispose();
         }
         mesh.dispose();
-      } catch (error) {
-        // Silently handle disposal errors
-      }
+      } catch (error) {}
     });
   }
 }

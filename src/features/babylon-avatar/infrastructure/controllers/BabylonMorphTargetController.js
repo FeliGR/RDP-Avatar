@@ -8,7 +8,7 @@ export class BabylonMorphTargetController extends IMorphTargetController {
   constructor(scene) {
     super();
     this.scene = scene;
-    this.automaticAnimations = new Map(); // Store intervals by character
+    this.automaticAnimations = new Map();
   }
 
   animateMorphTarget(character, morphName, targetValue, duration = 1000) {
@@ -18,14 +18,12 @@ export class BabylonMorphTargetController extends IMorphTargetController {
     }
 
     if (duration === 0) {
-      // Immediate change
       morphTarget.influence = targetValue;
       return;
     }
 
-    // Animate over time
     const initialValue = morphTarget.influence;
-    const numSteps = Math.max(1, duration / 16); // ~60fps
+    const numSteps = Math.max(1, duration / 16);
     let currentStep = 0;
 
     const animationCallback = () => {
@@ -42,34 +40,26 @@ export class BabylonMorphTargetController extends IMorphTargetController {
   }
 
   startAutomaticFacialAnimations(character) {
-    // Clear existing animations
     this.stopAutomaticFacialAnimations(character);
 
     const intervals = [];
 
-    // Eye blinking animation
     intervals.push(setInterval(() => this._animateEyes(character), 3000 + Math.random() * 2000));
 
-    // Subtle eyebrow movements
     intervals.push(setInterval(() => this._animateBrows(character), 5000 + Math.random() * 3000));
 
-    // Occasional smile variations
     intervals.push(setInterval(() => this._animateSmile(character), 8000 + Math.random() * 5000));
 
-    // Mouth left/right movements
     intervals.push(
       setInterval(() => this._animateMouthLeftRight(character), 6000 + Math.random() * 4000)
     );
 
-    // Nose movements
     intervals.push(setInterval(() => this._animateNose(character), 10000 + Math.random() * 5000));
 
-    // Jaw forward adjustments
     intervals.push(
       setInterval(() => this._animateJawForward(character), 12000 + Math.random() * 8000)
     );
 
-    // Cheek puff variations
     intervals.push(
       setInterval(() => this._animateCheeks(character), 15000 + Math.random() * 10000)
     );
@@ -85,7 +75,6 @@ export class BabylonMorphTargetController extends IMorphTargetController {
     }
   }
 
-  // Private animation methods
   _animateEyes(character) {
     const leftEye = character.getMorphTarget("leftEye");
     const rightEye = character.getMorphTarget("rightEye");
@@ -96,13 +85,11 @@ export class BabylonMorphTargetController extends IMorphTargetController {
   }
 
   async _performBlink(leftEye, rightEye) {
-    // Close eyes
     leftEye.influence = 1;
     rightEye.influence = 1;
 
     await this._wait(100);
 
-    // Open eyes
     leftEye.influence = 0;
     rightEye.influence = 0;
   }
@@ -170,7 +157,7 @@ export class BabylonMorphTargetController extends IMorphTargetController {
       const variation = 0.1 + Math.random() * 0.2;
       jawForward.influence = Math.min(1, currentInfluence + variation);
       setTimeout(() => {
-        jawForward.influence = 0.4; // Reset to default
+        jawForward.influence = 0.4;
       }, 2000);
     }
   }

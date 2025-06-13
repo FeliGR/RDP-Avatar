@@ -14,10 +14,9 @@ const PersonalityControls = () => {
   const { personalityTraits, updateTrait, isLoading, error } = usePersonality();
   const [localTraits, updateLocalTrait] = useLocalTraits(personalityTraits);
 
-  // Debounced function to update trait in the backend
   const debouncedUpdateTrait = useDebounce((trait, value) => {
     updateTrait(trait, value);
-  }, 400); // 400ms debounce time
+  }, 400);
 
   /**
    * Handler for trait slider changes
@@ -25,10 +24,8 @@ const PersonalityControls = () => {
   const handleTraitChange = (trait, value) => {
     const numericValue = parseInt(value, 10);
 
-    // Update local state immediately for responsive UI
     updateLocalTrait(trait, numericValue);
 
-    // Debounce the actual API call
     debouncedUpdateTrait(trait, numericValue);
   };
 

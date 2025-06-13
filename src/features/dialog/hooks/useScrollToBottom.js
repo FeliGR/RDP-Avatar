@@ -8,10 +8,8 @@ import { useLayoutEffect } from "react";
 const useScrollToBottom = (ref, deps = []) => {
   useLayoutEffect(() => {
     if (ref.current) {
-      // Force immediate scroll without animation
       ref.current.scrollIntoView(false);
 
-      // Double-ensure scroll position with a small delay and direct DOM manipulation
       setTimeout(() => {
         const container = document.querySelector(".messages-container");
         if (container) {

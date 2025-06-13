@@ -16,12 +16,10 @@ const TraitSlider = ({ trait, value, onChange, disabled = false }) => {
 
   const numericValue = typeof value === "number" ? Math.round(value) : parseInt(value, 10) || 3;
 
-  // Calculate percentage for progress bar width
   const calculatePercentage = (value) => {
-    return ((value - 1) / 4) * 100; // Scale from 1-5 to 0-100%
+    return ((value - 1) / 4) * 100;
   };
 
-  // Add pulse animation when value changes
   useEffect(() => {
     if (prevValueRef.current !== numericValue) {
       setIsPulse(true);
@@ -31,7 +29,6 @@ const TraitSlider = ({ trait, value, onChange, disabled = false }) => {
     }
   }, [numericValue]);
 
-  // Update range slider position variables for tooltip
   useEffect(() => {
     const updateRangePosition = () => {
       if (rangeRef.current) {
@@ -45,7 +42,6 @@ const TraitSlider = ({ trait, value, onChange, disabled = false }) => {
 
     updateRangePosition();
 
-    // Setup event listener for range input
     const element = rangeRef.current;
     if (element) {
       element.addEventListener("input", updateRangePosition);
@@ -60,7 +56,6 @@ const TraitSlider = ({ trait, value, onChange, disabled = false }) => {
 
   const percentage = calculatePercentage(numericValue);
 
-  // Get descriptive text based on value
   const getValueDescription = (trait, value) => {
     const descriptions = {
       openness: [
@@ -103,13 +98,11 @@ const TraitSlider = ({ trait, value, onChange, disabled = false }) => {
     return descriptions[trait] ? descriptions[trait][value - 1] : "";
   };
 
-  // Show trait info in modal
   const openTraitInfoModal = (e) => {
     e.stopPropagation();
     setIsModalOpen(true);
   };
 
-  // Close trait info modal
   const closeTraitInfoModal = () => {
     setIsModalOpen(false);
   };

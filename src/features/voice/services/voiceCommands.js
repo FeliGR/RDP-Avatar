@@ -1,6 +1,5 @@
 import { TRAIT_NAME_MAP } from "../../personality/constants/constants";
 
-// Voice recognition for commands and messaging
 class VoiceRecognition {
   constructor(onResult, onError, onEnd) {
     this.recognition = null;
@@ -17,16 +16,13 @@ class VoiceRecognition {
       return;
     }
 
-    // Use the appropriate speech recognition API
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     this.recognition = new SpeechRecognition();
 
-    // Configure recognition
     this.recognition.continuous = false;
     this.recognition.interimResults = false;
-    this.recognition.lang = "en-US"; // Default language
+    this.recognition.lang = "en-US";
 
-    // Set up event handlers
     this.recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
       console.log("Voice recognized:", transcript);
@@ -73,7 +69,6 @@ class VoiceRecognition {
     }
   }
 
-  // Change the recognition language
   setLanguage(langCode) {
     if (this.recognition) {
       this.recognition.lang = langCode;
@@ -81,7 +76,6 @@ class VoiceRecognition {
   }
 }
 
-// Command parser to handle voice commands
 export class VoiceCommandProcessor {
   constructor(dialogHandler, personalityHandler, onRecognitionEnd) {
     this.dialogHandler = dialogHandler;
@@ -94,7 +88,7 @@ export class VoiceCommandProcessor {
     this.voiceRecognition = new VoiceRecognition(
       (transcript) => {
         this.processCommand(transcript);
-        // Auto-stop after processing a command
+
         this.stopListening();
       },
       (error) => {
@@ -104,7 +98,6 @@ export class VoiceCommandProcessor {
         }
       },
       () => {
-        // This callback fires when recognition ends for any reason
         if (this.onRecognitionEnd) {
           this.onRecognitionEnd();
         }
@@ -126,20 +119,16 @@ export class VoiceCommandProcessor {
   }
 
   processCommand(transcript) {
-    // Convert to lowercase for easier matching
     const text = transcript.toLowerCase().trim();
 
-    // Check for personality adjustment commands
     if (this.isPersonalityCommand(text)) {
       return this.handlePersonalityCommand(text);
     }
 
-    // Check for message commands
     if (this.isMessageCommand(text)) {
       return this.handleMessageCommand(text);
     }
 
-    // If no specific command pattern is detected, treat as a regular message
     this.dialogHandler(text);
     return { type: "message", content: text };
   }
@@ -160,12 +149,11 @@ export class VoiceCommandProcessor {
   }
 
   handlePersonalityCommand(text) {
-    // Extract trait and action from command
     let trait, action, value;
 
     if (/increase/i.test(text)) {
       action = "increase";
-      // Extract the trait name
+
       const match = text.match(
         /(openness|conscientiousness|extraversion|agreeableness|neuroticism)/i
       );
@@ -183,13 +171,11 @@ export class VoiceCommandProcessor {
       );
       if (traitMatch) trait = traitMatch[0].toLowerCase();
 
-      // Try to extract a numeric value
       const valueMatch = text.match(/to (\d+(\.\d+)?)/i);
       if (valueMatch) value = parseFloat(valueMatch[1]);
     } else if (/(more|less)/i.test(text)) {
       action = /more/i.test(text) ? "increase" : "decrease";
 
-      // Use the imported trait map from constants
       for (const [key, mappedTrait] of Object.entries(TRAIT_NAME_MAP)) {
         if (text.includes(key)) {
           trait = mappedTrait;
@@ -198,12 +184,9 @@ export class VoiceCommandProcessor {
       }
     }
 
-    // If we identified a trait and action, update the personality
     if (trait && action) {
-      // Default increment/decrement amount
       const defaultChange = 0.5;
 
-      // Use the handleTraitAction method from context
       this.personalityHandler(trait, action, value || defaultChange);
 
       return {
@@ -218,7 +201,6 @@ export class VoiceCommandProcessor {
   }
 
   handleMessageCommand(text) {
-    // Extract the actual message content
     let messageContent = "";
 
     if (text.startsWith("send message")) {

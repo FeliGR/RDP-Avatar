@@ -12,10 +12,8 @@ import TypingIndicator from "./TypingIndicator";
 const MessageList = ({ messages, isLoading }) => {
   const messagesEndRef = useRef(null);
 
-  // Auto-scroll to bottom when messages change or loading state changes
   useScrollToBottom(messagesEndRef, [messages, isLoading]);
 
-  // If no messages, show empty state
   if (messages.length === 0) {
     return (
       <div className="messages-container">

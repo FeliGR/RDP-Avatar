@@ -7,7 +7,7 @@ export const DEFAULT_PERSONALITY = {
   extraversion: 3.0,
   agreeableness: 3.0,
   neuroticism: 3.0,
-  userId: 1, // This would typically come from authentication
+  userId: 1,
 };
 
 /**

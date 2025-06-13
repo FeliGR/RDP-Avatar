@@ -22,13 +22,11 @@ export class Character {
     this.currentAnimation = null;
   }
 
-  // Domain business rules
   canPlayAnimation(animationName) {
     return this.isLoaded && this.hasAnimation(animationName);
   }
 
   hasAnimation(animationName) {
-    // Make case-insensitive search
     const lowerAnimationName = animationName.toLowerCase();
     return this.animationGroups.some((group) =>
       group.name.toLowerCase().includes(lowerAnimationName)

@@ -15,12 +15,11 @@ export class PlayIdleAnimationUseCase {
       throw new Error("Character cannot play idle animations");
     }
 
-    // Get available idle animations - check both original and cloned versions
     const idleAnimationNames = [
       "M_Standing_Idle_Variations_001",
       "M_Standing_Idle_Variations_002",
       "M_Standing_Idle_Variations_003",
-      // Also check for names without the 'M_Standing_' prefix (after cloning)
+
       "Idle_Variations_001",
       "Idle_Variations_002",
       "Idle_Variations_003",
@@ -28,7 +27,6 @@ export class PlayIdleAnimationUseCase {
 
     let availableAnimations = [];
 
-    // Check for available animations
     idleAnimationNames.forEach((name) => {
       if (character.hasAnimation(name)) {
         availableAnimations.push(name);
@@ -39,7 +37,6 @@ export class PlayIdleAnimationUseCase {
       throw new Error("No idle animations available");
     }
 
-    // Play first available idle animation with looping
     const selectedAnimation = availableAnimations[0];
 
     try {
@@ -48,10 +45,8 @@ export class PlayIdleAnimationUseCase {
         speedRatio: 1.0,
       });
 
-      // Start automatic facial animations for more lifelike idle state
       this.morphTargetController.startAutomaticFacialAnimations(character);
 
-      // Setup observers to cycle through idle variations
       this._setupIdleVariationCycling(character, availableAnimations);
 
       return {
@@ -72,14 +67,12 @@ export class PlayIdleAnimationUseCase {
    */
   _setupIdleVariationCycling(character, availableAnimations) {
     if (availableAnimations.length <= 1) {
-      return; // No variations to cycle through
+      return;
     }
 
     let currentIndex = 0;
 
-    // Setup observer to switch to next animation when current one ends
     this.animationController.setupIdleObservers(character, () => {
-      // Move to next animation
       currentIndex = (currentIndex + 1) % availableAnimations.length;
       const nextAnimation = availableAnimations[currentIndex];
 

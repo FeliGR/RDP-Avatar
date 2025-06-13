@@ -14,7 +14,6 @@ const DialogBox = () => {
   const { messages, sendUserMessage, isLoading, error, clearConversation } = useDialog();
   const { updateTrait, personalityTraits } = usePersonality();
 
-  // Voice command functionality
   const { isListening, statusMessage, toggleVoiceInput } = useVoiceCommands(
     sendUserMessage,
     updateTrait,

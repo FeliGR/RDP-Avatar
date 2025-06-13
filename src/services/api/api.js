@@ -6,9 +6,6 @@ import axios from "axios";
  * It handles configuration, error management, and organizes API endpoints by service.
  */
 
-// Environment configuration utilities
-// -----------------------------------------------------------------------------
-
 /**
  * Gets environment variables, prioritizing runtime variables over build-time ones
  * @param {string} key - The environment variable key
@@ -16,11 +13,10 @@ import axios from "axios";
  * @return {*} The environment variable value or default
  */
 const getRuntimeEnv = (key, defaultValue) => {
-  // Check if we have runtime environment variables
   if (window.ENV && window.ENV[key]) {
     return window.ENV[key];
   }
-  // Fall back to build-time environment variables
+
   return process.env[key] || defaultValue;
 };
 
@@ -29,9 +25,6 @@ const getRuntimeEnv = (key, defaultValue) => {
  */
 const isLocalDevelopment =
   window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-
-// Global API configuration
-// -----------------------------------------------------------------------------
 
 /**
  * API endpoints configuration with environment-aware defaults
@@ -56,11 +49,8 @@ const DEFAULT_CONFIG = {
   headers: {
     "Content-Type": "application/json",
   },
-  timeout: 30000, // 30 second timeout - Increased for AI processing
+  timeout: 30000,
 };
-
-// API Client Factory
-// -----------------------------------------------------------------------------
 
 /**
  * Creates a configured axios instance with error handling interceptors
@@ -73,7 +63,6 @@ const createApiClient = (baseURL) => {
     baseURL,
   });
 
-  // Add response interceptor for global error handling
   client.interceptors.response.use(
     (response) => response,
     (error) => {
@@ -86,12 +75,8 @@ const createApiClient = (baseURL) => {
   return client;
 };
 
-// Create service-specific API clients
 const personaApi = createApiClient(API_ENDPOINTS.personaEngine);
 const dialogApi = createApiClient(API_ENDPOINTS.dialogOrchestrator);
-
-// Error Handler
-// -----------------------------------------------------------------------------
 
 /**
  * Standardizes API error responses across the application
@@ -100,22 +85,18 @@ const dialogApi = createApiClient(API_ENDPOINTS.dialogOrchestrator);
  */
 export const handleApiError = (error) => {
   if (error.response) {
-    // The request was made and the server responded with a status code
-    // that falls out of the range of 2xx
     return {
       status: error.response.status,
       data: error.response.data,
       message: error.response.data?.message || "An error occurred with the API",
     };
   } else if (error.request) {
-    // The request was made but no response was received
     return {
       status: 0,
       data: null,
       message: "No response received from server. Please check your connection.",
     };
   } else {
-    // Something happened in setting up the request that triggered an Error
     return {
       status: 0,
       data: null,
@@ -123,9 +104,6 @@ export const handleApiError = (error) => {
     };
   }
 };
-
-// API Services
-// -----------------------------------------------------------------------------
 
 /**
  * Persona Engine API Service
@@ -142,7 +120,6 @@ export const personaService = {
       const response = await personaApi.get(`/api/personas/${userId}`);
       return response.data;
     } catch (error) {
-      // Error is already processed by the interceptor
       throw error;
     }
   },
@@ -162,7 +139,6 @@ export const personaService = {
       });
       return response.data;
     } catch (error) {
-      // Error is already processed by the interceptor
       throw error;
     }
   },
@@ -186,15 +162,11 @@ export const dialogService = {
       });
       return response.data;
     } catch (error) {
-      // Error is already processed by the interceptor
       throw error;
     }
   },
 };
 
-// Legacy exports for backward compatibility
-// These should be gradually replaced with the service-based approach
-// -----------------------------------------------------------------------------
 export const getPersonaProfile = personaService.getProfile;
 export const updatePersonaTrait = personaService.updateTrait;
 export const sendMessage = dialogService.sendMessage;

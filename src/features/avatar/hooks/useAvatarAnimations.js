@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { AnimationService } from "../../babylon-avatar/index.js";
+import { useAvatarAnimationContext } from "../context/AvatarAnimationContext";
 
 /**
  * React Hook for Avatar Animations
  * Provides clean integration between React components and the animation system
  */
 export const useAvatarAnimations = (scene, shadowGenerator = null) => {
+  const { registerAnimationService, setAnimations } = useAvatarAnimationContext();
   const [isInitialized, setIsInitialized] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [currentCharacter, setCurrentCharacter] = useState(null);
@@ -81,15 +83,38 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
 
     try {
       const defaultAnimations = [
+        // Idle animations
         "/animations/masculine/idle/M_Standing_Idle_Variations_001.glb",
         "/animations/masculine/idle/M_Standing_Idle_Variations_002.glb",
         "/animations/masculine/idle/M_Standing_Idle_Variations_003.glb",
 
+        // Talking animations for regular avatar functionality
         "/animations/masculine/expression/M_Talking_Variations_005.glb",
         "/animations/masculine/expression/M_Talking_Variations_006.glb",
         "/animations/masculine/expression/M_Talking_Variations_007.glb",
 
+        // Expression animations for AI responses
+        "/animations/masculine/expression/M_Standing_Expressions_001.glb",
+        "/animations/masculine/expression/M_Standing_Expressions_002.glb",
+        "/animations/masculine/expression/M_Standing_Expressions_004.glb",
+        "/animations/masculine/expression/M_Standing_Expressions_005.glb",
+        "/animations/masculine/expression/M_Standing_Expressions_006.glb",
+        "/animations/masculine/expression/M_Standing_Expressions_007.glb",
+        "/animations/masculine/expression/M_Standing_Expressions_008.glb",
         "/animations/masculine/expression/M_Standing_Expressions_013.glb",
+
+        // Dance animations for AI responses
+        "/animations/masculine/dance/M_Dances_001.glb",
+        "/animations/masculine/dance/M_Dances_002.glb",
+        "/animations/masculine/dance/M_Dances_003.glb",
+        "/animations/masculine/dance/M_Dances_004.glb",
+        "/animations/masculine/dance/M_Dances_005.glb",
+
+        // Additional talking variations for AI responses
+        "/animations/masculine/expression/M_Talking_Variations_001.glb",
+        "/animations/masculine/expression/M_Talking_Variations_002.glb",
+        "/animations/masculine/expression/M_Talking_Variations_003.glb",
+        "/animations/masculine/expression/M_Talking_Variations_004.glb",
       ];
 
       const animationPaths = options.animationPaths || defaultAnimations;
@@ -99,6 +124,10 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
       if (result.success) {
         setCurrentCharacter(result.character);
         setAnimationState("idle");
+
+        // Register animation service and set loaded animations in context
+        registerAnimationService(animationServiceRef.current);
+        setAnimations(animationPaths);
 
         setTimeout(async () => {
           try {
@@ -128,7 +157,7 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
       setIsLoading(false);
       return { success: false, error: error.message };
     }
-  }, [_cleanupDuplicateAvatars]);
+  }, [_cleanupDuplicateAvatars, registerAnimationService, setAnimations]);
 
   /**
    * Start idle animations

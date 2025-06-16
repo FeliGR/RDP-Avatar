@@ -1,6 +1,7 @@
 import React, { createContext, useCallback, useContext, useState } from "react";
 import { sendMessage } from "../../../services/api";
 import { usePersonality } from "../../personality";
+import { useAvatarAnimation } from "../../avatar/context/AvatarAnimationContext";
 
 /**
  * Dialog context for managing conversation state and API interactions
@@ -28,6 +29,7 @@ const FALLBACK_RESPONSES = [
  */
 export const DialogProvider = ({ children }) => {
   const { personalityTraits, apiAvailable: personalityApiAvailable } = usePersonality();
+  const { triggerAIResponseAnimation } = useAvatarAnimation();
 
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -132,6 +134,12 @@ export const DialogProvider = ({ children }) => {
         const botMessage = createMessage(responseText, "bot", !dialogApiAvailable);
 
         setMessages((prevMessages) => [...prevMessages, botMessage]);
+        
+        // Trigger AI response animation when bot responds
+        if (triggerAIResponseAnimation) {
+          triggerAIResponseAnimation('all'); // Use all available animations for varied responses
+        }
+        
         return botMessage;
       } catch (err) {
         console.error("Failed to send message:", err);
@@ -141,7 +149,7 @@ export const DialogProvider = ({ children }) => {
         setIsLoading(false);
       }
     },
-    [personalityTraits.userId, dialogApiAvailable, fetchBotResponse, createMessage]
+    [personalityTraits.userId, dialogApiAvailable, fetchBotResponse, createMessage, triggerAIResponseAnimation]
   );
 
   /**

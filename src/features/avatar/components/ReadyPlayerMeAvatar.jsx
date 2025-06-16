@@ -3,6 +3,8 @@ import * as BABYLON from "babylonjs";
 import "babylonjs-loaders";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useAvatarAnimations } from "../hooks/useAvatarAnimations.js";
+import { useAIResponseAnimations } from "../hooks/useAIResponseAnimations.js";
+import { useAvatarAnimation } from "../context/AvatarAnimationContext.js";
 import "./ReadyPlayerMeAvatar.css";
 
 const RPM_CLIENT_ID =
@@ -16,6 +18,7 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
   const [showCreator, setShowCreator] = useState(!savedAvatarUrl);
   const [isLoading, setIsLoading] = useState(false);
   const [avatarError, setAvatarError] = useState(null);
+  const [avatarLoaded, setAvatarLoaded] = useState(false); // Add state to track when avatar is loaded
   const avatarRef = useRef(null);
   const sceneRef = useRef(null);
   const shadowGeneratorRef = useRef(null);
@@ -23,10 +26,25 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
   const loadingRef = useRef(false);
   const animationsLoadedRef = useRef(false);
 
-  const { isInitialized: animationsInitialized, loadAvatarAnimations } = useAvatarAnimations(
+  const { registerAnimationService, registerAIResponseCallback } = useAvatarAnimation();
+
+  const { 
+    isInitialized: animationsInitialized, 
+    loadAvatarAnimations, 
+    animationService 
+  } = useAvatarAnimations(
     sceneReady ? sceneRef.current?.scene : null,
     sceneReady ? shadowGeneratorRef.current : null
   );
+
+  const { triggerAIResponseAnimation } = useAIResponseAnimations(animationService);
+
+  // Register animation service when it becomes available
+  useEffect(() => {
+    if (animationService) {
+      registerAnimationService(animationService);
+    }
+  }, [animationService, registerAnimationService]);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -85,6 +103,7 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
 
     loadingRef.current = true;
     animationsLoadedRef.current = false;
+    setAvatarLoaded(false); // Reset avatar loaded state
     setIsLoading(true);
     setAvatarError(null);
 
@@ -166,6 +185,7 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
           avatarMesh.position = new BABYLON.Vector3(0, 0, 0);
 
           avatarRef.current = avatarMesh;
+          setAvatarLoaded(true);
 
           if (onAvatarLoaded) {
             onAvatarLoaded(avatarMesh);
@@ -174,9 +194,7 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
           setIsLoading(false);
           loadingRef.current = false;
         },
-        (progressEvent) => {
-          // Progress tracking could be implemented here if needed
-        },
+        null, // No progress callback needed
         (scene, message, exception) => {
           setAvatarError(`Failed to load avatar: ${message}`);
           setIsLoading(false);
@@ -197,18 +215,25 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
   }, [avatarUrl, sceneReady, loadAvatar]);
 
   useEffect(() => {
-    if (avatarRef.current && animationsInitialized && avatarUrl && !animationsLoadedRef.current) {
+    if (avatarRef.current && avatarLoaded && animationsInitialized && avatarUrl && !animationsLoadedRef.current) {
       animationsLoadedRef.current = true;
 
       setTimeout(() => {
         loadAvatarAnimations(avatarUrl).then((result) => {
           if (!result.success) {
             animationsLoadedRef.current = false;
+          } else {
+            // Register AI response callback after animations are successfully loaded
+            if (triggerAIResponseAnimation && animationService && animationService.isReady()) {
+              registerAIResponseCallback(() => {
+                triggerAIResponseAnimation('all');
+              });
+            }
           }
         });
       }, 200);
     }
-  }, [animationsInitialized, avatarUrl, loadAvatarAnimations]);
+  }, [avatarLoaded, animationsInitialized, avatarUrl, loadAvatarAnimations, triggerAIResponseAnimation, animationService, registerAIResponseCallback]);
 
   useEffect(() => {
     if (avatarError) {

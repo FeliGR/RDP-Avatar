@@ -51,7 +51,7 @@ export class BabylonAnimationController extends IAnimationController {
       speedRatio = 1.0,
       frameStart = 0,
       frameEnd = null,
-      transitionDuration = 0.3
+      transitionDuration = 0.3,
     } = options;
 
     // Set animation properties
@@ -72,7 +72,7 @@ export class BabylonAnimationController extends IAnimationController {
 
     // Use Babylon.js coroutine system for smooth blending
     const blendSpeed = Math.max(0.01, 1.0 / (transitionDuration * 60)); // Ensure minimum speed
-    
+
     return new Promise((resolve) => {
       this.scene.onBeforeRenderObservable.runCoroutineAsync(
         this._smoothAnimationBlending(
@@ -93,7 +93,7 @@ export class BabylonAnimationController extends IAnimationController {
   // Helper method to reset all animation weights
   _resetAllAnimationWeights(character) {
     if (character.animationGroups) {
-      character.animationGroups.forEach(animGroup => {
+      character.animationGroups.forEach((animGroup) => {
         try {
           animGroup.setWeightForAllAnimatables(1);
         } catch (error) {
@@ -104,36 +104,46 @@ export class BabylonAnimationController extends IAnimationController {
   }
 
   // Coroutine for smooth animation blending
-  *_smoothAnimationBlending(fromAnim, toAnim, speed, isLooping, speedRatio, frameStart, frameEnd, character, onComplete) {
+  *_smoothAnimationBlending(
+    fromAnim,
+    toAnim,
+    speed,
+    isLooping,
+    speedRatio,
+    frameStart,
+    frameEnd,
+    character,
+    onComplete
+  ) {
     let currentWeight = 1;
     let newWeight = 0;
-    
+
     // Start the new animation
     toAnim.start(isLooping, speedRatio, frameStart, frameEnd, false);
-    
+
     // Set speed ratios
     fromAnim.speedRatio = speedRatio;
     toAnim.speedRatio = speedRatio;
-    
+
     // Blend weights smoothly
     while (newWeight < 1) {
       newWeight += speed;
       currentWeight -= speed;
-      
+
       // Clamp values
       newWeight = Math.min(newWeight, 1);
       currentWeight = Math.max(currentWeight, 0);
-      
+
       try {
         toAnim.setWeightForAllAnimatables(newWeight);
         fromAnim.setWeightForAllAnimatables(currentWeight);
       } catch (error) {
         break;
       }
-      
+
       yield; // This allows Babylon to render frames during the blend
     }
-    
+
     // Ensure final state
     try {
       toAnim.setWeightForAllAnimatables(1);
@@ -142,10 +152,10 @@ export class BabylonAnimationController extends IAnimationController {
     } catch (error) {
       // Ignore final weight setting errors
     }
-    
+
     // Update current animation
     character.setCurrentAnimation(toAnim);
-    
+
     if (onComplete) {
       onComplete();
     }

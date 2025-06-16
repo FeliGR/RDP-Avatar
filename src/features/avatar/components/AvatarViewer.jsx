@@ -42,10 +42,7 @@ const AvatarViewer = () => {
       <div className="avatar-canvas-container">
         <canvas ref={canvasRef} className="avatar-canvas" />
 
-        <ReadyPlayerMeAvatar
-          canvasRef={canvasRef}
-          personalityTraits={personalityTraits}
-        />
+        <ReadyPlayerMeAvatar canvasRef={canvasRef} personalityTraits={personalityTraits} />
 
         {/* Tooltip for interaction instructions */}
         <div className={`avatar-tooltip ${tooltipVisible ? "visible" : ""}`}>

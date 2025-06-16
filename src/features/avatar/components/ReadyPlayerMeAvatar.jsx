@@ -16,10 +16,10 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
   const savedAvatarUrl = localStorage.getItem("rpmAvatarUrl");
   const [avatarUrl, setAvatarUrl] = useState(savedAvatarUrl || null);
   const [showCreator, setShowCreator] = useState(!savedAvatarUrl);
-  const [isLoading, setIsLoading] = useState(!!savedAvatarUrl); // Start loading if there's a saved avatar
+  const [isLoading, setIsLoading] = useState(!!savedAvatarUrl);
   const [avatarError, setAvatarError] = useState(null);
-  const [avatarLoaded, setAvatarLoaded] = useState(false); // Add state to track when avatar is loaded
-  const [avatarFullyReady, setAvatarFullyReady] = useState(false); // Track when avatar + animations are fully ready
+  const [avatarLoaded, setAvatarLoaded] = useState(false);
+  const [avatarFullyReady, setAvatarFullyReady] = useState(false);
   const avatarRef = useRef(null);
   const sceneRef = useRef(null);
   const shadowGeneratorRef = useRef(null);
@@ -29,19 +29,21 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
 
   const { registerAnimationService, registerAIResponseCallback } = useAvatarAnimation();
 
-  const { 
-    isInitialized: animationsInitialized, 
-    loadAvatarAnimations, 
+  const {
+    isInitialized: animationsInitialized,
+    loadAvatarAnimations,
     startSpecificIdleAnimation,
-    animationService 
+    animationService,
   } = useAvatarAnimations(
     sceneReady ? sceneRef.current?.scene : null,
     sceneReady ? shadowGeneratorRef.current : null
   );
 
-  const { triggerAIResponseAnimation } = useAIResponseAnimations(animationService, startSpecificIdleAnimation);
+  const { triggerAIResponseAnimation } = useAIResponseAnimations(
+    animationService,
+    startSpecificIdleAnimation
+  );
 
-  // Register animation service when it becomes available
   useEffect(() => {
     if (animationService) {
       registerAnimationService(animationService);
@@ -100,119 +102,120 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
     };
   }, [canvasRef]);
 
-  const loadAvatar = useCallback(async (url) => {
-    if (!sceneRef.current || !sceneRef.current.scene || loadingRef.current) return;
+  const loadAvatar = useCallback(
+    async (url) => {
+      if (!sceneRef.current || !sceneRef.current.scene || loadingRef.current) return;
 
-    loadingRef.current = true;
-    animationsLoadedRef.current = false;
-    setAvatarLoaded(false); // Reset avatar loaded state
-    setAvatarFullyReady(false); // Reset fully ready state
-    setIsLoading(true);
-    setAvatarError(null);
+      loadingRef.current = true;
+      animationsLoadedRef.current = false;
+      setAvatarLoaded(false);
+      setAvatarFullyReady(false);
+      setIsLoading(true);
+      setAvatarError(null);
 
-    try {
-      const { scene } = sceneRef.current;
+      try {
+        const { scene } = sceneRef.current;
 
-      if (avatarRef.current) {
-        if (Array.isArray(avatarRef.current.getChildMeshes)) {
-          const childMeshes = avatarRef.current.getChildMeshes();
-          childMeshes.forEach((mesh) => {
-            if (mesh.material) {
-              mesh.material.dispose();
-            }
-            mesh.dispose();
-          });
-        }
-
-        avatarRef.current.dispose();
-        avatarRef.current = null;
-      }
-
-      const sceneMeshes = scene.meshes.slice();
-
-      sceneMeshes.forEach((mesh) => {
-        const shouldKeep =
-          mesh.name === "camera" ||
-          mesh.name.includes("light") ||
-          mesh.name.includes("__root__") ||
-          mesh.name === "ground" ||
-          mesh.name === "skybox" ||
-          mesh.name.includes("Sphere") ||
-          mesh.name.includes("Base") ||
-          mesh.name.includes("TV");
-
-        const isFarAway =
-          mesh.position &&
-          (Math.abs(mesh.position.x) > 50000 ||
-            Math.abs(mesh.position.y) > 50000 ||
-            Math.abs(mesh.position.z) > 50000);
-
-        if (!shouldKeep || isFarAway) {
-          console.log("Disposing mesh:", mesh.name, isFarAway ? "(far away)" : "");
-
-          try {
-            const childMeshes = mesh.getChildMeshes();
-            childMeshes.forEach((childMesh) => {
-              if (childMesh.material) {
-                childMesh.material.dispose();
+        if (avatarRef.current) {
+          if (Array.isArray(avatarRef.current.getChildMeshes)) {
+            const childMeshes = avatarRef.current.getChildMeshes();
+            childMeshes.forEach((mesh) => {
+              if (mesh.material) {
+                mesh.material.dispose();
               }
-              childMesh.dispose();
+              mesh.dispose();
             });
+          }
 
-            if (mesh.material) {
-              mesh.material.dispose();
-            }
-            mesh.dispose();
-          } catch (error) {}
+          avatarRef.current.dispose();
+          avatarRef.current = null;
         }
-      });
 
-      const fullUrl = url.startsWith("http") ? url : `https://models.readyplayer.me/${url}`;
+        const sceneMeshes = scene.meshes.slice();
 
-      BABYLON.SceneLoader.ImportMesh(
-        "",
-        fullUrl,
-        "",
-        scene,
-        (meshes, particleSystems, skeletons, animationGroups) => {
-          if (meshes.length === 0) {
-            setAvatarError("Avatar loaded but no meshes were found");
+        sceneMeshes.forEach((mesh) => {
+          const shouldKeep =
+            mesh.name === "camera" ||
+            mesh.name.includes("light") ||
+            mesh.name.includes("__root__") ||
+            mesh.name === "ground" ||
+            mesh.name === "skybox" ||
+            mesh.name.includes("Sphere") ||
+            mesh.name.includes("Base") ||
+            mesh.name.includes("TV");
+
+          const isFarAway =
+            mesh.position &&
+            (Math.abs(mesh.position.x) > 50000 ||
+              Math.abs(mesh.position.y) > 50000 ||
+              Math.abs(mesh.position.z) > 50000);
+
+          if (!shouldKeep || isFarAway) {
+            console.log("Disposing mesh:", mesh.name, isFarAway ? "(far away)" : "");
+
+            try {
+              const childMeshes = mesh.getChildMeshes();
+              childMeshes.forEach((childMesh) => {
+                if (childMesh.material) {
+                  childMesh.material.dispose();
+                }
+                childMesh.dispose();
+              });
+
+              if (mesh.material) {
+                mesh.material.dispose();
+              }
+              mesh.dispose();
+            } catch (error) {}
+          }
+        });
+
+        const fullUrl = url.startsWith("http") ? url : `https://models.readyplayer.me/${url}`;
+
+        BABYLON.SceneLoader.ImportMesh(
+          "",
+          fullUrl,
+          "",
+          scene,
+          (meshes, particleSystems, skeletons, animationGroups) => {
+            if (meshes.length === 0) {
+              setAvatarError("Avatar loaded but no meshes were found");
+              setIsLoading(false);
+              loadingRef.current = false;
+              return;
+            }
+
+            const avatarMesh = meshes[0];
+            avatarMesh.name = "_Character_";
+            avatarMesh.scaling = new BABYLON.Vector3(1, 1, 1);
+            avatarMesh.position = new BABYLON.Vector3(0, 0, 0);
+
+            avatarMesh.setEnabled(false);
+
+            avatarRef.current = avatarMesh;
+            setAvatarLoaded(true);
+
+            if (onAvatarLoaded) {
+              onAvatarLoaded(avatarMesh);
+            }
+
+            loadingRef.current = false;
+          },
+          null,
+          (scene, message, exception) => {
+            setAvatarError(`Failed to load avatar: ${message}`);
             setIsLoading(false);
             loadingRef.current = false;
-            return;
           }
-
-          const avatarMesh = meshes[0];
-          avatarMesh.name = "_Character_";
-          avatarMesh.scaling = new BABYLON.Vector3(1, 1, 1);
-          avatarMesh.position = new BABYLON.Vector3(0, 0, 0);
-          
-          // Make avatar invisible until animations are fully loaded
-          avatarMesh.setEnabled(false);
-
-          avatarRef.current = avatarMesh;
-          setAvatarLoaded(true);
-
-          if (onAvatarLoaded) {
-            onAvatarLoaded(avatarMesh);
-          }
-
-          // Don't set loading to false here - wait for animations to be fully loaded and idle animation to start
-          loadingRef.current = false;
-        },
-        null, // No progress callback needed
-        (scene, message, exception) => {
-          setAvatarError(`Failed to load avatar: ${message}`);
-          setIsLoading(false);
-          loadingRef.current = false;
-        }
-      );
-    } catch (error) {
-      setAvatarError(`Failed to load avatar: ${error.message}`);
-      setIsLoading(false);
-      loadingRef.current = false;
-    }
-  }, [onAvatarLoaded]);
+        );
+      } catch (error) {
+        setAvatarError(`Failed to load avatar: ${error.message}`);
+        setIsLoading(false);
+        loadingRef.current = false;
+      }
+    },
+    [onAvatarLoaded]
+  );
 
   useEffect(() => {
     if (avatarUrl && sceneRef.current && sceneReady && !loadingRef.current) {
@@ -221,41 +224,52 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
   }, [avatarUrl, sceneReady, loadAvatar]);
 
   useEffect(() => {
-    if (avatarRef.current && avatarLoaded && animationsInitialized && avatarUrl && !animationsLoadedRef.current) {
+    if (
+      avatarRef.current &&
+      avatarLoaded &&
+      animationsInitialized &&
+      avatarUrl &&
+      !animationsLoadedRef.current
+    ) {
       animationsLoadedRef.current = true;
 
       setTimeout(() => {
         loadAvatarAnimations(avatarUrl).then((result) => {
           if (!result.success) {
             animationsLoadedRef.current = false;
-            setIsLoading(false); // Set loading to false on error
-            // Keep avatar invisible on error
+            setIsLoading(false);
+
             if (avatarRef.current) {
               avatarRef.current.setEnabled(false);
             }
           } else {
-            // Register AI response callback after animations are successfully loaded
             if (triggerAIResponseAnimation && animationService && animationService.isReady()) {
               registerAIResponseCallback(() => {
-                triggerAIResponseAnimation('all');
+                triggerAIResponseAnimation("all");
               });
             }
-            
-            // Wait a bit more to ensure idle animation has started, then hide loading
+
             setTimeout(() => {
               setIsLoading(false);
-              setAvatarFullyReady(true); // Avatar is now fully ready with animations
-              
-              // Make avatar visible now that everything is ready
+              setAvatarFullyReady(true);
+
               if (avatarRef.current) {
                 avatarRef.current.setEnabled(true);
               }
-            }, 1000); // Give time for idle animation to start smoothly
+            }, 1000);
           }
         });
       }, 200);
     }
-  }, [avatarLoaded, animationsInitialized, avatarUrl, loadAvatarAnimations, triggerAIResponseAnimation, animationService, registerAIResponseCallback]);
+  }, [
+    avatarLoaded,
+    animationsInitialized,
+    avatarUrl,
+    loadAvatarAnimations,
+    triggerAIResponseAnimation,
+    animationService,
+    registerAIResponseCallback,
+  ]);
 
   useEffect(() => {
     if (avatarError) {
@@ -283,7 +297,7 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
     localStorage.setItem("rpmAvatarUrl", cacheBustedUrl);
 
     setIsLoading(true);
-    setAvatarFullyReady(false); // Reset fully ready state for new avatar
+    setAvatarFullyReady(false);
 
     if (avatarRef.current) {
       avatarRef.current = null;
@@ -297,7 +311,9 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
 
   return (
     <div className="ready-player-me-avatar">
-      {(isLoading || (avatarUrl && !avatarFullyReady)) && !showCreator && <div className="avatar-loading">Loading avatar...</div>}
+      {(isLoading || (avatarUrl && !avatarFullyReady)) && !showCreator && (
+        <div className="avatar-loading">Loading avatar...</div>
+      )}
 
       {!avatarUrl && !showCreator && !isLoading && (
         <div className="no-avatar-message">

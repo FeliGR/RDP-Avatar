@@ -62,134 +62,139 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
   /**
    * Start specific idle animation with smooth transition
    */
-  const startSpecificIdleAnimation = useCallback(async (animationName = "F_Standing_Idle_Variations_002") => {
-    if (!animationServiceRef.current) {
-      return { success: false, error: "Animation service not available" };
-    }
-
-    if (!animationServiceRef.current.isReady()) {
-      return { success: false, error: "Animation service not ready" };
-    }
-
-    const character = animationServiceRef.current.getCurrentCharacter();
-    if (!character) {
-      return { success: false, error: "Character not available" };
-    }
-
-    try {
-      const result = await animationServiceRef.current.playAnimationWithTransition(animationName, {
-        isLooping: true,
-        speedRatio: 1.0,
-        transitionDuration: 0.5
-      });
-      
-      if (result.success) {
-        setAnimationState("idle");
+  const startSpecificIdleAnimation = useCallback(
+    async (animationName = "F_Standing_Idle_Variations_002") => {
+      if (!animationServiceRef.current) {
+        return { success: false, error: "Animation service not available" };
       }
-      return result;
-    } catch (error) {
-      setError(error.message);
-      return { success: false, error: error.message };
-    }
-  }, []); // Remove currentCharacter dependency
+
+      if (!animationServiceRef.current.isReady()) {
+        return { success: false, error: "Animation service not ready" };
+      }
+
+      const character = animationServiceRef.current.getCurrentCharacter();
+      if (!character) {
+        return { success: false, error: "Character not available" };
+      }
+
+      try {
+        const result = await animationServiceRef.current.playAnimationWithTransition(
+          animationName,
+          {
+            isLooping: true,
+            speedRatio: 1.0,
+            transitionDuration: 0.5,
+          }
+        );
+
+        if (result.success) {
+          setAnimationState("idle");
+        }
+        return result;
+      } catch (error) {
+        setError(error.message);
+        return { success: false, error: error.message };
+      }
+    },
+    []
+  );
 
   /**
    * Load character with animations from Ready Player Me avatar
    * @param {string} avatarUrl - Ready Player Me avatar URL
    * @param {Object} options - Loading options
    */
-  const loadAvatarAnimations = useCallback(async (avatarUrl, options = {}) => {
-    if (!animationServiceRef.current) {
-      setError("Animation service not initialized");
-      return { success: false, error: "Animation service not initialized" };
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const defaultAnimations = [
-        // Idle animations
-        "/animations/masculine/idle/M_Standing_Idle_Variations_001.glb",
-        "/animations/masculine/idle/M_Standing_Idle_Variations_002.glb",
-        "/animations/masculine/idle/M_Standing_Idle_Variations_003.glb",
-        "/animations/feminine/idle/F_Standing_Idle_Variations_002.glb",
-
-        // Talking animations for regular avatar functionality
-        "/animations/masculine/expression/M_Talking_Variations_005.glb",
-        "/animations/masculine/expression/M_Talking_Variations_006.glb",
-        "/animations/masculine/expression/M_Talking_Variations_007.glb",
-
-        // Expression animations for AI responses
-        "/animations/masculine/expression/M_Standing_Expressions_001.glb",
-        "/animations/masculine/expression/M_Standing_Expressions_002.glb",
-        "/animations/masculine/expression/M_Standing_Expressions_004.glb",
-        "/animations/masculine/expression/M_Standing_Expressions_005.glb",
-        "/animations/masculine/expression/M_Standing_Expressions_006.glb",
-        "/animations/masculine/expression/M_Standing_Expressions_007.glb",
-        "/animations/masculine/expression/M_Standing_Expressions_008.glb",
-        "/animations/masculine/expression/M_Standing_Expressions_013.glb",
-
-        // Dance animations for AI responses
-        "/animations/masculine/dance/M_Dances_001.glb",
-        "/animations/masculine/dance/M_Dances_002.glb",
-        "/animations/masculine/dance/M_Dances_003.glb",
-        "/animations/masculine/dance/M_Dances_004.glb",
-        "/animations/masculine/dance/M_Dances_005.glb",
-
-        // Additional talking variations for AI responses
-        "/animations/masculine/expression/M_Talking_Variations_001.glb",
-        "/animations/masculine/expression/M_Talking_Variations_002.glb",
-        "/animations/masculine/expression/M_Talking_Variations_003.glb",
-        "/animations/masculine/expression/M_Talking_Variations_004.glb",
-      ];
-
-      const animationPaths = options.animationPaths || defaultAnimations;
-
-      const result = await animationServiceRef.current.loadCharacter(avatarUrl, animationPaths);
-
-      if (result.success) {
-        setCurrentCharacter(result.character);
-        setAnimationState("idle");
-
-        // Register animation service and set loaded animations in context
-        registerAnimationService(animationServiceRef.current);
-        setAnimations(animationPaths);
-
-        setTimeout(async () => {
-          try {
-            // Start the specific idle animation after character is loaded
-            const idleResult = await animationServiceRef.current.playAnimationWithTransition("F_Standing_Idle_Variations_002", {
-              isLooping: true,
-              speedRatio: 1.0,
-              transitionDuration: 0.3 // Faster transition for initial load
-            });
-            if (idleResult.success) {
-              setAnimationState("idle");
-
-              setTimeout(() => {
-                _cleanupDuplicateAvatars();
-              }, 300);
-            } else {
-              console.warn("Failed to start idle animations:", idleResult.error);
-            }
-          } catch (error) {
-            console.error("Error starting idle animations:", error);
-          }
-        }, 50); // Reduced timeout for faster startup
-      } else {
-        setError(result.error || "Failed to load character");
+  const loadAvatarAnimations = useCallback(
+    async (avatarUrl, options = {}) => {
+      if (!animationServiceRef.current) {
+        setError("Animation service not initialized");
+        return { success: false, error: "Animation service not initialized" };
       }
 
-      setIsLoading(false);
-      return result;
-    } catch (error) {
-      console.error("Error loading avatar animations:", error);
-      setError(error.message);
-      setIsLoading(false);
-      return { success: false, error: error.message };
-    }
-  }, [_cleanupDuplicateAvatars, registerAnimationService, setAnimations]);
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const defaultAnimations = [
+          "/animations/masculine/idle/M_Standing_Idle_Variations_001.glb",
+          "/animations/masculine/idle/M_Standing_Idle_Variations_002.glb",
+          "/animations/masculine/idle/M_Standing_Idle_Variations_003.glb",
+          "/animations/feminine/idle/F_Standing_Idle_Variations_002.glb",
+
+          "/animations/masculine/expression/M_Talking_Variations_005.glb",
+          "/animations/masculine/expression/M_Talking_Variations_006.glb",
+          "/animations/masculine/expression/M_Talking_Variations_007.glb",
+
+          "/animations/masculine/expression/M_Standing_Expressions_001.glb",
+          "/animations/masculine/expression/M_Standing_Expressions_002.glb",
+          "/animations/masculine/expression/M_Standing_Expressions_004.glb",
+          "/animations/masculine/expression/M_Standing_Expressions_005.glb",
+          "/animations/masculine/expression/M_Standing_Expressions_006.glb",
+          "/animations/masculine/expression/M_Standing_Expressions_007.glb",
+          "/animations/masculine/expression/M_Standing_Expressions_008.glb",
+          "/animations/masculine/expression/M_Standing_Expressions_013.glb",
+
+          "/animations/masculine/dance/M_Dances_001.glb",
+          "/animations/masculine/dance/M_Dances_002.glb",
+          "/animations/masculine/dance/M_Dances_003.glb",
+          "/animations/masculine/dance/M_Dances_004.glb",
+          "/animations/masculine/dance/M_Dances_005.glb",
+
+          "/animations/masculine/expression/M_Talking_Variations_001.glb",
+          "/animations/masculine/expression/M_Talking_Variations_002.glb",
+          "/animations/masculine/expression/M_Talking_Variations_003.glb",
+          "/animations/masculine/expression/M_Talking_Variations_004.glb",
+        ];
+
+        const animationPaths = options.animationPaths || defaultAnimations;
+
+        const result = await animationServiceRef.current.loadCharacter(avatarUrl, animationPaths);
+
+        if (result.success) {
+          setCurrentCharacter(result.character);
+          setAnimationState("idle");
+
+          registerAnimationService(animationServiceRef.current);
+          setAnimations(animationPaths);
+
+          setTimeout(async () => {
+            try {
+              const idleResult = await animationServiceRef.current.playAnimationWithTransition(
+                "F_Standing_Idle_Variations_002",
+                {
+                  isLooping: true,
+                  speedRatio: 1.0,
+                  transitionDuration: 0.3,
+                }
+              );
+              if (idleResult.success) {
+                setAnimationState("idle");
+
+                setTimeout(() => {
+                  _cleanupDuplicateAvatars();
+                }, 300);
+              } else {
+                console.warn("Failed to start idle animations:", idleResult.error);
+              }
+            } catch (error) {
+              console.error("Error starting idle animations:", error);
+            }
+          }, 50);
+        } else {
+          setError(result.error || "Failed to load character");
+        }
+
+        setIsLoading(false);
+        return result;
+      } catch (error) {
+        console.error("Error loading avatar animations:", error);
+        setError(error.message);
+        setIsLoading(false);
+        return { success: false, error: error.message };
+      }
+    },
+    [_cleanupDuplicateAvatars, registerAnimationService, setAnimations]
+  );
 
   /**
    * Start idle animations (now uses specific idle animation)
@@ -254,11 +259,13 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
       }
 
       try {
-        // Use smooth transitions by default for better user experience
-        const result = await animationServiceRef.current.playAnimationWithTransition(animationName, {
-          transitionDuration: 0.3, // Default 300ms transition
-          ...options
-        });
+        const result = await animationServiceRef.current.playAnimationWithTransition(
+          animationName,
+          {
+            transitionDuration: 0.3,
+            ...options,
+          }
+        );
         return result;
       } catch (error) {
         setError(error.message);

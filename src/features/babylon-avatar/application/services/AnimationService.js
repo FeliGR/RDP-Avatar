@@ -148,15 +148,19 @@ export class AnimationService {
 
     try {
       const animationController = this.compositionRoot.getAnimationController();
-      
+
       // Default transition options
       const transitionOptions = {
         transitionDuration: options.transitionDuration || 0.3, // 300ms transition
         blendMode: options.blendMode || "add", // or "replace"
-        ...options
+        ...options,
       };
 
-      await animationController.playAnimationWithTransition(this.currentCharacter, animationName, transitionOptions);
+      await animationController.playAnimationWithTransition(
+        this.currentCharacter,
+        animationName,
+        transitionOptions
+      );
 
       return { success: true };
     } catch (error) {

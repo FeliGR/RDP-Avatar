@@ -134,12 +134,12 @@ export const DialogProvider = ({ children }) => {
         const botMessage = createMessage(responseText, "bot", !dialogApiAvailable);
 
         setMessages((prevMessages) => [...prevMessages, botMessage]);
-        
+
         // Trigger AI response animation when bot responds
         if (triggerAIResponseAnimation) {
-          triggerAIResponseAnimation('all'); // Use all available animations for varied responses
+          triggerAIResponseAnimation("all"); // Use all available animations for varied responses
         }
-        
+
         return botMessage;
       } catch (err) {
         console.error("Failed to send message:", err);
@@ -149,7 +149,13 @@ export const DialogProvider = ({ children }) => {
         setIsLoading(false);
       }
     },
-    [personalityTraits.userId, dialogApiAvailable, fetchBotResponse, createMessage, triggerAIResponseAnimation]
+    [
+      personalityTraits.userId,
+      dialogApiAvailable,
+      fetchBotResponse,
+      createMessage,
+      triggerAIResponseAnimation,
+    ]
   );
 
   /**

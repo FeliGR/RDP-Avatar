@@ -66,7 +66,7 @@ export const AvatarAnimationProvider = ({ children }) => {
    */
   const registerAIResponseCallback = (callback) => {
     animationCallbacks.current.add(callback);
-    
+
     // Return cleanup function
     return () => {
       animationCallbacks.current.delete(callback);
@@ -80,11 +80,11 @@ export const AvatarAnimationProvider = ({ children }) => {
   const triggerAIResponseAnimation = (options = {}) => {
     const animationOptions = {
       avatarType,
-      ...options
+      ...options,
     };
 
     // Execute all registered callbacks
-    animationCallbacks.current.forEach(callback => {
+    animationCallbacks.current.forEach((callback) => {
       try {
         callback(animationOptions);
       } catch (error) {

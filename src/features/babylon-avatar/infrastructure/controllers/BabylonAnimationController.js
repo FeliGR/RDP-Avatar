@@ -108,8 +108,6 @@ export class BabylonAnimationController extends IAnimationController {
     let currentWeight = 1;
     let newWeight = 0;
     
-    console.log("Starting smooth blend from", fromAnim.name, "to", toAnim.name);
-    
     // Start the new animation
     toAnim.start(isLooping, speedRatio, frameStart, frameEnd, false);
     
@@ -130,7 +128,6 @@ export class BabylonAnimationController extends IAnimationController {
         toAnim.setWeightForAllAnimatables(newWeight);
         fromAnim.setWeightForAllAnimatables(currentWeight);
       } catch (error) {
-        console.warn("Weight setting error, completing transition immediately");
         break;
       }
       
@@ -143,12 +140,11 @@ export class BabylonAnimationController extends IAnimationController {
       fromAnim.setWeightForAllAnimatables(0);
       fromAnim.stop(); // Stop the old animation
     } catch (error) {
-      console.warn("Final weight setting error");
+      // Ignore final weight setting errors
     }
     
     // Update current animation
     character.setCurrentAnimation(toAnim);
-    console.log("Blend completed, new animation:", toAnim.name);
     
     if (onComplete) {
       onComplete();

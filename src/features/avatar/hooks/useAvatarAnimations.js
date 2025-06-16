@@ -17,17 +17,9 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
   const animationServiceRef = useRef(null);
 
   useEffect(() => {
-    console.log(
-      "Animation hook effect triggered, scene:",
-      !!scene,
-      "service:",
-      !!animationServiceRef.current
-    );
     if (scene && !animationServiceRef.current) {
-      console.log("Initializing animation service...");
       animationServiceRef.current = new AnimationService(scene, shadowGenerator);
       setIsInitialized(true);
-      console.log("Animation service initialized");
     }
 
     return () => {
@@ -71,39 +63,31 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
    * Start specific idle animation with smooth transition
    */
   const startSpecificIdleAnimation = useCallback(async (animationName = "F_Standing_Idle_Variations_002") => {
-    console.log("startSpecificIdleAnimation called with:", animationName);
-    
     if (!animationServiceRef.current) {
-      console.log("Animation service not available for idle animation");
       return { success: false, error: "Animation service not available" };
     }
 
     if (!animationServiceRef.current.isReady()) {
-      console.log("Animation service not ready for idle animation");
       return { success: false, error: "Animation service not ready" };
     }
 
     const character = animationServiceRef.current.getCurrentCharacter();
     if (!character) {
-      console.log("Character not available for idle animation");
       return { success: false, error: "Character not available" };
     }
 
     try {
-      console.log("Attempting to play idle animation:", animationName);
       const result = await animationServiceRef.current.playAnimationWithTransition(animationName, {
         isLooping: true,
         speedRatio: 1.0,
-        transitionDuration: 0.5 // 500ms smooth transition
+        transitionDuration: 0.5
       });
-      console.log("Idle animation result:", result);
+      
       if (result.success) {
         setAnimationState("idle");
-        console.log("Animation state set to idle");
       }
       return result;
     } catch (error) {
-      console.error("Error starting idle animation:", error);
       setError(error.message);
       return { success: false, error: error.message };
     }
@@ -174,14 +158,13 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
 
         setTimeout(async () => {
           try {
-            // Use the animation service with transition for smooth startup
+            // Start the specific idle animation after character is loaded
             const idleResult = await animationServiceRef.current.playAnimationWithTransition("F_Standing_Idle_Variations_002", {
               isLooping: true,
               speedRatio: 1.0,
               transitionDuration: 0.5
             });
             if (idleResult.success) {
-              console.log("Specific idle animation started successfully");
               setAnimationState("idle");
 
               setTimeout(() => {

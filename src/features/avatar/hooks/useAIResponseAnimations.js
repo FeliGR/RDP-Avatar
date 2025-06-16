@@ -101,18 +101,12 @@ export const useAIResponseAnimations = (animationService, startSpecificIdleAnima
         // Ensure reasonable bounds and add buffer
         const timeoutDuration = Math.max(2000, Math.min(animationDuration + 1000, 8000));
         
-        console.log(`Animation ${animationName} will play for ${timeoutDuration}ms`);
-        
         // Auto-revert to specific idle animation after animation completes
         setTimeout(async () => {
           try {
-            console.log(`Reverting to idle after ${animationName}`);
             if (startSpecificIdleAnimation) {
-              console.log("Calling startSpecificIdleAnimation function...");
-              const idleResult = await startSpecificIdleAnimation();
-              console.log("Idle animation result:", idleResult);
+              await startSpecificIdleAnimation();
             } else {
-              console.log("startSpecificIdleAnimation not available, using default idle");
               await animationService.startIdleAnimations();
             }
           } catch (error) {

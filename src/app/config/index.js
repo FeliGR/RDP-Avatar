@@ -1,45 +1,13 @@
 /**
  * Global application configuration
- * Centralized place for app-wide constants and settings
+ * Currently using environment variables directly in components
+ * This file is kept for future configuration needs
  */
 
-export const APP_CONFIG = {
-  name: "Persona Dynamics AI",
-  version: process.env.REACT_APP_VERSION || "1.0.0",
-  description: "Experience next-generation digital identity with AI-powered avatar personalization",
-};
+// This file is currently unused but preserved for future configuration needs
+// All configurations are currently handled via environment variables
+// and direct imports where needed
 
-export const ENV_CONFIG = {
-  isDevelopment: process.env.NODE_ENV === "development",
-  isProduction: process.env.NODE_ENV === "production",
-  isTest: process.env.NODE_ENV === "test",
-};
-
-export const FEATURE_FLAGS = {
-  enableVoiceCommands: true,
-  enableAdvancedPersonality: true,
-  enableARFeatures: false,
-};
-
-export const UI_CONFIG = {
-  theme: {
-    primary: "rgb(33, 150, 243)",
-    primaryDark: "rgb(25, 118, 210)",
-    primaryLight: "rgb(100, 181, 246)",
-  },
-  breakpoints: {
-    mobile: "768px",
-    tablet: "992px",
-    desktop: "1200px",
-    large: "1400px",
-  },
-};
-
-const config = {
-  APP_CONFIG,
-  ENV_CONFIG,
-  FEATURE_FLAGS,
-  UI_CONFIG,
-};
+const config = {};
 
 export default config;

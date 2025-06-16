@@ -1,6 +1,5 @@
 /**
- * Shared utility functions for the application
- */
+ * Shared utility functions for the a */
 
 /**
  * Formats a trait name for display
@@ -35,24 +34,9 @@ export const debounce = (func, wait, immediate) => {
   };
 };
 
-/**
- * Generates a unique ID
- * @returns {string} Unique identifier
- */
-export const generateId = () => {
-  return Date.now().toString(36) + Math.random().toString(36).substr(2);
-};
 
-/**
- * Clamps a value between min and max
- * @param {number} value - Value to clamp
- * @param {number} min - Minimum value
- * @param {number} max - Maximum value
- * @returns {number} Clamped value
- */
-export const clamp = (value, min, max) => {
-  return Math.min(Math.max(value, min), max);
-};
+
+
 
 /**
  * Formats timestamp for display
@@ -66,33 +50,11 @@ export const formatTime = (timestamp) => {
   });
 };
 
-/**
- * Deep clone an object
- * @param {Object} obj - Object to clone
- * @returns {Object} Cloned object
- */
-export const deepClone = (obj) => {
-  if (obj === null || typeof obj !== "object") return obj;
-  if (obj instanceof Date) return new Date(obj.getTime());
-  if (obj instanceof Array) return obj.map((item) => deepClone(item));
-  if (typeof obj === "object") {
-    const clonedObj = {};
-    for (const key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        clonedObj[key] = deepClone(obj[key]);
-      }
-    }
-    return clonedObj;
-  }
-};
+
 
 const utils = {
   formatTrait,
   debounce,
-  generateId,
-  clamp,
-  formatTime,
-  deepClone,
 };
 
 export default utils;

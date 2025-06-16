@@ -162,21 +162,21 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
             const idleResult = await animationServiceRef.current.playAnimationWithTransition("F_Standing_Idle_Variations_002", {
               isLooping: true,
               speedRatio: 1.0,
-              transitionDuration: 0.5
+              transitionDuration: 0.3 // Faster transition for initial load
             });
             if (idleResult.success) {
               setAnimationState("idle");
 
               setTimeout(() => {
                 _cleanupDuplicateAvatars();
-              }, 500);
+              }, 300);
             } else {
               console.warn("Failed to start idle animations:", idleResult.error);
             }
           } catch (error) {
             console.error("Error starting idle animations:", error);
           }
-        }, 100);
+        }, 50); // Reduced timeout for faster startup
       } else {
         setError(result.error || "Failed to load character");
       }

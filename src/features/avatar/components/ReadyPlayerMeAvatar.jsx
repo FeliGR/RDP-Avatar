@@ -16,9 +16,10 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
   const savedAvatarUrl = localStorage.getItem("rpmAvatarUrl");
   const [avatarUrl, setAvatarUrl] = useState(savedAvatarUrl || null);
   const [showCreator, setShowCreator] = useState(!savedAvatarUrl);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(!!savedAvatarUrl); // Start loading if there's a saved avatar
   const [avatarError, setAvatarError] = useState(null);
   const [avatarLoaded, setAvatarLoaded] = useState(false); // Add state to track when avatar is loaded
+  const [avatarFullyReady, setAvatarFullyReady] = useState(false); // Track when avatar + animations are fully ready
   const avatarRef = useRef(null);
   const sceneRef = useRef(null);
   const shadowGeneratorRef = useRef(null);
@@ -105,6 +106,7 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
     loadingRef.current = true;
     animationsLoadedRef.current = false;
     setAvatarLoaded(false); // Reset avatar loaded state
+    setAvatarFullyReady(false); // Reset fully ready state
     setIsLoading(true);
     setAvatarError(null);
 
@@ -184,6 +186,9 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
           avatarMesh.name = "_Character_";
           avatarMesh.scaling = new BABYLON.Vector3(1, 1, 1);
           avatarMesh.position = new BABYLON.Vector3(0, 0, 0);
+          
+          // Make avatar invisible until animations are fully loaded
+          avatarMesh.setEnabled(false);
 
           avatarRef.current = avatarMesh;
           setAvatarLoaded(true);
@@ -192,7 +197,7 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
             onAvatarLoaded(avatarMesh);
           }
 
-          setIsLoading(false);
+          // Don't set loading to false here - wait for animations to be fully loaded and idle animation to start
           loadingRef.current = false;
         },
         null, // No progress callback needed
@@ -223,6 +228,11 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
         loadAvatarAnimations(avatarUrl).then((result) => {
           if (!result.success) {
             animationsLoadedRef.current = false;
+            setIsLoading(false); // Set loading to false on error
+            // Keep avatar invisible on error
+            if (avatarRef.current) {
+              avatarRef.current.setEnabled(false);
+            }
           } else {
             // Register AI response callback after animations are successfully loaded
             if (triggerAIResponseAnimation && animationService && animationService.isReady()) {
@@ -230,6 +240,17 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
                 triggerAIResponseAnimation('all');
               });
             }
+            
+            // Wait a bit more to ensure idle animation has started, then hide loading
+            setTimeout(() => {
+              setIsLoading(false);
+              setAvatarFullyReady(true); // Avatar is now fully ready with animations
+              
+              // Make avatar visible now that everything is ready
+              if (avatarRef.current) {
+                avatarRef.current.setEnabled(true);
+              }
+            }, 1000); // Give time for idle animation to start smoothly
           }
         });
       }, 200);
@@ -262,6 +283,7 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
     localStorage.setItem("rpmAvatarUrl", cacheBustedUrl);
 
     setIsLoading(true);
+    setAvatarFullyReady(false); // Reset fully ready state for new avatar
 
     if (avatarRef.current) {
       avatarRef.current = null;
@@ -275,7 +297,7 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
 
   return (
     <div className="ready-player-me-avatar">
-      {isLoading && <div className="avatar-loading">Loading avatar...</div>}
+      {(isLoading || (avatarUrl && !avatarFullyReady)) && !showCreator && <div className="avatar-loading">Loading avatar...</div>}
 
       {!avatarUrl && !showCreator && !isLoading && (
         <div className="no-avatar-message">

@@ -1,9 +1,36 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, Suspense, lazy } from "react";
 import "./App.css";
 import { AppProviders } from "./app/providers";
-import { AvatarViewer } from "./features/avatar";
-import { DialogBox } from "./features/dialog";
-import { PersonalityControls } from "./features/personality";
+
+// Lazy load heavy components
+const AvatarViewer = lazy(() => import("./features/avatar").then(module => ({ default: module.AvatarViewer })));
+const DialogBox = lazy(() => import("./features/dialog").then(module => ({ default: module.DialogBox })));
+const PersonalityControls = lazy(() => import("./features/personality").then(module => ({ default: module.PersonalityControls })));
+
+// Loading component for better UX
+const LoadingSpinner = () => (
+  <div style={{ 
+    display: 'flex', 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    height: '200px',
+    color: 'var(--primary-color)',
+    fontSize: '14px'
+  }}>
+    <div style={{ textAlign: 'center' }}>
+      <div style={{ 
+        width: '40px', 
+        height: '40px', 
+        border: '3px solid #f3f3f3',
+        borderTop: '3px solid var(--primary-color)', 
+        borderRadius: '50%',
+        animation: 'spin 1s linear infinite',
+        margin: '0 auto 10px'
+      }}></div>
+      Loading...
+    </div>
+  </div>
+);
 
 function AppContent() {
   const headerRef = useRef(null);
@@ -64,7 +91,9 @@ function AppContent() {
               <h2>Avatar</h2>
             </div>
             <div className="app-card-content">
-              <AvatarViewer />
+              <Suspense fallback={<LoadingSpinner />}>
+                <AvatarViewer />
+              </Suspense>
             </div>
           </div>
         </div>
@@ -75,7 +104,9 @@ function AppContent() {
               <h2>Personality Profile</h2>
             </div>
             <div className="app-card-content">
-              <PersonalityControls />
+              <Suspense fallback={<LoadingSpinner />}>
+                <PersonalityControls />
+              </Suspense>
             </div>
           </div>
 
@@ -84,7 +115,9 @@ function AppContent() {
               <h2>Conversation</h2>
             </div>
             <div className="app-card-content">
-              <DialogBox />
+              <Suspense fallback={<LoadingSpinner />}>
+                <DialogBox />
+              </Suspense>
             </div>
           </div>
         </div>

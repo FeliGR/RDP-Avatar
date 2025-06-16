@@ -54,6 +54,7 @@
     "react-app-rewired": "^2.2.1",
     "stream-browserify": "^3.0.0",
     "util": "^0.12.5",
-    "webpack": "^5.99.5"
+    "webpack": "^5.99.5",
+    "webpack-bundle-analyzer": "^4.10.2"
   }
 }

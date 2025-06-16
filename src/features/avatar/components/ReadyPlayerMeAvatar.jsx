@@ -1,10 +1,9 @@
 import { AvatarCreator } from "@readyplayerme/react-avatar-creator";
-import * as BABYLON from "babylonjs";
-import "babylonjs-loaders";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useAvatarAnimations } from "../hooks/useAvatarAnimations.js";
 import { useAIResponseAnimations } from "../hooks/useAIResponseAnimations.js";
 import { useAvatarAnimation } from "../context/AvatarAnimationContext.js";
+import { useBabylonJS } from "../hooks/useBabylonJS.js";
 import "./ReadyPlayerMeAvatar.css";
 
 const RPM_CLIENT_ID =
@@ -13,6 +12,8 @@ const RPM_CLIENT_ID =
   "684b2978d8c346fff8566d83";
 
 const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
+  const { BABYLON, isLoading: babylonLoading, error: babylonError } = useBabylonJS();
+  
   const savedAvatarUrl = localStorage.getItem("rpmAvatarUrl");
   const [avatarUrl, setAvatarUrl] = useState(savedAvatarUrl || null);
   const [showCreator, setShowCreator] = useState(!savedAvatarUrl);
@@ -51,7 +52,8 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
   }, [animationService, registerAnimationService]);
 
   useEffect(() => {
-    if (!canvasRef.current) return;
+    // Don't initialize scene until Babylon.js is loaded
+    if (!BABYLON || !canvasRef.current) return;
 
     const engine = new BABYLON.Engine(canvasRef.current, true);
     const scene = new BABYLON.Scene(engine);
@@ -100,11 +102,11 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
       engine.dispose();
       scene.dispose();
     };
-  }, [canvasRef]);
+  }, [canvasRef, BABYLON]);
 
   const loadAvatar = useCallback(
     async (url) => {
-      if (!sceneRef.current || !sceneRef.current.scene || loadingRef.current) return;
+      if (!BABYLON || !sceneRef.current || !sceneRef.current.scene || loadingRef.current) return;
 
       loadingRef.current = true;
       animationsLoadedRef.current = false;
@@ -214,7 +216,7 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
         loadingRef.current = false;
       }
     },
-    [onAvatarLoaded]
+    [onAvatarLoaded, BABYLON]
   );
 
   useEffect(() => {
@@ -311,11 +313,24 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
 
   return (
     <div className="ready-player-me-avatar">
-      {(isLoading || (avatarUrl && !avatarFullyReady)) && !showCreator && (
+      {/* Show loading state while Babylon.js is loading */}
+      {babylonLoading && (
+        <div className="avatar-loading">Loading 3D engine...</div>
+      )}
+
+      {/* Show error if Babylon.js failed to load */}
+      {babylonError && (
+        <div className="avatar-error">
+          Failed to load 3D engine: {babylonError.message}
+        </div>
+      )}
+
+      {/* Show normal loading states only after Babylon.js is loaded */}
+      {BABYLON && (isLoading || (avatarUrl && !avatarFullyReady)) && !showCreator && (
         <div className="avatar-loading">Loading avatar...</div>
       )}
 
-      {!avatarUrl && !showCreator && !isLoading && (
+      {BABYLON && !avatarUrl && !showCreator && !isLoading && (
         <div className="no-avatar-message">
           <p>No avatar created yet</p>
           <button className="customize-avatar-button" onClick={() => setShowCreator(true)}>
@@ -324,14 +339,14 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
         </div>
       )}
 
-      {avatarUrl && !showCreator && (
+      {BABYLON && avatarUrl && !showCreator && (
         <button className="customize-avatar-button" onClick={() => setShowCreator(true)}>
           Customize Avatar
         </button>
       )}
 
       {/* Close button rendered outside the container, at the top level */}
-      {showCreator && (
+      {BABYLON && showCreator && (
         <button
           className="creator-close-button"
           onClick={() => setShowCreator(false)}
@@ -342,7 +357,7 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
       )}
 
       {/* Avatar creator container without the close button inside */}
-      {showCreator && (
+      {BABYLON && showCreator && (
         <div className="avatar-creator-container">
           <AvatarCreator
             clientId={RPM_CLIENT_ID}

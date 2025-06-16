@@ -149,10 +149,9 @@ export class AnimationService {
     try {
       const animationController = this.compositionRoot.getAnimationController();
 
-      // Default transition options
       const transitionOptions = {
-        transitionDuration: options.transitionDuration || 0.3, // 300ms transition
-        blendMode: options.blendMode || "add", // or "replace"
+        transitionDuration: options.transitionDuration || 0.3,
+        blendMode: options.blendMode || "add",
         ...options,
       };
 

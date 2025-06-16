@@ -135,9 +135,8 @@ export const DialogProvider = ({ children }) => {
 
         setMessages((prevMessages) => [...prevMessages, botMessage]);
 
-        // Trigger AI response animation when bot responds
         if (triggerAIResponseAnimation) {
-          triggerAIResponseAnimation("all"); // Use all available animations for varied responses
+          triggerAIResponseAnimation("all");
         }
 
         return botMessage;

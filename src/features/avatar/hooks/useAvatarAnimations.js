@@ -68,6 +68,48 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
   }, [scene]);
 
   /**
+   * Start specific idle animation with smooth transition
+   */
+  const startSpecificIdleAnimation = useCallback(async (animationName = "F_Standing_Idle_Variations_002") => {
+    console.log("startSpecificIdleAnimation called with:", animationName);
+    
+    if (!animationServiceRef.current) {
+      console.log("Animation service not available for idle animation");
+      return { success: false, error: "Animation service not available" };
+    }
+
+    if (!animationServiceRef.current.isReady()) {
+      console.log("Animation service not ready for idle animation");
+      return { success: false, error: "Animation service not ready" };
+    }
+
+    const character = animationServiceRef.current.getCurrentCharacter();
+    if (!character) {
+      console.log("Character not available for idle animation");
+      return { success: false, error: "Character not available" };
+    }
+
+    try {
+      console.log("Attempting to play idle animation:", animationName);
+      const result = await animationServiceRef.current.playAnimationWithTransition(animationName, {
+        isLooping: true,
+        speedRatio: 1.0,
+        transitionDuration: 0.5 // 500ms smooth transition
+      });
+      console.log("Idle animation result:", result);
+      if (result.success) {
+        setAnimationState("idle");
+        console.log("Animation state set to idle");
+      }
+      return result;
+    } catch (error) {
+      console.error("Error starting idle animation:", error);
+      setError(error.message);
+      return { success: false, error: error.message };
+    }
+  }, []); // Remove currentCharacter dependency
+
+  /**
    * Load character with animations from Ready Player Me avatar
    * @param {string} avatarUrl - Ready Player Me avatar URL
    * @param {Object} options - Loading options
@@ -87,6 +129,7 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
         "/animations/masculine/idle/M_Standing_Idle_Variations_001.glb",
         "/animations/masculine/idle/M_Standing_Idle_Variations_002.glb",
         "/animations/masculine/idle/M_Standing_Idle_Variations_003.glb",
+        "/animations/feminine/idle/F_Standing_Idle_Variations_002.glb",
 
         // Talking animations for regular avatar functionality
         "/animations/masculine/expression/M_Talking_Variations_005.glb",
@@ -131,9 +174,15 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
 
         setTimeout(async () => {
           try {
-            const idleResult = await animationServiceRef.current.startIdleAnimations();
+            // Use the animation service with transition for smooth startup
+            const idleResult = await animationServiceRef.current.playAnimationWithTransition("F_Standing_Idle_Variations_002", {
+              isLooping: true,
+              speedRatio: 1.0,
+              transitionDuration: 0.5
+            });
             if (idleResult.success) {
-              console.log("Idle animations started successfully");
+              console.log("Specific idle animation started successfully");
+              setAnimationState("idle");
 
               setTimeout(() => {
                 _cleanupDuplicateAvatars();
@@ -160,24 +209,11 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
   }, [_cleanupDuplicateAvatars, registerAnimationService, setAnimations]);
 
   /**
-   * Start idle animations
+   * Start idle animations (now uses specific idle animation)
    */
   const startIdleAnimations = useCallback(async () => {
-    if (!animationServiceRef.current || !currentCharacter) {
-      return { success: false, error: "Service or character not available" };
-    }
-
-    try {
-      const result = await animationServiceRef.current.startIdleAnimations();
-      if (result.success) {
-        setAnimationState("idle");
-      }
-      return result;
-    } catch (error) {
-      setError(error.message);
-      return { success: false, error: error.message };
-    }
-  }, [currentCharacter]);
+    return await startSpecificIdleAnimation();
+  }, [startSpecificIdleAnimation]);
 
   /**
    * Start talking animations with optional audio
@@ -224,7 +260,7 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
   }, [currentCharacter]);
 
   /**
-   * Play a specific animation
+   * Play a specific animation with smooth transitions
    * @param {string} animationName - Name of animation
    * @param {Object} options - Animation options
    */
@@ -235,7 +271,11 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
       }
 
       try {
-        const result = await animationServiceRef.current.playAnimation(animationName, options);
+        // Use smooth transitions by default for better user experience
+        const result = await animationServiceRef.current.playAnimationWithTransition(animationName, {
+          transitionDuration: 0.3, // Default 300ms transition
+          ...options
+        });
         return result;
       } catch (error) {
         setError(error.message);
@@ -285,6 +325,7 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
 
     loadAvatarAnimations,
     startIdleAnimations,
+    startSpecificIdleAnimation,
     startTalkingAnimations,
     stopTalkingAnimations,
     playAnimation,

@@ -31,13 +31,14 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
   const { 
     isInitialized: animationsInitialized, 
     loadAvatarAnimations, 
+    startSpecificIdleAnimation,
     animationService 
   } = useAvatarAnimations(
     sceneReady ? sceneRef.current?.scene : null,
     sceneReady ? shadowGeneratorRef.current : null
   );
 
-  const { triggerAIResponseAnimation } = useAIResponseAnimations(animationService);
+  const { triggerAIResponseAnimation } = useAIResponseAnimations(animationService, startSpecificIdleAnimation);
 
   // Register animation service when it becomes available
   useEffect(() => {

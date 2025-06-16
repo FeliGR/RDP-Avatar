@@ -7,7 +7,7 @@ const ANIMATION_CATEGORIES = {
   all: ['expression', 'dance']
 };
 
-export const useAIResponseAnimations = (animationService) => {
+export const useAIResponseAnimations = (animationService, startSpecificIdleAnimation) => {
   const isProcessingRef = useRef(false);
 
   // Default animations that should be loaded
@@ -74,25 +74,58 @@ export const useAIResponseAnimations = (animationService) => {
         .pop()
         .replace('.glb', '');
 
-      // Play the animation
-      const result = await animationService.playAnimation(animationName);
+      // Play the animation with smooth transition
+      const result = await animationService.playAnimationWithTransition(animationName, {
+        isLooping: false,
+        speedRatio: 1.0,
+        transitionDuration: 0.3 // 300ms smooth transition
+      });
       
       if (result.success) {
-        // Auto-revert to idle after animation duration
+        // Get the character to check animation duration
+        const character = animationService.getCurrentCharacter();
+        const animationGroup = character?.getAnimationGroup(animationName);
+        
+        // Calculate animation duration properly
+        // In Babylon.js, animation duration is typically in frames at 60 FPS
+        let animationDuration = 3000; // Default fallback
+        
+        if (animationGroup && animationGroup.to && animationGroup.from) {
+          const frameCount = animationGroup.to - animationGroup.from;
+          animationDuration = (frameCount / 60) * 1000; // Convert to milliseconds assuming 60 FPS
+        } else if (animationGroup && animationGroup.duration) {
+          // Some animations might have duration property
+          animationDuration = animationGroup.duration * 1000;
+        }
+        
+        // Ensure reasonable bounds and add buffer
+        const timeoutDuration = Math.max(2000, Math.min(animationDuration + 1000, 8000));
+        
+        console.log(`Animation ${animationName} will play for ${timeoutDuration}ms`);
+        
+        // Auto-revert to specific idle animation after animation completes
         setTimeout(async () => {
           try {
-            await animationService.startIdleAnimations();
+            console.log(`Reverting to idle after ${animationName}`);
+            if (startSpecificIdleAnimation) {
+              console.log("Calling startSpecificIdleAnimation function...");
+              const idleResult = await startSpecificIdleAnimation();
+              console.log("Idle animation result:", idleResult);
+            } else {
+              console.log("startSpecificIdleAnimation not available, using default idle");
+              await animationService.startIdleAnimations();
+            }
           } catch (error) {
             console.error('Failed to revert to idle:', error);
           }
-        }, 3000); // 3 seconds default duration
+        }, timeoutDuration);
       }
     } catch (error) {
       console.error('Error playing animation:', error);
     } finally {
       isProcessingRef.current = false;
     }
-  }, [animationService, isCharacterReady, defaultAnimations]);
+  }, [animationService, isCharacterReady, defaultAnimations, startSpecificIdleAnimation]);
 
   return {
     triggerAIResponseAnimation,

@@ -33,6 +33,128 @@ export class BabylonAnimationController extends IAnimationController {
     return Promise.resolve();
   }
 
+  /**
+   * Play animation with smooth transition from current animation
+   * @param {Character} character - The character to animate
+   * @param {string} animationName - Name of the animation to play
+   * @param {Object} options - Animation and transition options
+   * @returns {Promise}
+   */
+  async playAnimationWithTransition(character, animationName, options = {}) {
+    const targetAnimationGroup = character.getAnimationGroup(animationName);
+    if (!targetAnimationGroup) {
+      throw new Error(`Animation '${animationName}' not found`);
+    }
+
+    const {
+      isLooping = false,
+      speedRatio = 1.0,
+      frameStart = 0,
+      frameEnd = null,
+      transitionDuration = 0.3
+    } = options;
+
+    // Set animation properties
+    targetAnimationGroup.speedRatio = speedRatio;
+    const endFrame = frameEnd || targetAnimationGroup.to || targetAnimationGroup.duration;
+
+    // Get current animation
+    const currentAnimation = character.currentAnimation;
+
+    // If no current animation or not playing, start directly
+    if (!currentAnimation || !currentAnimation.isPlaying) {
+      // Reset all weights first
+      this._resetAllAnimationWeights(character);
+      targetAnimationGroup.start(isLooping, speedRatio, frameStart, endFrame, false);
+      character.setCurrentAnimation(targetAnimationGroup);
+      return Promise.resolve();
+    }
+
+    // Use Babylon.js coroutine system for smooth blending
+    const blendSpeed = Math.max(0.01, 1.0 / (transitionDuration * 60)); // Ensure minimum speed
+    
+    return new Promise((resolve) => {
+      this.scene.onBeforeRenderObservable.runCoroutineAsync(
+        this._smoothAnimationBlending(
+          currentAnimation,
+          targetAnimationGroup,
+          blendSpeed,
+          isLooping,
+          speedRatio,
+          frameStart,
+          endFrame,
+          character,
+          resolve
+        )
+      );
+    });
+  }
+
+  // Helper method to reset all animation weights
+  _resetAllAnimationWeights(character) {
+    if (character.animationGroups) {
+      character.animationGroups.forEach(animGroup => {
+        try {
+          animGroup.setWeightForAllAnimatables(1);
+        } catch (error) {
+          // Ignore weight setting errors
+        }
+      });
+    }
+  }
+
+  // Coroutine for smooth animation blending
+  *_smoothAnimationBlending(fromAnim, toAnim, speed, isLooping, speedRatio, frameStart, frameEnd, character, onComplete) {
+    let currentWeight = 1;
+    let newWeight = 0;
+    
+    console.log("Starting smooth blend from", fromAnim.name, "to", toAnim.name);
+    
+    // Start the new animation
+    toAnim.start(isLooping, speedRatio, frameStart, frameEnd, false);
+    
+    // Set speed ratios
+    fromAnim.speedRatio = speedRatio;
+    toAnim.speedRatio = speedRatio;
+    
+    // Blend weights smoothly
+    while (newWeight < 1) {
+      newWeight += speed;
+      currentWeight -= speed;
+      
+      // Clamp values
+      newWeight = Math.min(newWeight, 1);
+      currentWeight = Math.max(currentWeight, 0);
+      
+      try {
+        toAnim.setWeightForAllAnimatables(newWeight);
+        fromAnim.setWeightForAllAnimatables(currentWeight);
+      } catch (error) {
+        console.warn("Weight setting error, completing transition immediately");
+        break;
+      }
+      
+      yield; // This allows Babylon to render frames during the blend
+    }
+    
+    // Ensure final state
+    try {
+      toAnim.setWeightForAllAnimatables(1);
+      fromAnim.setWeightForAllAnimatables(0);
+      fromAnim.stop(); // Stop the old animation
+    } catch (error) {
+      console.warn("Final weight setting error");
+    }
+    
+    // Update current animation
+    character.setCurrentAnimation(toAnim);
+    console.log("Blend completed, new animation:", toAnim.name);
+    
+    if (onComplete) {
+      onComplete();
+    }
+  }
+
   async blendAnimations(character, blendConfig) {
     const { fromAnimation, toAnimation, blendSpeed, maxWeight, frameRange } = blendConfig;
 

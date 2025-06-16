@@ -136,6 +136,38 @@ export class AnimationService {
   }
 
   /**
+   * Play a specific animation with smooth transition
+   * @param {string} animationName - Name of animation to play
+   * @param {Object} options - Animation options including transition settings
+   * @returns {Promise<{success: boolean, error?: string}>}
+   */
+  async playAnimationWithTransition(animationName, options = {}) {
+    if (!this._checkInitialized()) {
+      return { success: false, error: "Character not loaded" };
+    }
+
+    try {
+      const animationController = this.compositionRoot.getAnimationController();
+      
+      // Default transition options
+      const transitionOptions = {
+        transitionDuration: options.transitionDuration || 0.3, // 300ms transition
+        blendMode: options.blendMode || "add", // or "replace"
+        ...options
+      };
+
+      await animationController.playAnimationWithTransition(this.currentCharacter, animationName, transitionOptions);
+
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  }
+
+  /**
    * Set morph target value
    * @param {string} morphName - Name of morph target
    * @param {number} value - Target value (0-1)

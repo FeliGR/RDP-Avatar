@@ -30,14 +30,16 @@ const TraitInfoModal = ({ trait, traitInfo, isOpen, onClose }) => {
       }
     };
 
+    const currentOverlay = overlayRef.current;
+
     if (isOpen) {
       setTimeout(() => {
-        overlayRef.current?.addEventListener("mousedown", handleOutsideClick);
+        currentOverlay?.addEventListener("mousedown", handleOutsideClick);
       }, 10);
     }
 
     return () => {
-      overlayRef.current?.removeEventListener("mousedown", handleOutsideClick);
+      currentOverlay?.removeEventListener("mousedown", handleOutsideClick);
     };
   }, [isOpen, onClose]);
 

@@ -17,7 +17,8 @@ const useScrollToBottom = (ref, deps = []) => {
         }
       }, 50);
     }
-  }, deps);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ref, ...deps]);
 };
 
 export default useScrollToBottom;

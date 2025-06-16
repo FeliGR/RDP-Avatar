@@ -86,7 +86,7 @@ export const deepClone = (obj) => {
   }
 };
 
-export default {
+const utils = {
   formatTrait,
   debounce,
   generateId,
@@ -94,3 +94,5 @@ export default {
   formatTime,
   deepClone,
 };
+
+export default utils;

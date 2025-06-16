@@ -37,6 +37,35 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
   }, [scene, shadowGenerator]);
 
   /**
+   * Clean up duplicate avatar meshes from the scene
+   */
+  const _cleanupDuplicateAvatars = useCallback(() => {
+    if (!scene) return;
+
+    const meshes = scene.meshes.slice();
+
+    meshes.forEach((mesh) => {
+      const isHidden = !mesh.isVisible || mesh.visibility === 0 || !mesh.isEnabled();
+      const isFarAway =
+        mesh.position &&
+        (Math.abs(mesh.position.x) > 50000 ||
+          Math.abs(mesh.position.y) > 50000 ||
+          Math.abs(mesh.position.z) > 50000);
+      const isScaledDown =
+        mesh.scaling && (mesh.scaling.x < 0.01 || mesh.scaling.y < 0.01 || mesh.scaling.z < 0.01);
+
+      if ((isHidden && isFarAway) || isScaledDown) {
+        try {
+          if (mesh.material) {
+            mesh.material.dispose();
+          }
+          mesh.dispose();
+        } catch (error) {}
+      }
+    });
+  }, [scene]);
+
+  /**
    * Load character with animations from Ready Player Me avatar
    * @param {string} avatarUrl - Ready Player Me avatar URL
    * @param {Object} options - Loading options
@@ -99,7 +128,7 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
       setIsLoading(false);
       return { success: false, error: error.message };
     }
-  }, []);
+  }, [_cleanupDuplicateAvatars]);
 
   /**
    * Start idle animations
@@ -164,37 +193,6 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
       return { success: false, error: error.message };
     }
   }, [currentCharacter]);
-
-  /**
-   * Clean up duplicate avatar meshes from the scene
-   */
-  const _cleanupDuplicateAvatars = useCallback(() => {
-    if (!scene) return;
-
-    const meshes = scene.meshes.slice();
-    let cleanedCount = 0;
-
-    meshes.forEach((mesh) => {
-      const isHidden = !mesh.isVisible || mesh.visibility === 0 || !mesh.isEnabled();
-      const isFarAway =
-        mesh.position &&
-        (Math.abs(mesh.position.x) > 50000 ||
-          Math.abs(mesh.position.y) > 50000 ||
-          Math.abs(mesh.position.z) > 50000);
-      const isScaledDown =
-        mesh.scaling && (mesh.scaling.x < 0.01 || mesh.scaling.y < 0.01 || mesh.scaling.z < 0.01);
-
-      if ((isHidden && isFarAway) || isScaledDown) {
-        try {
-          if (mesh.material) {
-            mesh.material.dispose();
-          }
-          mesh.dispose();
-          cleanedCount++;
-        } catch (error) {}
-      }
-    });
-  }, [scene]);
 
   /**
    * Play a specific animation

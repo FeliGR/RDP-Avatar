@@ -1,5 +1,3 @@
-import { AnimationBlend } from "../../domain/entities/Animation.js";
-
 /**
  * Play Talking Animation Use Case
  * Handles the business logic for playing talking animations with morph target sync

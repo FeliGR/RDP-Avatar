@@ -32,7 +32,7 @@ export const PersonalityProvider = ({ children }) => {
     };
 
     fetchPersonalityData();
-  }, []);
+  }, [personalityTraits.userId]);
 
   /**
    * Update a single personality trait

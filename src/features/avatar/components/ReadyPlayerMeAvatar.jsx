@@ -1,7 +1,7 @@
 import { AvatarCreator } from "@readyplayerme/react-avatar-creator";
 import * as BABYLON from "babylonjs";
 import "babylonjs-loaders";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useAvatarAnimations } from "../hooks/useAvatarAnimations.js";
 import "./ReadyPlayerMeAvatar.css";
 
@@ -80,11 +80,121 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
     };
   }, [canvasRef]);
 
+  const loadAvatar = useCallback(async (url) => {
+    if (!sceneRef.current || !sceneRef.current.scene || loadingRef.current) return;
+
+    loadingRef.current = true;
+    animationsLoadedRef.current = false;
+    setIsLoading(true);
+    setAvatarError(null);
+
+    try {
+      const { scene } = sceneRef.current;
+
+      if (avatarRef.current) {
+        if (Array.isArray(avatarRef.current.getChildMeshes)) {
+          const childMeshes = avatarRef.current.getChildMeshes();
+          childMeshes.forEach((mesh) => {
+            if (mesh.material) {
+              mesh.material.dispose();
+            }
+            mesh.dispose();
+          });
+        }
+
+        avatarRef.current.dispose();
+        avatarRef.current = null;
+      }
+
+      const sceneMeshes = scene.meshes.slice();
+
+      sceneMeshes.forEach((mesh) => {
+        const shouldKeep =
+          mesh.name === "camera" ||
+          mesh.name.includes("light") ||
+          mesh.name.includes("__root__") ||
+          mesh.name === "ground" ||
+          mesh.name === "skybox" ||
+          mesh.name.includes("Sphere") ||
+          mesh.name.includes("Base") ||
+          mesh.name.includes("TV");
+
+        const isFarAway =
+          mesh.position &&
+          (Math.abs(mesh.position.x) > 50000 ||
+            Math.abs(mesh.position.y) > 50000 ||
+            Math.abs(mesh.position.z) > 50000);
+
+        if (!shouldKeep || isFarAway) {
+          console.log("Disposing mesh:", mesh.name, isFarAway ? "(far away)" : "");
+
+          try {
+            const childMeshes = mesh.getChildMeshes();
+            childMeshes.forEach((childMesh) => {
+              if (childMesh.material) {
+                childMesh.material.dispose();
+              }
+              childMesh.dispose();
+            });
+
+            if (mesh.material) {
+              mesh.material.dispose();
+            }
+            mesh.dispose();
+          } catch (error) {}
+        }
+      });
+
+      const fullUrl = url.startsWith("http") ? url : `https://models.readyplayer.me/${url}`;
+
+      BABYLON.SceneLoader.ImportMesh(
+        "",
+        fullUrl,
+        "",
+        scene,
+        (meshes, particleSystems, skeletons, animationGroups) => {
+          if (meshes.length === 0) {
+            setAvatarError("Avatar loaded but no meshes were found");
+            setIsLoading(false);
+            loadingRef.current = false;
+            return;
+          }
+
+          const avatarMesh = meshes[0];
+          avatarMesh.name = "_Character_";
+          avatarMesh.scaling = new BABYLON.Vector3(1, 1, 1);
+          avatarMesh.position = new BABYLON.Vector3(0, 0, 0);
+
+          avatarRef.current = avatarMesh;
+
+          if (onAvatarLoaded) {
+            onAvatarLoaded(avatarMesh);
+          }
+
+          setIsLoading(false);
+          loadingRef.current = false;
+        },
+        (progressEvent) => {
+          // Progress tracking could be implemented here if needed
+        },
+        (scene, message, exception) => {
+          setAvatarError(`Failed to load avatar: ${message}`);
+          setIsLoading(false);
+          loadingRef.current = false;
+        }
+      );
+    } catch (error) {
+      setAvatarError(`Failed to load avatar: ${error.message}`);
+      setIsLoading(false);
+      loadingRef.current = false;
+    }
+  }, [onAvatarLoaded]);
+
   useEffect(() => {
     if (avatarUrl && sceneRef.current && sceneReady && !loadingRef.current) {
       loadAvatar(avatarUrl);
     }
-  }, [avatarUrl, sceneReady]);
+  }, [avatarUrl, sceneReady, loadAvatar]);
 
   useEffect(() => {
     if (avatarRef.current && animationsInitialized && avatarUrl && !animationsLoadedRef.current) {
@@ -98,7 +208,7 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
         });
       }, 200);
     }
-  }, [avatarRef.current, animationsInitialized, avatarUrl, loadAvatarAnimations]);
+  }, [animationsInitialized, avatarUrl, loadAvatarAnimations]);
 
   useEffect(() => {
     if (avatarError) {
@@ -135,132 +245,6 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
       setAvatarUrl(cacheBustedUrl);
       setShowCreator(false);
     }, 100);
-  };
-
-  const loadAvatar = async (url) => {
-    if (!sceneRef.current || !sceneRef.current.scene || loadingRef.current) return;
-
-    loadingRef.current = true;
-    animationsLoadedRef.current = false;
-    setIsLoading(true);
-    setAvatarError(null);
-
-    try {
-      const { scene } = sceneRef.current;
-
-      if (avatarRef.current) {
-        if (Array.isArray(avatarRef.current.getChildMeshes)) {
-          const childMeshes = avatarRef.current.getChildMeshes();
-          childMeshes.forEach((mesh) => {
-            if (mesh.material) {
-              mesh.material.dispose();
-            }
-            mesh.dispose();
-          });
-        }
-
-        avatarRef.current.dispose();
-        avatarRef.current = null;
-      }
-
-      const sceneMeshes = scene.meshes.slice();
-
-      let disposedCount = 0;
-      sceneMeshes.forEach((mesh) => {
-        const shouldKeep =
-          mesh.name === "camera" ||
-          mesh.name.includes("light") ||
-          mesh.name.includes("__root__") ||
-          mesh.name === "ground" ||
-          mesh.name === "skybox" ||
-          mesh.name.includes("Sphere") ||
-          mesh.name.includes("Base") ||
-          mesh.name.includes("TV");
-
-        const isFarAway =
-          mesh.position &&
-          (Math.abs(mesh.position.x) > 50000 ||
-            Math.abs(mesh.position.y) > 50000 ||
-            Math.abs(mesh.position.z) > 50000);
-
-        if (!shouldKeep || isFarAway) {
-          console.log("Disposing mesh:", mesh.name, isFarAway ? "(far away)" : "");
-
-          try {
-            const childMeshes = mesh.getChildMeshes();
-            childMeshes.forEach((childMesh) => {
-              if (childMesh.material) {
-                childMesh.material.dispose();
-              }
-              childMesh.dispose();
-            });
-
-            if (mesh.material) {
-              mesh.material.dispose();
-            }
-            mesh.dispose();
-            disposedCount++;
-          } catch (error) {}
-        }
-      });
-
-      const fullUrl = url.startsWith("http") ? url : `https://models.readyplayer.me/${url}`;
-
-      BABYLON.SceneLoader.ImportMesh(
-        "",
-        fullUrl,
-        "",
-        scene,
-        (meshes, particleSystems, skeletons, animationGroups) => {
-          if (meshes.length === 0) {
-            setAvatarError("Avatar loaded but no meshes were found");
-            setIsLoading(false);
-            loadingRef.current = false;
-            return;
-          }
-
-          const avatarMesh = meshes[0];
-          avatarMesh.name = "_Character_";
-          avatarMesh.scaling = new BABYLON.Vector3(1, 1, 1);
-          avatarMesh.position = new BABYLON.Vector3(0, 0, 0);
-
-          avatarRef.current = avatarMesh;
-
-          if (onAvatarLoaded) {
-            onAvatarLoaded(avatarMesh);
-          }
-
-          setIsLoading(false);
-          loadingRef.current = false;
-        },
-        (progressEvent) => {
-          const loadProgress = progressEvent.lengthComputable
-            ? Math.round((progressEvent.loaded / progressEvent.total) * 100)
-            : 0;
-        },
-        (scene, message, exception) => {
-          setAvatarError(`Failed to load avatar: ${message}`);
-          setIsLoading(false);
-          loadingRef.current = false;
-        }
-      );
-    } catch (error) {
-      setAvatarError(`Failed to load avatar: ${error.message}`);
-      setIsLoading(false);
-      loadingRef.current = false;
-    }
-  };
-
-  const resetCamera = () => {
-    if (sceneRef.current && sceneRef.current.scene) {
-      const camera = sceneRef.current.scene.getCameraByName("camera");
-      if (camera && camera instanceof BABYLON.ArcRotateCamera) {
-        camera.alpha = -Math.PI / 2;
-        camera.beta = Math.PI / 2.5;
-        camera.radius = 3;
-        camera.target = new BABYLON.Vector3(0, 1, 0);
-      }
-    }
   };
 
   return (

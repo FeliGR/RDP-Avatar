@@ -5,11 +5,10 @@ import ReadyPlayerMeAvatar from "./ReadyPlayerMeAvatar";
 
 const AvatarViewer = () => {
   const canvasRef = useRef(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
 
-  const { personalityTraits, isLoading: isPersonalityLoading } = usePersonality();
+  const { personalityTraits } = usePersonality();
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -38,10 +37,6 @@ const AvatarViewer = () => {
     }
   }, [hasInteracted]);
 
-  const handleAvatarLoaded = (avatar) => {
-    setIsLoading(false);
-  };
-
   return (
     <div className="avatar-viewer">
       <div className="avatar-canvas-container">
@@ -49,7 +44,6 @@ const AvatarViewer = () => {
 
         <ReadyPlayerMeAvatar
           canvasRef={canvasRef}
-          onAvatarLoaded={handleAvatarLoaded}
           personalityTraits={personalityTraits}
         />
 

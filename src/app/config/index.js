@@ -35,9 +35,11 @@ export const UI_CONFIG = {
   },
 };
 
-export default {
+const config = {
   APP_CONFIG,
   ENV_CONFIG,
   FEATURE_FLAGS,
   UI_CONFIG,
 };
+
+export default config;

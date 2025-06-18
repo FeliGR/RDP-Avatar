@@ -143,9 +143,9 @@ const App = () => {
                   Experience the future of digital identity
                 </p>
                 <div className="feature-tags">
-                  <span className="tag">AI-Powered</span>
-                  <span className="tag">Voice Interaction</span>
-                  <span className="tag">Personality Adaptation</span>
+                  <span className="tag">Real-Time Chat</span>
+                  <span className="tag">3D Avatar</span>
+                  <span className="tag">Smart Responses</span>
                 </div>
               </div>
 
@@ -165,15 +165,15 @@ const App = () => {
               <div className="system-status">
                 <div className="status-item">
                   <div className="status-dot active"></div>
-                  <span>Neural Network</span>
+                  <span>AI Core</span>
                 </div>
                 <div className="status-item">
                   <div className="status-dot active"></div>
-                  <span>Voice Recognition</span>
+                  <span>Avatar Engine</span>
                 </div>
                 <div className="status-item">
                   <div className="status-dot active"></div>
-                  <span>Avatar System</span>
+                  <span>Ready to Chat</span>
                 </div>
               </div>
             </div>

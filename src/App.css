@@ -474,30 +474,11 @@
   height: 100px;
   margin: 0 auto 1.5rem;
   transition: transform 0.3s ease;
-  overflow: hidden;
-}
-
-.start-orb::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
   border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: all 0.3s ease;
-  z-index: -1;
 }
 
 .start-orb:hover {
   transform: scale(1.1);
-}
-
-.start-orb:hover::before {
-  width: 200px;
-  height: 200px;
 }
 
 .orb-inner {
@@ -512,15 +493,7 @@
   justify-content: center;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-}
-
-.orb-pulse {
-  position: absolute;
-  width: 120%;
-  height: 120%;
-  border: 2px solid rgba(100, 200, 255, 0.5);
-  border-radius: 50%;
-  animation: orbPulse 2s infinite ease-out;
+  overflow: hidden;
 }
 
 .orb-core {
@@ -528,46 +501,6 @@
   height: 40px;
   background: linear-gradient(45deg, #64c8ff, #ff6b9d);
   border-radius: 50%;
-  animation: coreGlow 3s ease-in-out infinite;
-}
-
-.orb-rings {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.orb-ring {
-  position: absolute;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  animation: ringRotate 10s linear infinite;
-}
-
-.ring-1 {
-  width: 140px;
-  height: 140px;
-  top: -70px;
-  left: -70px;
-  animation-duration: 8s;
-}
-
-.ring-2 {
-  width: 180px;
-  height: 180px;
-  top: -90px;
-  left: -90px;
-  animation-duration: 12s;
-  animation-direction: reverse;
-}
-
-.ring-3 {
-  width: 220px;
-  height: 220px;
-  top: -110px;
-  left: -110px;
-  animation-duration: 16s;
 }
 
 .interaction-text {
@@ -705,21 +638,6 @@
 @keyframes slideUp {
   0% { opacity: 0; transform: translateY(20px); }
   100% { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes orbPulse {
-  0% { transform: scale(1); opacity: 0.7; }
-  100% { transform: scale(1.4); opacity: 0; }
-}
-
-@keyframes coreGlow {
-  0%, 100% { box-shadow: 0 0 20px rgba(100, 200, 255, 0.5); }
-  50% { box-shadow: 0 0 40px rgba(255, 107, 157, 0.8); }
-}
-
-@keyframes ringRotate {
-  0% { transform: translate(-50%, -50%) rotate(0deg); }
-  100% { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
 @keyframes statusBlink {

@@ -152,13 +152,7 @@ const App = () => {
               <div className="interaction-zone" onClick={handleStart}>
                 <div className="start-orb">
                   <div className="orb-inner">
-                    <div className="orb-pulse"></div>
                     <div className="orb-core"></div>
-                  </div>
-                  <div className="orb-rings">
-                    <div className="orb-ring ring-1"></div>
-                    <div className="orb-ring ring-2"></div>
-                    <div className="orb-ring ring-3"></div>
                   </div>
                 </div>
                 <p className="interaction-text">

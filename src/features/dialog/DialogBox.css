@@ -374,6 +374,12 @@
   transform: none;
 }
 
+.send-button svg {
+  width: 22px;
+  height: 22px;
+  transition: transform 0.3s ease;
+}
+
 /* Enhanced Voice Input Button */
 .voice-input-button {
   background: var(--chat-glass-bg);

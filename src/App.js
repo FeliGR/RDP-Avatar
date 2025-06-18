@@ -232,13 +232,20 @@ const App = () => {
               </button>
             </div>
 
-            {/* Chat Panel */}
+            {/* Modal Backdrop */}
+            <div 
+              className={`modal-backdrop ${activePanel === 'chat' ? 'active' : ''}`}
+              onClick={() => setActivePanel(null)}
+            ></div>
+
+            {/* Chat Modal - Large Centered Design */}
             <div className={`side-panel chat-panel ${activePanel === 'chat' ? 'active' : ''}`}>
               <div className="panel-header">
-                <h3>Conversation</h3>
+                <h3>AI Assistant</h3>
                 <button 
                   className="close-panel-btn"
                   onClick={() => setActivePanel(null)}
+                  title="Close Chat"
                 >
                   ×
                 </button>

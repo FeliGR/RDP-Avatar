@@ -11,7 +11,7 @@
   font-family: 'Helvetica Neue', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* Avatar Background */
+/* Avatar Background with Enhanced Entrance Animation */
 .avatar-background {
   position: absolute;
   top: 0;
@@ -20,17 +20,182 @@
   height: 100%;
   z-index: 1;
   opacity: 0;
-  animation: avatarFadeIn 2s ease-out 0.5s forwards;
+  transform: scale(1.02);
+  transition: all 2s cubic-bezier(0.23, 1, 0.32, 1); /* Reduced from 3s */
+  background: radial-gradient(
+    ellipse at center,
+    rgba(100, 150, 255, 0.05) 0%,
+    rgba(67, 56, 202, 0.1) 50%,
+    transparent 100%
+  );
 }
 
-@keyframes avatarFadeIn {
+.avatar-background.loaded {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Multi-stage avatar entrance animation with enhanced effects */
+.avatar-background.loaded .avatar-viewer {
+  animation: avatarEntrance 2.5s cubic-bezier(0.23, 1, 0.32, 1) forwards, /* Reduced from 4s */
+             avatarBreathing 6s ease-in-out 2.5s infinite; /* Start after entrance */
+  position: relative;
+}
+
+@keyframes avatarEntrance {
   0% { 
     opacity: 0; 
-    transform: scale(0.95);
+    transform: translateY(40px) scale(0.9) rotateY(10deg); /* Reduced movement */
+    filter: blur(5px) brightness(0.8); /* Reduced blur */
+  }
+  25% {
+    opacity: 0.3;
+    transform: translateY(25px) scale(0.94) rotateY(6deg);
+    filter: blur(3px) brightness(0.85);
+  }
+  60% {
+    opacity: 0.7;
+    transform: translateY(8px) scale(0.97) rotateY(2deg);
+    filter: blur(1px) brightness(0.92);
+  }
+  85% {
+    opacity: 0.95;
+    transform: translateY(2px) scale(0.995) rotateY(0.5deg);
+    filter: blur(0.2px) brightness(0.98);
   }
   100% { 
     opacity: 1; 
+    transform: translateY(0px) scale(1) rotateY(0deg);
+    filter: blur(0px) brightness(1);
+  }
+}
+
+/* Subtle breathing animation after entrance */
+@keyframes avatarBreathing {
+  0%, 100% {
+    transform: scale(1) translateY(0px);
+  }
+  50% {
+    transform: scale(1.002) translateY(-2px);
+  }
+}
+
+/* Loading shimmer effect before avatar appears - Enhanced */
+.avatar-background:not(.loaded)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    45deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.03) 20%,
+    rgba(100, 200, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.03) 80%,
+    transparent 100%
+  );
+  animation: shimmer 2s ease-in-out infinite, /* Reduced from 3s */
+             shimmerPulse 1.5s ease-in-out infinite alternate; /* Reduced from 2s */
+  z-index: 1;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-120%) rotate(15deg);
+  }
+  100% {
+    transform: translateX(120%) rotate(15deg);
+  }
+}
+
+@keyframes shimmerPulse {
+  0% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0.7;
+  }
+}
+
+/* Avatar glow effect during entrance - Enhanced and Faster */
+.avatar-background.loaded .avatar-viewer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(100, 200, 255, 0.15) 0%,
+    rgba(67, 56, 202, 0.08) 40%,
+    transparent 70%
+  );
+  opacity: 1;
+  animation: avatarGlow 3s ease-out forwards; /* Reduced from 5s */
+  pointer-events: none;
+  z-index: 2;
+}
+
+@keyframes avatarGlow {
+  0% {
+    opacity: 1;
+    transform: scale(1.2); /* Reduced from 1.3 */
+    filter: blur(8px); /* Reduced from 10px */
+  }
+  30% {
+    opacity: 0.8;
+    transform: scale(1.15); /* Reduced from 1.2 */
+    filter: blur(4px); /* Reduced from 5px */
+  }
+  70% {
+    opacity: 0.3;
+    transform: scale(1.08); /* Reduced from 1.1 */
+    filter: blur(1px); /* Reduced from 2px */
+  }
+  100% {
+    opacity: 0;
     transform: scale(1);
+    filter: blur(0px);
+  }
+}
+
+/* Avatar entrance particles effect - Faster */
+.avatar-background.loaded .avatar-viewer::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 200px;
+  margin: -100px 0 0 -100px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(100, 200, 255, 0.05) 30%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  opacity: 1;
+  animation: entranceParticles 2s ease-out forwards; /* Reduced from 3s */
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes entranceParticles {
+  0% {
+    opacity: 1;
+    transform: scale(0.5) rotate(0deg);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.8) rotate(180deg); /* Reduced from scale(2) */
+  }
+  100% {
+    opacity: 0;
+    transform: scale(3) rotate(360deg); /* Reduced from scale(4) */
   }
 }
 

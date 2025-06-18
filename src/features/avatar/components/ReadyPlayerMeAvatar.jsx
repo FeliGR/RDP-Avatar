@@ -21,6 +21,7 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded, fullscreen = false, pe
   const [avatarError, setAvatarError] = useState(null);
   const [avatarLoaded, setAvatarLoaded] = useState(false);
   const [avatarFullyReady, setAvatarFullyReady] = useState(false);
+  const [avatarEntranceStarted, setAvatarEntranceStarted] = useState(false);
   const avatarRef = useRef(null);
   const sceneRef = useRef(null);
   const shadowGeneratorRef = useRef(null);
@@ -112,6 +113,7 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded, fullscreen = false, pe
       animationsLoadedRef.current = false;
       setAvatarLoaded(false);
       setAvatarFullyReady(false);
+      setAvatarEntranceStarted(false);
       setIsLoading(true);
       setAvatarError(null);
 
@@ -196,6 +198,7 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded, fullscreen = false, pe
 
             avatarRef.current = avatarMesh;
             setAvatarLoaded(true);
+            setAvatarEntranceStarted(false); // Reset entrance state
 
             if (onAvatarLoaded) {
               onAvatarLoaded(avatarMesh);
@@ -251,17 +254,84 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded, fullscreen = false, pe
               });
             }
 
+            // Enhanced avatar entrance animation - faster timing
             setTimeout(() => {
               setIsLoading(false);
               setAvatarFullyReady(true);
+              setAvatarEntranceStarted(true);
 
               if (avatarRef.current) {
+                // Start avatar invisible for smooth entrance
                 avatarRef.current.setEnabled(true);
+                
+                // Apply initial invisible state
+                const childMeshes = avatarRef.current.getChildMeshes();
+                childMeshes.forEach((mesh) => {
+                  if (mesh.material) {
+                    // Store original alpha values
+                    if (!mesh.material.originalAlpha) {
+                      mesh.material.originalAlpha = mesh.material.alpha || 1;
+                    }
+                    mesh.material.alpha = 0;
+                  }
+                });
+
+                // Animated entrance with gradual fade-in and scale - faster animation
+                let progress = 0;
+                const animationDuration = 1500; // Reduced from 2.5s to 1.5s
+                const startTime = Date.now();
+                
+                const animateEntrance = () => {
+                  const elapsed = Date.now() - startTime;
+                  progress = Math.min(elapsed / animationDuration, 1);
+                  
+                  // Smooth easing function for dramatic effect
+                  const easeOutCubic = 1 - Math.pow(1 - progress, 3);
+                  const easeInOutQuart = progress < 0.5 
+                    ? 8 * progress * progress * progress * progress 
+                    : 1 - Math.pow(-2 * progress + 2, 4) / 2;
+                  
+                  // Apply alpha fade-in
+                  childMeshes.forEach((mesh) => {
+                    if (mesh.material && mesh.material.originalAlpha) {
+                      mesh.material.alpha = mesh.material.originalAlpha * easeOutCubic;
+                    }
+                  });
+                  
+                  // Apply scale and position transformation
+                  if (avatarRef.current) {
+                    const scale = 0.8 + (0.2 * easeInOutQuart); // Scale from 0.8 to 1
+                    const yOffset = (1 - easeInOutQuart) * -0.3; // Float down from above
+                    
+                    avatarRef.current.scaling = new BABYLON.Vector3(scale, scale, scale);
+                    avatarRef.current.position.y = yOffset;
+                  }
+                  
+                  if (progress < 1) {
+                    requestAnimationFrame(animateEntrance);
+                  } else {
+                    // Animation complete - final state
+                    if (avatarRef.current) {
+                      avatarRef.current.scaling = new BABYLON.Vector3(1, 1, 1);
+                      avatarRef.current.position.y = 0;
+                    }
+                    childMeshes.forEach((mesh) => {
+                      if (mesh.material && mesh.material.originalAlpha) {
+                        mesh.material.alpha = mesh.material.originalAlpha;
+                      }
+                    });
+                  }
+                };
+                
+                // Start the entrance animation with reduced delay
+                setTimeout(() => {
+                  animateEntrance();
+                }, 200); // Reduced from 500ms to 200ms
               }
-            }, 1000);
+            }, 400); // Reduced from 1000ms to 400ms
           }
         });
-      }, 200);
+      }, 100); // Reduced from 200ms to 100ms
     }
   }, [
     avatarLoaded,

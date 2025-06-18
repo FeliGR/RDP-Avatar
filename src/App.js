@@ -9,8 +9,21 @@ const App = () => {
   const [showUI, setShowUI] = useState(false);
   const [activePanel, setActivePanel] = useState(null); // 'chat' | 'personality' | null
   const [isStarted, setIsStarted] = useState(false);
+  const [avatarLoaded, setAvatarLoaded] = useState(false);
   const logoRef = useRef(null);
   const containerRef = useRef(null);
+
+  // Avatar entrance animation on first load
+  useEffect(() => {
+    // Reduced delay for faster avatar appearance
+    const avatarTimer = setTimeout(() => {
+      setAvatarLoaded(true);
+    }, 500); // Reduced from 1.5s to 0.5s
+
+    return () => {
+      clearTimeout(avatarTimer);
+    };
+  }, []);
 
   // Mouse parallax effect
   useEffect(() => {
@@ -82,9 +95,9 @@ const App = () => {
   return (
     <AppProviders>
       <div ref={containerRef} className="app-container">
-        {/* Full-screen Avatar Background */}
-        <div className="avatar-background">
-          <AvatarViewer fullscreen={true} />
+        {/* Full-screen Avatar Background with entrance animation */}
+        <div className={`avatar-background ${avatarLoaded ? 'loaded' : ''}`}>
+          {avatarLoaded && <AvatarViewer fullscreen={true} />}
         </div>
 
         {/* Interactive Welcome Experience - Initially visible, fades when started */}

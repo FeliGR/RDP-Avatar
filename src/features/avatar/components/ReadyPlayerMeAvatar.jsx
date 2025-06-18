@@ -11,7 +11,7 @@ const RPM_CLIENT_ID =
   process.env.REACT_APP_RPM_CLIENT_ID ||
   "684b2978d8c346fff8566d83";
 
-const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded }) => {
+const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded, fullscreen = false, personalityTraits }) => {
   const { BABYLON, isLoading: babylonLoading, error: babylonError } = useBabylonJS();
   
   const savedAvatarUrl = localStorage.getItem("rpmAvatarUrl");

@@ -444,3 +444,39 @@
     width: 4px;
   }
 }
+
+/* Fullscreen Dialog Styles */
+.fullscreen-avatar-container .dialog-box {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.fullscreen-avatar-container .dialog-header {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 10px 10px 0 0;
+  padding: 1rem;
+  margin-bottom: 0;
+}
+
+.fullscreen-avatar-container .clear-button {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.fullscreen-avatar-container .clear-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.fullscreen-avatar-container .voice-status-message {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 0.5rem 1rem;
+}

@@ -2,8 +2,16 @@ html {
   box-sizing: border-box;
 }
 
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
 body {
   margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden; /* Prevent scrolling for fullscreen app */
   font-family:
     "Inter",
     -apple-system,
@@ -23,8 +31,10 @@ body {
   line-height: 1.5; /* Added base line-height */
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+#root {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
 }
 
 /* Import Inter font similar to Cohere's typography */

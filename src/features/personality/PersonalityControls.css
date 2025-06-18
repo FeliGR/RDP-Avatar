@@ -259,3 +259,45 @@
 .trait-control:hover .trait-range {
   opacity: 1;
 }
+
+/* Fullscreen Personality Controls Styles */
+.fullscreen-avatar-container .personality-controls {
+  background: transparent;
+  border: none;
+  padding: 1rem;
+}
+
+.fullscreen-avatar-container .trait-control {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.fullscreen-avatar-container .trait-control:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.fullscreen-avatar-container .trait-control label {
+  color: white;
+  font-weight: 600;
+}
+
+.fullscreen-avatar-container .trait-value {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.fullscreen-avatar-container .trait-slider {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.fullscreen-avatar-container .trait-slider::-webkit-slider-thumb {
+  background: white;
+  border: 2px solid rgba(100, 181, 246, 0.8);
+}
+
+.fullscreen-avatar-container .trait-slider::-moz-range-thumb {
+  background: white;
+  border: 2px solid rgba(100, 181, 246, 0.8);
+}

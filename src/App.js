@@ -10,6 +10,53 @@ const App = () => {
   const [activePanel, setActivePanel] = useState(null); // 'chat' | 'personality' | null
   const [isStarted, setIsStarted] = useState(false);
   const logoRef = useRef(null);
+  const containerRef = useRef(null);
+
+  // Mouse parallax effect
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (!containerRef.current || isStarted) return;
+
+      const { clientX, clientY } = e;
+      const { innerWidth, innerHeight } = window;
+      
+      const xPercent = (clientX / innerWidth - 0.5) * 2; // -1 to 1
+      const yPercent = (clientY / innerHeight - 0.5) * 2; // -1 to 1
+
+      // Apply parallax to floating particles
+      const particles = containerRef.current.querySelectorAll('.particle');
+      particles.forEach((particle, index) => {
+        const speed = (index % 3 + 1) * 0.5; // Different speeds for variety
+        const x = xPercent * speed * 10;
+        const y = yPercent * speed * 10;
+        particle.style.transform = `translate(${x}px, ${y}px)`;
+      });
+
+      // Apply subtle parallax to neural nodes
+      const nodes = containerRef.current.querySelectorAll('.neural-node');
+      nodes.forEach((node, index) => {
+        const speed = (index % 2 + 1) * 0.3;
+        const x = xPercent * speed * 5;
+        const y = yPercent * speed * 5;
+        node.style.transform = `translate(${x}px, ${y}px)`;
+      });
+
+      // Apply parallax to logo elements
+      const logoElements = containerRef.current.querySelectorAll('.logo-ring, .logo-ring-2');
+      logoElements.forEach((element, index) => {
+        const speed = index === 0 ? 0.2 : 0.1;
+        const x = xPercent * speed * 3;
+        const y = yPercent * speed * 3;
+        element.style.transform = `translate(${x}px, ${y}px) rotate(${element.style.transform?.includes('rotate') ? element.style.transform.match(/rotate\(([^)]+)\)/)?.[1] || '0deg' : '0deg'})`;
+      });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, [isStarted]);
 
   const handleStart = () => {
     setIsStarted(true);
@@ -34,7 +81,7 @@ const App = () => {
 
   return (
     <AppProviders>
-      <div className="app-container">
+      <div ref={containerRef} className="app-container">
         {/* Full-screen Avatar Background */}
         <div className="avatar-background">
           <AvatarViewer fullscreen={true} />

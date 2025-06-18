@@ -313,24 +313,24 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded, fullscreen = false, pe
 
   return (
     <div className="ready-player-me-avatar">
-      {/* Show loading state while Babylon.js is loading */}
-      {babylonLoading && (
+      {/* Show loading state while Babylon.js is loading - hidden in fullscreen */}
+      {babylonLoading && !fullscreen && (
         <div className="avatar-loading">Loading 3D engine...</div>
       )}
 
-      {/* Show error if Babylon.js failed to load */}
-      {babylonError && (
+      {/* Show error if Babylon.js failed to load - hidden in fullscreen */}
+      {babylonError && !fullscreen && (
         <div className="avatar-error">
           Failed to load 3D engine: {babylonError.message}
         </div>
       )}
 
-      {/* Show normal loading states only after Babylon.js is loaded */}
-      {BABYLON && (isLoading || (avatarUrl && !avatarFullyReady)) && !showCreator && (
+      {/* Show normal loading states only after Babylon.js is loaded - hidden in fullscreen */}
+      {BABYLON && (isLoading || (avatarUrl && !avatarFullyReady)) && !showCreator && !fullscreen && (
         <div className="avatar-loading">Loading avatar...</div>
       )}
 
-      {BABYLON && !avatarUrl && !showCreator && !isLoading && (
+      {BABYLON && !avatarUrl && !showCreator && !isLoading && !fullscreen && (
         <div className="no-avatar-message">
           <p>No avatar created yet</p>
           <button className="customize-avatar-button" onClick={() => setShowCreator(true)}>
@@ -339,7 +339,7 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded, fullscreen = false, pe
         </div>
       )}
 
-      {BABYLON && avatarUrl && !showCreator && (
+      {BABYLON && avatarUrl && !showCreator && !fullscreen && (
         <button className="customize-avatar-button" onClick={() => setShowCreator(true)}>
           Customize Avatar
         </button>

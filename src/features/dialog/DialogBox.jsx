@@ -22,21 +22,11 @@ const DialogBox = () => {
 
   return (
     <div className="dialog-box">
-      {/* Dialog header */}
-      <div className="dialog-header">
-        <button
-          className="clear-button"
-          onClick={clearConversation}
-          disabled={isLoading || messages.length === 0}
-          aria-label="Clear conversation"
-        >
-          Clear Chat
-        </button>
-        {statusMessage && <div className="voice-status-message">{statusMessage}</div>}
-      </div>
-
       {/* Error display */}
       <ErrorMessage message={error} />
+
+      {/* Voice status message */}
+      {statusMessage && <div className="voice-status-message">{statusMessage}</div>}
 
       {/* Messages display */}
       <MessageList messages={messages} isLoading={isLoading} />

@@ -83,7 +83,7 @@ const MessageInput = ({ onSendMessage, isLoading, isListening, onToggleVoice }) 
         className="send-button"
         aria-label="Send message"
       >
-        {isLoading ? "..." : "Send"}
+        {isLoading ? "..." : "↗"}
       </button>
     </form>
   );

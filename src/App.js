@@ -241,7 +241,7 @@ const App = () => {
             {/* Chat Modal - Large Centered Design */}
             <div className={`side-panel chat-panel ${activePanel === 'chat' ? 'active' : ''}`}>
               <div className="panel-header">
-                <h3>AI Assistant</h3>
+                <h3>Chat with Alex</h3>
                 <button 
                   className="close-panel-btn"
                   onClick={() => setActivePanel(null)}

@@ -122,7 +122,7 @@ export class BabylonAnimationRepository extends IAnimationRepository {
   }
 
   _storeAnimationMeshesForCleanup(meshes) {
-    meshes.forEach(mesh => {
+    meshes.forEach((mesh) => {
       if (mesh._isOfficeEnvironment) {
       }
     });

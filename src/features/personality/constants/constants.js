@@ -30,7 +30,7 @@ export const DETAILED_TRAIT_DESCRIPTIONS = {
     effects:
       "Higher openness values make the AI more creative, explorative, and open to discussing abstract concepts and new ideas. Lower values result in more conventional, practical responses focused on established facts.",
     highExample:
-      '"That\'s an interesting perspective! Let\'s explore different angles and possibilities..."',
+      "\"That's an interesting perspective! Let's explore different angles and possibilities...\"",
     lowExample: '"I prefer to stick with proven, practical approaches that work reliably..."',
     icon: "🔍",
   },
@@ -50,7 +50,7 @@ export const DETAILED_TRAIT_DESCRIPTIONS = {
     effects:
       "Higher extraversion values make the AI more enthusiastic, talkative, and socially engaged. Lower values result in more reserved, thoughtful responses that are less emotionally expressive.",
     highExample:
-      '"I\'m excited to work with you on this project! Let\'s collaborate and share ideas!"',
+      "\"I'm excited to work with you on this project! Let's collaborate and share ideas!\"",
     lowExample: '\"I\'ve given this careful thought and would suggest a measured approach...\"',
     icon: "👥",
   },
@@ -70,7 +70,8 @@ export const DETAILED_TRAIT_DESCRIPTIONS = {
     description: "Reflects emotional reactivity and sensitivity to stressors.",
     effects:
       "Higher sensitivity values make the AI more emotionally nuanced, cautious, and attentive to potential problems. Lower values result in more emotionally stable, optimistic responses with less focus on risks.",
-    highExample: '\"I\'m concerned about potential challenges we might face with this approach...\"',
+    highExample:
+      '\"I\'m concerned about potential challenges we might face with this approach...\"',
     lowExample: '\"I\'m confident we can handle any challenges that come up along the way...\"',
     icon: "🧠",
   },

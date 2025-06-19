@@ -29,7 +29,7 @@ export class OfficeEnvironmentService {
 
   setupLighting() {
     this.hdrTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
-      "/assets/env/environment_19.env", 
+      "/assets/env/environment_19.env",
       this.scene
     );
     this.hdrTexture.rotationY = BABYLON.Tools.ToRadians(this.hdrRotation);
@@ -65,7 +65,7 @@ export class OfficeEnvironmentService {
         this.animationGroups.push(cloudsAnim);
       }
       if (result.animationGroups) {
-        result.animationGroups.forEach(group => {
+        result.animationGroups.forEach((group) => {
           if (group !== cloudsAnim) {
             this.animationGroups.push(group);
           }
@@ -92,7 +92,7 @@ export class OfficeEnvironmentService {
         mesh.isPickable = false;
         mesh._isOfficeEnvironment = true;
         const originalDispose = mesh.dispose;
-        mesh.dispose = function() {
+        mesh.dispose = function () {
           return originalDispose.call(this);
         };
         if (!meshName.includes("Sphere")) {
@@ -100,7 +100,8 @@ export class OfficeEnvironmentService {
           mesh.doNotSyncBoundingInfo = true;
         }
         if (meshName.includes("Base") || meshName.includes("Table")) {
-          const lightmapPath = "/assets/textures/" + (mesh.parent?.name || meshName) + "_lighting.jpg";
+          const lightmapPath =
+            "/assets/textures/" + (mesh.parent?.name || meshName) + "_lighting.jpg";
           let lightmap = lightingTextureCache[lightmapPath];
           if (!lightmap) {
             try {
@@ -212,7 +213,7 @@ export class OfficeEnvironmentService {
       this.videoTexture.dispose();
       this.videoTexture = null;
     }
-    this.environmentMeshes.forEach(mesh => {
+    this.environmentMeshes.forEach((mesh) => {
       if (mesh && !mesh.isDisposed()) {
         if (mesh.material) {
           mesh.material.dispose();
@@ -220,7 +221,7 @@ export class OfficeEnvironmentService {
         mesh.dispose();
       }
     });
-    this.animationGroups.forEach(group => {
+    this.animationGroups.forEach((group) => {
       if (group) {
         group.dispose();
       }
@@ -241,11 +242,11 @@ export class OfficeEnvironmentService {
   }
 
   checkEnvironmentIntegrity() {
-    const presentMeshes = this.environmentMeshes.filter(mesh => 
-      mesh && !mesh.isDisposed() && mesh.isEnabled()
+    const presentMeshes = this.environmentMeshes.filter(
+      (mesh) => mesh && !mesh.isDisposed() && mesh.isEnabled()
     );
-    const visibleMeshes = this.environmentMeshes.filter(mesh => 
-      mesh && !mesh.isDisposed() && mesh.isEnabled() && mesh.isVisible
+    const visibleMeshes = this.environmentMeshes.filter(
+      (mesh) => mesh && !mesh.isDisposed() && mesh.isEnabled() && mesh.isVisible
     );
     if (presentMeshes.length === 0) {
       return false;

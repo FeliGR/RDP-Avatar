@@ -12,10 +12,7 @@ export const useBabylonJS = () => {
       setIsLoading(true);
       setError(null);
       try {
-        const [babylonCore] = await Promise.all([
-          import("babylonjs"),
-          import("babylonjs-loaders"),
-        ]);
+        const [babylonCore] = await Promise.all([import("babylonjs"), import("babylonjs-loaders")]);
         if (mounted) {
           setBabylon(babylonCore);
           setIsLoading(false);

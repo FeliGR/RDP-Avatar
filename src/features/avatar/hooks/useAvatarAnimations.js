@@ -31,8 +31,8 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
       if (mesh._isOfficeEnvironment) {
         return;
       }
-      const hasOfficeEnvironmentChildren = mesh.getChildMeshes && 
-        mesh.getChildMeshes().some(child => child._isOfficeEnvironment);
+      const hasOfficeEnvironmentChildren =
+        mesh.getChildMeshes && mesh.getChildMeshes().some((child) => child._isOfficeEnvironment);
       if (hasOfficeEnvironmentChildren) {
         return;
       }

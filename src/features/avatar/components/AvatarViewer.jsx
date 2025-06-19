@@ -3,7 +3,12 @@ import { usePersonality } from "../../personality/context/PersonalityContext";
 import "./AvatarViewer.css";
 import ReadyPlayerMeAvatar from "./ReadyPlayerMeAvatar";
 
-const AvatarViewer = ({ fullscreen = false, triggerAvatarCustomization = false, showCreator, setShowCreator }) => {
+const AvatarViewer = ({
+  fullscreen = false,
+  triggerAvatarCustomization = false,
+  showCreator,
+  setShowCreator,
+}) => {
   const canvasRef = useRef(null);
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);

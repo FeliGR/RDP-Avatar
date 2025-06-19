@@ -65,12 +65,12 @@ const App = () => {
 
   useEffect(() => {
     if (showCreator) {
-      document.body.classList.add('creator-open');
+      document.body.classList.add("creator-open");
     } else {
-      document.body.classList.remove('creator-open');
+      document.body.classList.remove("creator-open");
     }
     return () => {
-      document.body.classList.remove('creator-open');
+      document.body.classList.remove("creator-open");
     };
   }, [showCreator]);
 
@@ -106,8 +106,8 @@ const App = () => {
       <div ref={containerRef} className="app-container">
         <div className={`avatar-background ${avatarLoaded ? "loaded" : ""}`}>
           {avatarLoaded && (
-            <AvatarViewer 
-              fullscreen={true} 
+            <AvatarViewer
+              fullscreen={true}
               triggerAvatarCustomization={triggerAvatarCustomization}
               showCreator={showCreator}
               setShowCreator={setShowCreator}

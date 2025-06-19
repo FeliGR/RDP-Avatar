@@ -77,9 +77,17 @@ const ReadyPlayerMeAvatar = ({
     camera.attachControl(canvasRef.current, true);
     camera.lowerRadiusLimit = 4;
     camera.upperRadiusLimit = 15;
-    const hemiLight = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(0, 1, 0), scene);
+    const hemiLight = new BABYLON.HemisphericLight(
+      "hemiLight",
+      new BABYLON.Vector3(0, 1, 0),
+      scene
+    );
     hemiLight.intensity = 0.15;
-    const dirLight = new BABYLON.DirectionalLight("dirLight", new BABYLON.Vector3(-2, -7, -5), scene);
+    const dirLight = new BABYLON.DirectionalLight(
+      "dirLight",
+      new BABYLON.Vector3(-2, -7, -5),
+      scene
+    );
     dirLight.intensity = 1.75;
     dirLight.position = new BABYLON.Vector3(0, 30, 10);
     dirLight.shadowMinZ = -100;
@@ -130,29 +138,31 @@ const ReadyPlayerMeAvatar = ({
         }
         const sceneMeshes = scene.meshes.slice();
         sceneMeshes.forEach((mesh) => {
-          const isAvatarMesh = mesh.name === "_Character_" || 
-                               mesh.name.includes("Armature") ||
-                               mesh.name.includes("Character") ||
-                               mesh.name.includes("Wolf3D") ||
-                               mesh.name.includes("Body") ||
-                               mesh.name.includes("Head") ||
-                               mesh.name.includes("Hair") ||
-                               mesh.name.includes("Outfit") ||
-                               mesh.name.includes("Top") ||
-                               mesh.name.includes("Bottom") ||
-                               mesh.name.includes("Shoes") ||
-                               mesh.name.includes("Accessory");
-          const isOfficeMesh = mesh.name.includes("Base") ||
-                               mesh.name.includes("Chair") ||
-                               mesh.name.includes("TV") ||
-                               mesh.name.includes("Lamp") ||
-                               mesh.name.includes("Table") ||
-                               mesh.name.includes("Sphere") ||
-                               mesh.name.includes("Vinils") ||
-                               mesh.name.includes("cloud") ||
-                               mesh.name === "skybox" ||
-                               mesh.name === "__root__" ||
-                               mesh._isOfficeEnvironment;
+          const isAvatarMesh =
+            mesh.name === "_Character_" ||
+            mesh.name.includes("Armature") ||
+            mesh.name.includes("Character") ||
+            mesh.name.includes("Wolf3D") ||
+            mesh.name.includes("Body") ||
+            mesh.name.includes("Head") ||
+            mesh.name.includes("Hair") ||
+            mesh.name.includes("Outfit") ||
+            mesh.name.includes("Top") ||
+            mesh.name.includes("Bottom") ||
+            mesh.name.includes("Shoes") ||
+            mesh.name.includes("Accessory");
+          const isOfficeMesh =
+            mesh.name.includes("Base") ||
+            mesh.name.includes("Chair") ||
+            mesh.name.includes("TV") ||
+            mesh.name.includes("Lamp") ||
+            mesh.name.includes("Table") ||
+            mesh.name.includes("Sphere") ||
+            mesh.name.includes("Vinils") ||
+            mesh.name.includes("cloud") ||
+            mesh.name === "skybox" ||
+            mesh.name === "__root__" ||
+            mesh._isOfficeEnvironment;
           const shouldKeep = !isAvatarMesh || isOfficeMesh;
           const isFarAway =
             mesh.position &&
@@ -253,7 +263,9 @@ const ReadyPlayerMeAvatar = ({
                   if (startOfficeAnimations) {
                     startOfficeAnimations();
                   }
-                  if (animationService?.sceneManager?.officeEnvironment?.checkEnvironmentIntegrity) {
+                  if (
+                    animationService?.sceneManager?.officeEnvironment?.checkEnvironmentIntegrity
+                  ) {
                     animationService.sceneManager.officeEnvironment.checkEnvironmentIntegrity();
                   }
                 }, 500);
@@ -349,13 +361,19 @@ const ReadyPlayerMeAvatar = ({
       {BABYLON && !avatarUrl && !showCreator && !isLoading && !fullscreen && (
         <div className="no-avatar-message">
           <p>No avatar created yet</p>
-          <button className="customize-avatar-button" onClick={() => setShowCreator && setShowCreator(true)}>
+          <button
+            className="customize-avatar-button"
+            onClick={() => setShowCreator && setShowCreator(true)}
+          >
             Create Avatar
           </button>
         </div>
       )}
       {BABYLON && avatarUrl && !showCreator && !fullscreen && (
-        <button className="customize-avatar-button" onClick={() => setShowCreator && setShowCreator(true)}>
+        <button
+          className="customize-avatar-button"
+          onClick={() => setShowCreator && setShowCreator(true)}
+        >
           Customize Avatar
         </button>
       )}

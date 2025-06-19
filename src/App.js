@@ -10,6 +10,7 @@ const App = () => {
   const [activePanel, setActivePanel] = useState(null); // 'chat' | 'personality' | null
   const [isStarted, setIsStarted] = useState(false);
   const [avatarLoaded, setAvatarLoaded] = useState(false);
+  const [triggerAvatarCustomization, setTriggerAvatarCustomization] = useState(false);
   const logoRef = useRef(null);
   const containerRef = useRef(null);
 
@@ -92,12 +93,28 @@ const App = () => {
     }
   };
 
+  const handleCustomizeAvatar = () => {
+    // Close any open panels first
+    setActivePanel(null);
+    // Trigger avatar customization
+    setTriggerAvatarCustomization(true);
+    // Reset the trigger after a short delay
+    setTimeout(() => {
+      setTriggerAvatarCustomization(false);
+    }, 100);
+  };
+
   return (
     <AppProviders>
       <div ref={containerRef} className="app-container">
         {/* Full-screen Avatar Background with entrance animation */}
         <div className={`avatar-background ${avatarLoaded ? "loaded" : ""}`}>
-          {avatarLoaded && <AvatarViewer fullscreen={true} />}
+          {avatarLoaded && (
+            <AvatarViewer 
+              fullscreen={true} 
+              triggerAvatarCustomization={triggerAvatarCustomization}
+            />
+          )}
         </div>
 
         {/* Interactive Welcome Experience - Initially visible, fades when started */}
@@ -221,8 +238,8 @@ const App = () => {
 
               <button
                 className="control-btn"
-                onClick={() => setActivePanel(null)}
-                title="Hide Panels"
+                onClick={handleCustomizeAvatar}
+                title="Customize Avatar"
               >
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />

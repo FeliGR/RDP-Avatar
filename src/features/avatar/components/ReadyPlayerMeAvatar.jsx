@@ -16,6 +16,7 @@ const ReadyPlayerMeAvatar = ({
   onAvatarLoaded,
   fullscreen = false,
   personalityTraits,
+  triggerAvatarCustomization = false,
 }) => {
   const { BABYLON, isLoading: babylonLoading, error: babylonError } = useBabylonJS();
 
@@ -358,6 +359,13 @@ const ReadyPlayerMeAvatar = ({
       setAvatarUrl(null);
     }
   }, [avatarError]);
+
+  // Handle triggerAvatarCustomization prop from App component
+  useEffect(() => {
+    if (triggerAvatarCustomization && BABYLON) {
+      setShowCreator(true);
+    }
+  }, [triggerAvatarCustomization, BABYLON]);
 
   const handleAvatarExported = (response) => {
     const urlValue = typeof response === "object" && response.data ? response.data.url : response;

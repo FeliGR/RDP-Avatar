@@ -17,12 +17,14 @@ const ReadyPlayerMeAvatar = ({
   fullscreen = false,
   personalityTraits,
   triggerAvatarCustomization = false,
+  showCreator,
+  setShowCreator,
 }) => {
   const { BABYLON, isLoading: babylonLoading, error: babylonError } = useBabylonJS();
 
   const savedAvatarUrl = localStorage.getItem("rpmAvatarUrl");
   const [avatarUrl, setAvatarUrl] = useState(savedAvatarUrl || null);
-  const [showCreator, setShowCreator] = useState(!savedAvatarUrl);
+  // Using props instead of local state for showCreator
   const [isLoading, setIsLoading] = useState(!!savedAvatarUrl);
   const [avatarError, setAvatarError] = useState(null);
   const [avatarLoaded, setAvatarLoaded] = useState(false);
@@ -353,19 +355,28 @@ const ReadyPlayerMeAvatar = ({
         localStorage.removeItem("rpmAvatarUrl");
       }
 
-      setShowCreator(true);
+      if (setShowCreator) {
+        setShowCreator(true);
+      }
 
       setAvatarError(null);
       setAvatarUrl(null);
     }
-  }, [avatarError]);
+  }, [avatarError, setShowCreator]);
 
   // Handle triggerAvatarCustomization prop from App component
   useEffect(() => {
-    if (triggerAvatarCustomization && BABYLON) {
+    if (triggerAvatarCustomization && BABYLON && setShowCreator) {
       setShowCreator(true);
     }
-  }, [triggerAvatarCustomization, BABYLON]);
+  }, [triggerAvatarCustomization, BABYLON, setShowCreator]);
+
+  // Initialize showCreator if it's undefined (compatibility with both prop-based and state-based approaches)
+  useEffect(() => {
+    if (setShowCreator && showCreator === undefined) {
+      setShowCreator(!savedAvatarUrl);
+    }
+  }, [savedAvatarUrl, showCreator, setShowCreator]);
 
   const handleAvatarExported = (response) => {
     const urlValue = typeof response === "object" && response.data ? response.data.url : response;
@@ -388,7 +399,9 @@ const ReadyPlayerMeAvatar = ({
 
     setTimeout(() => {
       setAvatarUrl(cacheBustedUrl);
-      setShowCreator(false);
+      if (setShowCreator) {
+        setShowCreator(false);
+      }
     }, 100);
   };
 
@@ -411,14 +424,14 @@ const ReadyPlayerMeAvatar = ({
       {BABYLON && !avatarUrl && !showCreator && !isLoading && !fullscreen && (
         <div className="no-avatar-message">
           <p>No avatar created yet</p>
-          <button className="customize-avatar-button" onClick={() => setShowCreator(true)}>
+          <button className="customize-avatar-button" onClick={() => setShowCreator && setShowCreator(true)}>
             Create Avatar
           </button>
         </div>
       )}
 
       {BABYLON && avatarUrl && !showCreator && !fullscreen && (
-        <button className="customize-avatar-button" onClick={() => setShowCreator(true)}>
+        <button className="customize-avatar-button" onClick={() => setShowCreator && setShowCreator(true)}>
           Customize Avatar
         </button>
       )}
@@ -427,7 +440,7 @@ const ReadyPlayerMeAvatar = ({
       {BABYLON && showCreator && (
         <button
           className="creator-close-button"
-          onClick={() => setShowCreator(false)}
+          onClick={() => setShowCreator && setShowCreator(false)}
           aria-label="Close avatar creator"
         >
           Close Editor
@@ -442,7 +455,7 @@ const ReadyPlayerMeAvatar = ({
             subdomain="ar-avatar-39283x"
             style={{ width: "100%", height: "100%" }}
             onAvatarExported={handleAvatarExported}
-            onError={() => setShowCreator(true)}
+            onError={() => setShowCreator && setShowCreator(true)}
             avatarId={avatarUrl && avatarUrl.split("/").pop().split(".")[0].split("?")[0]}
             bodyType="fullbody"
             clearCache={true}

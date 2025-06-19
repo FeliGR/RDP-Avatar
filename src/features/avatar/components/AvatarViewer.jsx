@@ -3,7 +3,7 @@ import { usePersonality } from "../../personality/context/PersonalityContext";
 import "./AvatarViewer.css";
 import ReadyPlayerMeAvatar from "./ReadyPlayerMeAvatar";
 
-const AvatarViewer = ({ fullscreen = false, triggerAvatarCustomization = false }) => {
+const AvatarViewer = ({ fullscreen = false, triggerAvatarCustomization = false, showCreator, setShowCreator }) => {
   const canvasRef = useRef(null);
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
@@ -47,6 +47,8 @@ const AvatarViewer = ({ fullscreen = false, triggerAvatarCustomization = false }
           personalityTraits={personalityTraits}
           fullscreen={fullscreen}
           triggerAvatarCustomization={triggerAvatarCustomization}
+          showCreator={showCreator}
+          setShowCreator={setShowCreator}
         />
 
         {/* Tooltip for interaction instructions - only show in non-fullscreen mode */}

@@ -11,6 +11,10 @@ const App = () => {
   const [isStarted, setIsStarted] = useState(false);
   const [avatarLoaded, setAvatarLoaded] = useState(false);
   const [triggerAvatarCustomization, setTriggerAvatarCustomization] = useState(false);
+  const [showCreator, setShowCreator] = useState(() => {
+    // Default to true if no avatar is saved
+    return !localStorage.getItem("rpmAvatarUrl");
+  });
   const logoRef = useRef(null);
   const containerRef = useRef(null);
 
@@ -29,7 +33,12 @@ const App = () => {
   // Mouse parallax effect
   useEffect(() => {
     const handleMouseMove = (e) => {
-      if (!containerRef.current || isStarted) return;
+      if (!containerRef.current || isStarted || showCreator) {
+        if (showCreator) {
+          console.log('Parallax effect skipped due to showCreator being true');
+        }
+        return;
+      }
 
       const { clientX, clientY } = e;
       const { innerWidth, innerHeight } = window;
@@ -70,7 +79,24 @@ const App = () => {
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
     };
-  }, [isStarted]);
+  }, [isStarted, showCreator]);
+
+  // Add/remove class to disable background animations when creator is open
+  useEffect(() => {
+    console.log('ShowCreator state changed:', showCreator);
+    if (showCreator) {
+      document.body.classList.add('creator-open');
+      console.log('Added creator-open class to body');
+    } else {
+      document.body.classList.remove('creator-open');
+      console.log('Removed creator-open class from body');
+    }
+
+    // Cleanup when component unmounts
+    return () => {
+      document.body.classList.remove('creator-open');
+    };
+  }, [showCreator]);
 
   const handleStart = () => {
     setIsStarted(true);
@@ -113,6 +139,8 @@ const App = () => {
             <AvatarViewer 
               fullscreen={true} 
               triggerAvatarCustomization={triggerAvatarCustomization}
+              showCreator={showCreator}
+              setShowCreator={setShowCreator}
             />
           )}
         </div>

@@ -271,16 +271,7 @@ const App = () => {
               </div>
             </div>
 
-            {/* Avatar Info Card - Shows at bottom when talking */}
-            <div className="avatar-info-card">
-              <div className="avatar-card-content">
-                <div className="avatar-status-indicator"></div>
-                <div className="avatar-info">
-                  <h4>AI Assistant</h4>
-                  <p>Ready to chat</p>
-                </div>
-              </div>
-            </div>
+
           </>
         )}
       </div>

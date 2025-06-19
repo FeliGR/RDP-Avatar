@@ -735,6 +735,23 @@
   transform: translateY(-50%) translateZ(0);
 }
 
+/* Ensure both chat and personality panels have the same positioning */
+.side-panel.chat-panel,
+.side-panel.personality-panel {
+  position: fixed;
+  top: 50%;
+  right: -500px;
+  width: 450px;
+  height: 80vh;
+  max-height: 700px;
+  transform: translateY(-50%) translateZ(0);
+}
+
+.side-panel.chat-panel.active,
+.side-panel.personality-panel.active {
+  right: 20px;
+}
+
 .side-panel::before {
   content: '';
   position: absolute;
@@ -1212,32 +1229,9 @@
   }
 }
 
-/* Personality Panel Specific */
-.personality-panel {
-  right: -480px;
-}
-
+/* Personality Panel Specific - Use same smooth animation as chat panel */
 .personality-panel.active {
-  right: 0;
-  animation: personalityPanelEntrance 0.7s var(--chat-easing-smooth) forwards;
-}
-
-@keyframes personalityPanelEntrance {
-  0% {
-    right: -480px;
-    transform: translateX(0) rotateY(-15deg) scale(0.95);
-    opacity: 0;
-  }
-  60% {
-    right: -10px;
-    transform: translateX(0) rotateY(3deg) scale(1.01);
-    opacity: 0.9;
-  }
-  100% {
-    right: 0;
-    transform: translateX(0) rotateY(0deg) scale(1);
-    opacity: 1;
-  }
+  animation: panelSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 /* Responsive Design */

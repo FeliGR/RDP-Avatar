@@ -80,7 +80,7 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
       try {
         // Use longer transition for returning to idle for smoother transitions
         const transitionDuration = options.transitionDuration || 0.8;
-        
+
         const result = await animationServiceRef.current.playAnimationWithTransition(
           animationName,
           {

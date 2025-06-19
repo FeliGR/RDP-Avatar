@@ -34,10 +34,6 @@ export const debounce = (func, wait, immediate) => {
   };
 };
 
-
-
-
-
 /**
  * Formats timestamp for display
  * @param {number|Date} timestamp - Timestamp to format
@@ -49,8 +45,6 @@ export const formatTime = (timestamp) => {
     minute: "2-digit",
   });
 };
-
-
 
 const utils = {
   formatTrait,

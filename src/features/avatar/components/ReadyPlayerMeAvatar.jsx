@@ -11,9 +11,14 @@ const RPM_CLIENT_ID =
   process.env.REACT_APP_RPM_CLIENT_ID ||
   "684b2978d8c346fff8566d83";
 
-const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded, fullscreen = false, personalityTraits }) => {
+const ReadyPlayerMeAvatar = ({
+  canvasRef,
+  onAvatarLoaded,
+  fullscreen = false,
+  personalityTraits,
+}) => {
   const { BABYLON, isLoading: babylonLoading, error: babylonError } = useBabylonJS();
-  
+
   const savedAvatarUrl = localStorage.getItem("rpmAvatarUrl");
   const [avatarUrl, setAvatarUrl] = useState(savedAvatarUrl || null);
   const [showCreator, setShowCreator] = useState(!savedAvatarUrl);
@@ -21,7 +26,6 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded, fullscreen = false, pe
   const [avatarError, setAvatarError] = useState(null);
   const [avatarLoaded, setAvatarLoaded] = useState(false);
   const [avatarFullyReady, setAvatarFullyReady] = useState(false);
-  const [avatarEntranceStarted, setAvatarEntranceStarted] = useState(false);
   const avatarRef = useRef(null);
   const sceneRef = useRef(null);
   const shadowGeneratorRef = useRef(null);
@@ -113,7 +117,6 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded, fullscreen = false, pe
       animationsLoadedRef.current = false;
       setAvatarLoaded(false);
       setAvatarFullyReady(false);
-      setAvatarEntranceStarted(false);
       setIsLoading(true);
       setAvatarError(null);
 
@@ -198,7 +201,6 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded, fullscreen = false, pe
 
             avatarRef.current = avatarMesh;
             setAvatarLoaded(true);
-            setAvatarEntranceStarted(false); // Reset entrance state
 
             if (onAvatarLoaded) {
               onAvatarLoaded(avatarMesh);
@@ -258,12 +260,11 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded, fullscreen = false, pe
             setTimeout(() => {
               setIsLoading(false);
               setAvatarFullyReady(true);
-              setAvatarEntranceStarted(true);
 
               if (avatarRef.current) {
                 // Start avatar invisible for smooth entrance
                 avatarRef.current.setEnabled(true);
-                
+
                 // Apply initial invisible state
                 const childMeshes = avatarRef.current.getChildMeshes();
                 childMeshes.forEach((mesh) => {
@@ -280,33 +281,34 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded, fullscreen = false, pe
                 let progress = 0;
                 const animationDuration = 1500; // Reduced from 2.5s to 1.5s
                 const startTime = Date.now();
-                
+
                 const animateEntrance = () => {
                   const elapsed = Date.now() - startTime;
                   progress = Math.min(elapsed / animationDuration, 1);
-                  
+
                   // Smooth easing function for dramatic effect
                   const easeOutCubic = 1 - Math.pow(1 - progress, 3);
-                  const easeInOutQuart = progress < 0.5 
-                    ? 8 * progress * progress * progress * progress 
-                    : 1 - Math.pow(-2 * progress + 2, 4) / 2;
-                  
+                  const easeInOutQuart =
+                    progress < 0.5
+                      ? 8 * progress * progress * progress * progress
+                      : 1 - Math.pow(-2 * progress + 2, 4) / 2;
+
                   // Apply alpha fade-in
                   childMeshes.forEach((mesh) => {
                     if (mesh.material && mesh.material.originalAlpha) {
                       mesh.material.alpha = mesh.material.originalAlpha * easeOutCubic;
                     }
                   });
-                  
+
                   // Apply scale and position transformation
                   if (avatarRef.current) {
-                    const scale = 0.8 + (0.2 * easeInOutQuart); // Scale from 0.8 to 1
+                    const scale = 0.8 + 0.2 * easeInOutQuart; // Scale from 0.8 to 1
                     const yOffset = (1 - easeInOutQuart) * -0.3; // Float down from above
-                    
+
                     avatarRef.current.scaling = new BABYLON.Vector3(scale, scale, scale);
                     avatarRef.current.position.y = yOffset;
                   }
-                  
+
                   if (progress < 1) {
                     requestAnimationFrame(animateEntrance);
                   } else {
@@ -322,7 +324,7 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded, fullscreen = false, pe
                     });
                   }
                 };
-                
+
                 // Start the entrance animation with reduced delay
                 setTimeout(() => {
                   animateEntrance();
@@ -341,6 +343,7 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded, fullscreen = false, pe
     triggerAIResponseAnimation,
     animationService,
     registerAIResponseCallback,
+    BABYLON?.Vector3, // Added to satisfy exhaustive-deps
   ]);
 
   useEffect(() => {
@@ -384,21 +387,18 @@ const ReadyPlayerMeAvatar = ({ canvasRef, onAvatarLoaded, fullscreen = false, pe
   return (
     <div className="ready-player-me-avatar">
       {/* Show loading state while Babylon.js is loading - hidden in fullscreen */}
-      {babylonLoading && !fullscreen && (
-        <div className="avatar-loading">Loading 3D engine...</div>
-      )}
+      {babylonLoading && !fullscreen && <div className="avatar-loading">Loading 3D engine...</div>}
 
       {/* Show error if Babylon.js failed to load - hidden in fullscreen */}
       {babylonError && !fullscreen && (
-        <div className="avatar-error">
-          Failed to load 3D engine: {babylonError.message}
-        </div>
+        <div className="avatar-error">Failed to load 3D engine: {babylonError.message}</div>
       )}
 
       {/* Show normal loading states only after Babylon.js is loaded - hidden in fullscreen */}
-      {BABYLON && (isLoading || (avatarUrl && !avatarFullyReady)) && !showCreator && !fullscreen && (
-        <div className="avatar-loading">Loading avatar...</div>
-      )}
+      {BABYLON &&
+        (isLoading || (avatarUrl && !avatarFullyReady)) &&
+        !showCreator &&
+        !fullscreen && <div className="avatar-loading">Loading avatar...</div>}
 
       {BABYLON && !avatarUrl && !showCreator && !isLoading && !fullscreen && (
         <div className="no-avatar-message">

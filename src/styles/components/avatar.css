@@ -25,14 +25,15 @@
 
 /* Multi-stage avatar entrance animation with enhanced effects */
 .avatar-background.loaded .avatar-viewer {
-  animation: avatarEntrance 2.5s var(--animation-smooth) forwards,
-             avatarBreathing 6s ease-in-out 2.5s infinite;
+  animation:
+    avatarEntrance 2.5s var(--animation-smooth) forwards,
+    avatarBreathing 6s ease-in-out 2.5s infinite;
   position: relative;
 }
 
 /* Loading shimmer effect before avatar appears */
 .avatar-background:not(.loaded)::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -44,14 +45,15 @@
     rgba(255, 255, 255, 0.1) 50%,
     transparent 70%
   );
-  animation: shimmer 2s ease-in-out infinite,
-             shimmerPulse 1.5s ease-in-out infinite alternate;
+  animation:
+    shimmer 2s ease-in-out infinite,
+    shimmerPulse 1.5s ease-in-out infinite alternate;
   z-index: 1;
 }
 
 /* Avatar glow effect during entrance */
 .avatar-background.loaded .avatar-viewer::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -71,7 +73,7 @@
 
 /* Avatar entrance particles effect */
 .avatar-background.loaded .avatar-viewer::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;

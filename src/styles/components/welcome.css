@@ -50,26 +50,106 @@
   transition: transform 0.1s ease-out;
 }
 
-.particle-0 { left: 10%; animation-delay: 0s; animation-duration: 25s; }
-.particle-1 { left: 20%; animation-delay: -5s; animation-duration: 30s; }
-.particle-2 { left: 30%; animation-delay: -10s; animation-duration: 22s; }
-.particle-3 { left: 40%; animation-delay: -15s; animation-duration: 28s; }
-.particle-4 { left: 50%; animation-delay: -20s; animation-duration: 26s; }
-.particle-5 { left: 60%; animation-delay: -25s; animation-duration: 24s; }
-.particle-6 { left: 70%; animation-delay: -30s; animation-duration: 32s; }
-.particle-7 { left: 80%; animation-delay: -35s; animation-duration: 29s; }
-.particle-8 { left: 90%; animation-delay: -40s; animation-duration: 27s; }
-.particle-9 { left: 15%; animation-delay: -45s; animation-duration: 31s; }
-.particle-10 { left: 25%; animation-delay: -50s; animation-duration: 23s; }
-.particle-11 { left: 35%; animation-delay: -55s; animation-duration: 25s; }
-.particle-12 { left: 45%; animation-delay: -60s; animation-duration: 33s; }
-.particle-13 { left: 55%; animation-delay: -65s; animation-duration: 21s; }
-.particle-14 { left: 65%; animation-delay: -70s; animation-duration: 34s; }
-.particle-15 { left: 75%; animation-delay: -75s; animation-duration: 28s; }
-.particle-16 { left: 85%; animation-delay: -80s; animation-duration: 26s; }
-.particle-17 { left: 95%; animation-delay: -85s; animation-duration: 30s; }
-.particle-18 { left: 5%; animation-delay: -90s; animation-duration: 24s; }
-.particle-19 { left: 12%; animation-delay: -95s; animation-duration: 27s; }
+.particle-0 {
+  left: 10%;
+  animation-delay: 0s;
+  animation-duration: 25s;
+}
+.particle-1 {
+  left: 20%;
+  animation-delay: -5s;
+  animation-duration: 30s;
+}
+.particle-2 {
+  left: 30%;
+  animation-delay: -10s;
+  animation-duration: 22s;
+}
+.particle-3 {
+  left: 40%;
+  animation-delay: -15s;
+  animation-duration: 28s;
+}
+.particle-4 {
+  left: 50%;
+  animation-delay: -20s;
+  animation-duration: 26s;
+}
+.particle-5 {
+  left: 60%;
+  animation-delay: -25s;
+  animation-duration: 24s;
+}
+.particle-6 {
+  left: 70%;
+  animation-delay: -30s;
+  animation-duration: 32s;
+}
+.particle-7 {
+  left: 80%;
+  animation-delay: -35s;
+  animation-duration: 29s;
+}
+.particle-8 {
+  left: 90%;
+  animation-delay: -40s;
+  animation-duration: 27s;
+}
+.particle-9 {
+  left: 15%;
+  animation-delay: -45s;
+  animation-duration: 31s;
+}
+.particle-10 {
+  left: 25%;
+  animation-delay: -50s;
+  animation-duration: 23s;
+}
+.particle-11 {
+  left: 35%;
+  animation-delay: -55s;
+  animation-duration: 25s;
+}
+.particle-12 {
+  left: 45%;
+  animation-delay: -60s;
+  animation-duration: 33s;
+}
+.particle-13 {
+  left: 55%;
+  animation-delay: -65s;
+  animation-duration: 21s;
+}
+.particle-14 {
+  left: 65%;
+  animation-delay: -70s;
+  animation-duration: 34s;
+}
+.particle-15 {
+  left: 75%;
+  animation-delay: -75s;
+  animation-duration: 28s;
+}
+.particle-16 {
+  left: 85%;
+  animation-delay: -80s;
+  animation-duration: 26s;
+}
+.particle-17 {
+  left: 95%;
+  animation-delay: -85s;
+  animation-duration: 30s;
+}
+.particle-18 {
+  left: 5%;
+  animation-delay: -90s;
+  animation-duration: 24s;
+}
+.particle-19 {
+  left: 12%;
+  animation-delay: -95s;
+  animation-duration: 27s;
+}
 
 /* Neural Network Animation */
 .neural-network {
@@ -99,14 +179,46 @@
   animation: pulsering 2s infinite ease-out;
 }
 
-.node-0 { top: 20%; left: 15%; animation-delay: 0s; }
-.node-1 { top: 30%; left: 85%; animation-delay: 0.5s; }
-.node-2 { top: 60%; left: 10%; animation-delay: 1s; }
-.node-3 { top: 70%; left: 90%; animation-delay: 1.5s; }
-.node-4 { top: 40%; left: 30%; animation-delay: 2s; }
-.node-5 { top: 50%; left: 70%; animation-delay: 2.5s; }
-.node-6 { top: 80%; left: 40%; animation-delay: 3s; }
-.node-7 { top: 15%; left: 60%; animation-delay: 3.5s; }
+.node-0 {
+  top: 20%;
+  left: 15%;
+  animation-delay: 0s;
+}
+.node-1 {
+  top: 30%;
+  left: 85%;
+  animation-delay: 0.5s;
+}
+.node-2 {
+  top: 60%;
+  left: 10%;
+  animation-delay: 1s;
+}
+.node-3 {
+  top: 70%;
+  left: 90%;
+  animation-delay: 1.5s;
+}
+.node-4 {
+  top: 40%;
+  left: 30%;
+  animation-delay: 2s;
+}
+.node-5 {
+  top: 50%;
+  left: 70%;
+  animation-delay: 2.5s;
+}
+.node-6 {
+  top: 80%;
+  left: 40%;
+  animation-delay: 3s;
+}
+.node-7 {
+  top: 15%;
+  left: 60%;
+  animation-delay: 3.5s;
+}
 
 .neural-connection {
   position: absolute;
@@ -117,12 +229,48 @@
   filter: drop-shadow(0 0 2px rgba(100, 200, 255, 0.3));
 }
 
-.connection-0 { top: 25%; left: 15%; width: 200px; transform: rotate(15deg); animation-delay: 0s; }
-.connection-1 { top: 35%; left: 80%; width: 150px; transform: rotate(-30deg); animation-delay: 0.5s; }
-.connection-2 { top: 65%; left: 10%; width: 180px; transform: rotate(45deg); animation-delay: 1s; }
-.connection-3 { top: 75%; left: 85%; width: 120px; transform: rotate(-15deg); animation-delay: 1.5s; }
-.connection-4 { top: 45%; left: 25%; width: 160px; transform: rotate(60deg); animation-delay: 2s; }
-.connection-5 { top: 55%; left: 65%; width: 140px; transform: rotate(-45deg); animation-delay: 2.5s; }
+.connection-0 {
+  top: 25%;
+  left: 15%;
+  width: 200px;
+  transform: rotate(15deg);
+  animation-delay: 0s;
+}
+.connection-1 {
+  top: 35%;
+  left: 80%;
+  width: 150px;
+  transform: rotate(-30deg);
+  animation-delay: 0.5s;
+}
+.connection-2 {
+  top: 65%;
+  left: 10%;
+  width: 180px;
+  transform: rotate(45deg);
+  animation-delay: 1s;
+}
+.connection-3 {
+  top: 75%;
+  left: 85%;
+  width: 120px;
+  transform: rotate(-15deg);
+  animation-delay: 1.5s;
+}
+.connection-4 {
+  top: 45%;
+  left: 25%;
+  width: 160px;
+  transform: rotate(60deg);
+  animation-delay: 2s;
+}
+.connection-5 {
+  top: 55%;
+  left: 65%;
+  width: 140px;
+  transform: rotate(-45deg);
+  animation-delay: 2.5s;
+}
 
 /* Data Streams */
 .data-streams {
@@ -160,9 +308,39 @@
   animation: dotFlow 2s infinite ease-in-out;
 }
 
-.stream-0 { top: 10%; left: 0%; animation-delay: 0s; transform: rotate(45deg); }
-.stream-1 { top: 20%; left: 100%; animation-delay: 1s; transform: rotate(-30deg); }
-.stream-2 { top: 80%; left: 0%; animation-delay: 2s; transform: rotate(15deg); }
-.stream-3 { top: 90%; left: 100%; animation-delay: 3s; transform: rotate(-60deg); }
-.stream-4 { top: 50%; left: 0%; animation-delay: 4s; transform: rotate(75deg); }
-.stream-5 { top: 60%; left: 100%; animation-delay: 5s; transform: rotate(-15deg); }
+.stream-0 {
+  top: 10%;
+  left: 0%;
+  animation-delay: 0s;
+  transform: rotate(45deg);
+}
+.stream-1 {
+  top: 20%;
+  left: 100%;
+  animation-delay: 1s;
+  transform: rotate(-30deg);
+}
+.stream-2 {
+  top: 80%;
+  left: 0%;
+  animation-delay: 2s;
+  transform: rotate(15deg);
+}
+.stream-3 {
+  top: 90%;
+  left: 100%;
+  animation-delay: 3s;
+  transform: rotate(-60deg);
+}
+.stream-4 {
+  top: 50%;
+  left: 0%;
+  animation-delay: 4s;
+  transform: rotate(75deg);
+}
+.stream-5 {
+  top: 60%;
+  left: 100%;
+  animation-delay: 5s;
+  transform: rotate(-15deg);
+}

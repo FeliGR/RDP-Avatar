@@ -76,7 +76,7 @@
 }
 
 .side-panel::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -88,7 +88,7 @@
 }
 
 .side-panel::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -112,7 +112,7 @@
 
 /* Chat Panel Background */
 .side-panel.chat-panel::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -139,7 +139,7 @@
 }
 
 .panel-header::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 2rem;
@@ -160,7 +160,7 @@
 }
 
 .panel-header h3::before {
-  content: '';
+  content: "";
   position: absolute;
   left: -16px;
   top: 50%;
@@ -192,7 +192,7 @@
 }
 
 .close-panel-btn::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;

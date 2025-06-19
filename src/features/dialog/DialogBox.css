@@ -37,32 +37,44 @@
   font-size: 0.75rem;
   color: var(--chat-text-primary);
   white-space: nowrap;
-  animation: fadeIn 0.4s ease, voicePulse 2s ease-in-out infinite;
+  animation:
+    fadeIn 0.4s ease,
+    voicePulse 2s ease-in-out infinite;
   position: relative;
   overflow: hidden;
 }
 
 .voice-status-message::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 8px;
   top: 50%;
   transform: translateY(-50%);
   width: 6px;
   height: 6px;
-  background: #4CAF50;
+  background: #4caf50;
   border-radius: 50%;
   animation: statusBlink 1.5s ease-in-out infinite;
 }
 
 @keyframes voicePulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.02); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
 }
 
 @keyframes statusBlink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
 }
 
 /* Enhanced Messages Container */
@@ -121,7 +133,7 @@
 }
 
 .empty-chat::before {
-  content: '●●●';
+  content: "●●●";
   display: block;
   font-size: 2.5rem;
   margin-bottom: 1.5rem;
@@ -175,7 +187,8 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: rgba(255, 255, 255, 0.95);
   margin-left: auto;
-  border-radius: var(--chat-radius-md) var(--chat-radius-md) var(--chat-radius-sm) var(--chat-radius-md);
+  border-radius: var(--chat-radius-md) var(--chat-radius-md) var(--chat-radius-sm)
+    var(--chat-radius-md);
   position: relative;
   overflow: hidden;
 }
@@ -194,13 +207,14 @@
   backdrop-filter: var(--chat-blur-soft);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: rgba(255, 255, 255, 0.95);
-  border-radius: var(--chat-radius-md) var(--chat-radius-md) var(--chat-radius-md) var(--chat-radius-sm);
+  border-radius: var(--chat-radius-md) var(--chat-radius-md) var(--chat-radius-md)
+    var(--chat-radius-sm);
   position: relative;
   overflow: hidden;
 }
 
 .bot-message .message-content::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 0;
@@ -307,7 +321,7 @@
 .message-input:focus {
   border-color: rgba(100, 200, 255, 0.9);
   background: rgba(255, 255, 255, 0.35);
-  box-shadow: 
+  box-shadow:
     0 0 0 3px rgba(100, 200, 255, 0.3),
     inset 0 2px 8px rgba(0, 0, 0, 0.1),
     var(--chat-shadow-soft);
@@ -341,7 +355,7 @@
 }
 
 .send-button::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -400,7 +414,7 @@
 }
 
 .voice-input-button::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -446,7 +460,7 @@
 }
 
 .voice-input-button.listening::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -5px;
   left: -5px;
@@ -458,7 +472,8 @@
 }
 
 @keyframes listeningPulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.4);
   }
@@ -469,7 +484,8 @@
 }
 
 @keyframes listeningRing {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     opacity: 1;
   }
@@ -499,7 +515,8 @@
 .typing-indicator {
   padding: 12px 18px;
   display: inline-block;
-  border-radius: var(--chat-radius-md) var(--chat-radius-md) var(--chat-radius-md) var(--chat-radius-sm);
+  border-radius: var(--chat-radius-md) var(--chat-radius-md) var(--chat-radius-md)
+    var(--chat-radius-sm);
   background: var(--chat-glass-bg);
   backdrop-filter: var(--chat-blur-soft);
   margin-bottom: 1.5rem;
@@ -532,7 +549,8 @@
 }
 
 @keyframes typing {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
     opacity: 0.6;
   }
@@ -543,7 +561,8 @@
 }
 
 @keyframes typingPulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.4;
   }
   50% {

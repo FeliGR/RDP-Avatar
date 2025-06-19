@@ -118,10 +118,10 @@ export class BabylonAnimationController extends IAnimationController {
     // Ensure animations are properly configured before blending
     try {
       toAnim.start(isLooping, speedRatio, frameStart, frameEnd, false);
-      
+
       fromAnim.speedRatio = speedRatio;
       toAnim.speedRatio = speedRatio;
-      
+
       // Start with proper initial weights
       fromAnim.setWeightForAllAnimatables(1);
       toAnim.setWeightForAllAnimatables(0);
@@ -151,7 +151,7 @@ export class BabylonAnimationController extends IAnimationController {
     try {
       toAnim.setWeightForAllAnimatables(1);
       fromAnim.setWeightForAllAnimatables(0);
-      
+
       // Small delay before stopping the previous animation to ensure smooth handoff
       setTimeout(() => {
         try {

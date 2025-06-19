@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 /**
  * Hook to dynamically load Babylon.js only when needed
@@ -14,15 +14,15 @@ export const useBabylonJS = () => {
 
     const loadBabylon = async () => {
       if (BABYLON) return; // Already loaded
-      
+
       setIsLoading(true);
       setError(null);
 
       try {
         // Dynamic import of Babylon.js
         const [babylonCore] = await Promise.all([
-          import('babylonjs'),
-          import('babylonjs-loaders') // Still needed for loaders, but not stored
+          import("babylonjs"),
+          import("babylonjs-loaders"), // Still needed for loaders, but not stored
         ]);
 
         if (mounted) {

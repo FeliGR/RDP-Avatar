@@ -38,13 +38,13 @@ const AvatarViewer = ({ fullscreen = false }) => {
   }, [hasInteracted]);
 
   return (
-    <div className={`avatar-viewer ${fullscreen ? 'fullscreen' : ''}`}>
+    <div className={`avatar-viewer ${fullscreen ? "fullscreen" : ""}`}>
       <div className="avatar-canvas-container">
         <canvas ref={canvasRef} className="avatar-canvas" />
 
-        <ReadyPlayerMeAvatar 
-          canvasRef={canvasRef} 
-          personalityTraits={personalityTraits} 
+        <ReadyPlayerMeAvatar
+          canvasRef={canvasRef}
+          personalityTraits={personalityTraits}
           fullscreen={fullscreen}
         />
 

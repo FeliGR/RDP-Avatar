@@ -63,7 +63,7 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
    * Start specific idle animation with smooth transition
    */
   const startSpecificIdleAnimation = useCallback(
-    async (animationName = "F_Standing_Idle_Variations_002") => {
+    async (animationName = "F_Standing_Idle_Variations_002", options = {}) => {
       if (!animationServiceRef.current) {
         return { success: false, error: "Animation service not available" };
       }
@@ -78,12 +78,16 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
       }
 
       try {
+        // Use longer transition for returning to idle for smoother transitions
+        const transitionDuration = options.transitionDuration || 0.8;
+        
         const result = await animationServiceRef.current.playAnimationWithTransition(
           animationName,
           {
             isLooping: true,
             speedRatio: 1.0,
-            transitionDuration: 0.5,
+            transitionDuration,
+            ...options,
           }
         );
 

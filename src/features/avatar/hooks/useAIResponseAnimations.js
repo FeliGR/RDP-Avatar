@@ -90,11 +90,13 @@ export const useAIResponseAnimations = (animationService, startSpecificIdleAnima
             animationDuration = animationGroup.duration * 1000;
           }
 
-          const timeoutDuration = Math.max(2000, Math.min(animationDuration + 1000, 8000));
+          // Improved timing calculation - allow some overlap for smoother transition
+          const timeoutDuration = Math.max(1500, Math.min(animationDuration - 200, 6000));
 
           setTimeout(async () => {
             try {
               if (startSpecificIdleAnimation) {
+                // Use a longer transition duration for smoother return to idle
                 await startSpecificIdleAnimation();
               } else {
                 await animationService.startIdleAnimations();

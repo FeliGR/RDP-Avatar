@@ -66,7 +66,8 @@ export class BabylonAnimationController extends IAnimationController {
       return Promise.resolve();
     }
 
-    const blendSpeed = Math.max(0.01, 1.0 / (transitionDuration * 60));
+    // Improved blend speed calculation for smoother transitions
+    const blendSpeed = Math.max(0.008, Math.min(0.05, 1.0 / (transitionDuration * 60)));
 
     return new Promise((resolve) => {
       this.scene.onBeforeRenderObservable.runCoroutineAsync(
@@ -89,8 +90,13 @@ export class BabylonAnimationController extends IAnimationController {
     if (character.animationGroups) {
       character.animationGroups.forEach((animGroup) => {
         try {
-          animGroup.setWeightForAllAnimatables(1);
-        } catch (error) {}
+          // Only reset weights for non-playing animations
+          if (!animGroup.isPlaying) {
+            animGroup.setWeightForAllAnimatables(1);
+          }
+        } catch (error) {
+          console.warn("Error resetting animation group:", error);
+        }
       });
     }
   }
@@ -109,10 +115,19 @@ export class BabylonAnimationController extends IAnimationController {
     let currentWeight = 1;
     let newWeight = 0;
 
-    toAnim.start(isLooping, speedRatio, frameStart, frameEnd, false);
-
-    fromAnim.speedRatio = speedRatio;
-    toAnim.speedRatio = speedRatio;
+    // Ensure animations are properly configured before blending
+    try {
+      toAnim.start(isLooping, speedRatio, frameStart, frameEnd, false);
+      
+      fromAnim.speedRatio = speedRatio;
+      toAnim.speedRatio = speedRatio;
+      
+      // Start with proper initial weights
+      fromAnim.setWeightForAllAnimatables(1);
+      toAnim.setWeightForAllAnimatables(0);
+    } catch (error) {
+      console.warn("Error setting up animation blending:", error);
+    }
 
     while (newWeight < 1) {
       newWeight += speed;
@@ -125,17 +140,29 @@ export class BabylonAnimationController extends IAnimationController {
         toAnim.setWeightForAllAnimatables(newWeight);
         fromAnim.setWeightForAllAnimatables(currentWeight);
       } catch (error) {
+        console.warn("Error during animation blending:", error);
         break;
       }
 
       yield;
     }
 
+    // Final cleanup - ensure clean transition
     try {
       toAnim.setWeightForAllAnimatables(1);
       fromAnim.setWeightForAllAnimatables(0);
-      fromAnim.stop();
-    } catch (error) {}
+      
+      // Small delay before stopping the previous animation to ensure smooth handoff
+      setTimeout(() => {
+        try {
+          fromAnim.stop();
+        } catch (error) {
+          console.warn("Error stopping previous animation:", error);
+        }
+      }, 50);
+    } catch (error) {
+      console.warn("Error in final animation cleanup:", error);
+    }
 
     character.setCurrentAnimation(toAnim);
 

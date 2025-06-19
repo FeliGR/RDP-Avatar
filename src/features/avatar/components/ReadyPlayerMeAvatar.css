@@ -231,6 +231,42 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
+/* Office Environment Status Styling */
+.office-environment-status {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 15;
+  pointer-events: auto;
+}
+
+.environment-loading,
+.environment-error,
+.environment-ready {
+  background: rgba(15, 23, 42, 0.85);
+  color: var(--text-primary);
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 0.25rem;
+  white-space: nowrap;
+}
+
+.environment-loading {
+  border-left: 3px solid #fbbf24;
+}
+
+.environment-error {
+  border-left: 3px solid #ef4444;
+}
+
+.environment-ready {
+  border-left: 3px solid #10b981;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
 /* Disable background animations when avatar creator is open */
 body.creator-open .header-grid,
 body.creator-open .floating-particles,

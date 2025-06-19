@@ -2,6 +2,7 @@ import { AvatarCreator } from "@readyplayerme/react-avatar-creator";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useAvatarAnimations } from "../hooks/useAvatarAnimations.js";
 import { useAIResponseAnimations } from "../hooks/useAIResponseAnimations.js";
+import { useOfficeEnvironment } from "../hooks/useOfficeEnvironment.js";
 import { useAvatarAnimation } from "../context/AvatarAnimationContext.js";
 import { useBabylonJS } from "../hooks/useBabylonJS.js";
 import "./ReadyPlayerMeAvatar.css";
@@ -53,6 +54,16 @@ const ReadyPlayerMeAvatar = ({
     startSpecificIdleAnimation
   );
 
+  // Office environment hook
+  const {
+    environmentInitialized,
+    isInitializing: environmentInitializing,
+    error: environmentError,
+    startOfficeAnimations,
+    playVideo,
+    pauseVideo,
+  } = useOfficeEnvironment(animationService);
+
   useEffect(() => {
     if (animationService) {
       registerAnimationService(animationService);
@@ -66,27 +77,33 @@ const ReadyPlayerMeAvatar = ({
     const engine = new BABYLON.Engine(canvasRef.current, true);
     const scene = new BABYLON.Scene(engine);
 
-    scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
+    // Set transparent background for office environment to show
+    scene.clearColor = new BABYLON.Color4(0.55, 0.71, 1.0, 1.0); // Light blue background similar to original
 
     const camera = new BABYLON.ArcRotateCamera(
       "camera",
-      -Math.PI / 2,
-      Math.PI / 2.5,
-      3,
+      -Math.PI / 6,   // Adjusted to show office from front-left angle
+      Math.PI / 4,    // Lower angle to see more of the office floor
+      8,              // Increased distance to show both avatar and office
       new BABYLON.Vector3(0, 1, 0),
       scene
     );
     camera.attachControl(canvasRef.current, true);
-    camera.lowerRadiusLimit = 1.5;
-    camera.upperRadiusLimit = 8;
+    camera.lowerRadiusLimit = 4;
+    camera.upperRadiusLimit = 15;
 
-    const light1 = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
-    light1.intensity = 0.7;
+    // Enhanced lighting setup similar to original
+    const hemiLight = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(0, 1, 0), scene);
+    hemiLight.intensity = 0.15;
 
-    const light2 = new BABYLON.DirectionalLight("light2", new BABYLON.Vector3(0, -1, 1), scene);
-    light2.intensity = 0.5;
+    const dirLight = new BABYLON.DirectionalLight("dirLight", new BABYLON.Vector3(-2, -7, -5), scene);
+    dirLight.intensity = 1.75;
+    dirLight.position = new BABYLON.Vector3(0, 30, 10);
+    dirLight.shadowMinZ = -100;
+    dirLight.shadowMaxZ = 100;
 
-    const shadowGenerator = new BABYLON.ShadowGenerator(1024, light2, true);
+    // Enhanced shadow generator
+    const shadowGenerator = new BABYLON.ShadowGenerator(1024, dirLight, true);
     shadowGenerator.darkness = 0.4;
     shadowGenerator.bias = 0.001;
     shadowGenerator.usePercentageCloserFiltering = true;
@@ -143,16 +160,42 @@ const ReadyPlayerMeAvatar = ({
 
         const sceneMeshes = scene.meshes.slice();
 
+        console.log("Avatar loading: Starting mesh cleanup...");
+        console.log("Avatar loading: Total scene meshes before cleanup:", sceneMeshes.length);
+        
+        let disposedCount = 0;
+        let keptCount = 0;
+        
         sceneMeshes.forEach((mesh) => {
-          const shouldKeep =
-            mesh.name === "camera" ||
-            mesh.name.includes("light") ||
-            mesh.name.includes("__root__") ||
-            mesh.name === "ground" ||
-            mesh.name === "skybox" ||
-            mesh.name.includes("Sphere") ||
-            mesh.name.includes("Base") ||
-            mesh.name.includes("TV");
+          // Check if this is an avatar mesh (should be disposed)
+          const isAvatarMesh = mesh.name === "_Character_" || 
+                               mesh.name.includes("Armature") ||
+                               mesh.name.includes("Character") ||
+                               mesh.name.includes("Wolf3D") ||
+                               mesh.name.includes("Body") ||
+                               mesh.name.includes("Head") ||
+                               mesh.name.includes("Hair") ||
+                               mesh.name.includes("Outfit") ||
+                               mesh.name.includes("Top") ||
+                               mesh.name.includes("Bottom") ||
+                               mesh.name.includes("Shoes") ||
+                               mesh.name.includes("Accessory");
+
+          // Check if this is an office environment mesh (should be kept)
+          const isOfficeMesh = mesh.name.includes("Base") ||
+                               mesh.name.includes("Chair") ||
+                               mesh.name.includes("TV") ||
+                               mesh.name.includes("Lamp") ||
+                               mesh.name.includes("Table") ||
+                               mesh.name.includes("Sphere") ||
+                               mesh.name.includes("Vinils") ||
+                               mesh.name.includes("cloud") ||
+                               mesh.name === "skybox" ||
+                               mesh.name === "__root__" ||
+                               mesh._isOfficeEnvironment; // Check the flag we set in OfficeEnvironmentService
+
+          // Keep all non-avatar meshes (including office environment)
+          const shouldKeep = !isAvatarMesh || isOfficeMesh;
 
           const isFarAway =
             mesh.position &&
@@ -160,8 +203,20 @@ const ReadyPlayerMeAvatar = ({
               Math.abs(mesh.position.y) > 50000 ||
               Math.abs(mesh.position.z) > 50000);
 
+          // Log what we're keeping for debugging
+          if (shouldKeep && !isFarAway && (isOfficeMesh || mesh._isOfficeEnvironment)) {
+            console.log("Keeping office environment mesh:", mesh.name);
+            keptCount++;
+          }
+
           if (!shouldKeep || isFarAway) {
-            console.log("Disposing mesh:", mesh.name, isFarAway ? "(far away)" : "");
+            console.log("Disposing mesh:", mesh.name, 
+              isFarAway ? "(far away)" : "", 
+              isAvatarMesh ? "(avatar)" : "",
+              isOfficeMesh ? "(office)" : "",
+              mesh._isOfficeEnvironment ? "(office flag)" : ""
+            );
+            disposedCount++;
 
             try {
               const childMeshes = mesh.getChildMeshes();
@@ -179,6 +234,10 @@ const ReadyPlayerMeAvatar = ({
             } catch (error) {}
           }
         });
+        
+        console.log("Avatar loading: Mesh cleanup complete.");
+        console.log(`Avatar loading: Disposed ${disposedCount} meshes, kept ${keptCount} office meshes`);
+        console.log("Avatar loading: Remaining scene meshes:", scene.meshes.length);
 
         const fullUrl = url.startsWith("http") ? url : `https://models.readyplayer.me/${url}`;
 
@@ -198,7 +257,9 @@ const ReadyPlayerMeAvatar = ({
             const avatarMesh = meshes[0];
             avatarMesh.name = "_Character_";
             avatarMesh.scaling = new BABYLON.Vector3(1, 1, 1);
-            avatarMesh.position = new BABYLON.Vector3(0, 0, 0);
+            // Center the avatar and position it to face the camera
+            avatarMesh.position = new BABYLON.Vector3(0, 0, 0); // Center position
+             avatarMesh.rotation = new BABYLON.Vector3(0, 0, 0); // No rotation - face forward/ Rotate -90 degrees to face camera
 
             avatarMesh.setEnabled(false);
 
@@ -259,84 +320,30 @@ const ReadyPlayerMeAvatar = ({
               });
             }
 
-            // Enhanced avatar entrance animation - faster timing
+            // Simply enable the avatar without entrance animation
             setTimeout(() => {
               setIsLoading(false);
               setAvatarFullyReady(true);
 
               if (avatarRef.current) {
-                // Start avatar invisible for smooth entrance
                 avatarRef.current.setEnabled(true);
 
-                // Apply initial invisible state
-                const childMeshes = avatarRef.current.getChildMeshes();
-                childMeshes.forEach((mesh) => {
-                  if (mesh.material) {
-                    // Store original alpha values
-                    if (!mesh.material.originalAlpha) {
-                      mesh.material.originalAlpha = mesh.material.alpha || 1;
-                    }
-                    mesh.material.alpha = 0;
-                  }
-                });
-
-                // Animated entrance with gradual fade-in and scale - faster animation
-                let progress = 0;
-                const animationDuration = 1500; // Reduced from 2.5s to 1.5s
-                const startTime = Date.now();
-
-                const animateEntrance = () => {
-                  const elapsed = Date.now() - startTime;
-                  progress = Math.min(elapsed / animationDuration, 1);
-
-                  // Smooth easing function for dramatic effect
-                  const easeOutCubic = 1 - Math.pow(1 - progress, 3);
-                  const easeInOutQuart =
-                    progress < 0.5
-                      ? 8 * progress * progress * progress * progress
-                      : 1 - Math.pow(-2 * progress + 2, 4) / 2;
-
-                  // Apply alpha fade-in
-                  childMeshes.forEach((mesh) => {
-                    if (mesh.material && mesh.material.originalAlpha) {
-                      mesh.material.alpha = mesh.material.originalAlpha * easeOutCubic;
-                    }
-                  });
-
-                  // Apply scale and position transformation
-                  if (avatarRef.current) {
-                    const scale = 0.8 + 0.2 * easeInOutQuart; // Scale from 0.8 to 1
-                    const yOffset = (1 - easeInOutQuart) * -0.3; // Float down from above
-
-                    avatarRef.current.scaling = new BABYLON.Vector3(scale, scale, scale);
-                    avatarRef.current.position.y = yOffset;
-                  }
-
-                  if (progress < 1) {
-                    requestAnimationFrame(animateEntrance);
-                  } else {
-                    // Animation complete - final state
-                    if (avatarRef.current) {
-                      avatarRef.current.scaling = new BABYLON.Vector3(1, 1, 1);
-                      avatarRef.current.position.y = 0;
-                    }
-                    childMeshes.forEach((mesh) => {
-                      if (mesh.material && mesh.material.originalAlpha) {
-                        mesh.material.alpha = mesh.material.originalAlpha;
-                      }
-                    });
-                  }
-                };
-
-                // Start the entrance animation with reduced delay
+                // Office environment should persist - no need to reinitialize
+                // Just ensure animations are properly applied
                 setTimeout(() => {
-                  animateEntrance();
-                }, 200); // Reduced from 500ms to 200ms
+                  if (startOfficeAnimations) {
+                    startOfficeAnimations();
+                  }
+                  // Check environment integrity for debugging
+                  if (animationService?.sceneManager?.officeEnvironment?.checkEnvironmentIntegrity) {
+                    animationService.sceneManager.officeEnvironment.checkEnvironmentIntegrity();
+                  }
+                }, 500);
               }
-            }, 400); // Reduced from 1000ms to 400ms
+            }, 100);
           }
         });
-      }, 100); // Reduced from 200ms to 100ms
+      }, 100);
     }
   }, [
     avatarLoaded,
@@ -405,6 +412,16 @@ const ReadyPlayerMeAvatar = ({
     }, 100);
   };
 
+  // Debug: Log office environment status
+  useEffect(() => {
+    if (environmentInitialized) {
+      console.log("✅ Office environment initialized successfully");
+    }
+    if (environmentError) {
+      console.error("❌ Office environment error:", environmentError);
+    }
+  }, [environmentInitialized, environmentError]);
+
   return (
     <div className="ready-player-me-avatar">
       {/* Show loading state while Babylon.js is loading - hidden in fullscreen */}
@@ -413,6 +430,21 @@ const ReadyPlayerMeAvatar = ({
       {/* Show error if Babylon.js failed to load - hidden in fullscreen */}
       {babylonError && !fullscreen && (
         <div className="avatar-error">Failed to load 3D engine: {babylonError.message}</div>
+      )}
+
+      {/* Office environment status - hidden in fullscreen */}
+      {BABYLON && !fullscreen && (
+        <div className="office-environment-status">
+          {environmentInitializing && (
+            <div className="environment-loading">Loading office environment...</div>
+          )}
+          {environmentError && (
+            <div className="environment-error">Office environment: {environmentError}</div>
+          )}
+          {environmentInitialized && (
+            <div className="environment-ready">✅ Office environment ready</div>
+          )}
+        </div>
       )}
 
       {/* Show normal loading states only after Babylon.js is loaded - hidden in fullscreen */}

@@ -36,9 +36,31 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
   const _cleanupDuplicateAvatars = useCallback(() => {
     if (!scene) return;
 
+    console.log("[useAvatarAnimations] Starting _cleanupDuplicateAvatars");
     const meshes = scene.meshes.slice();
+    console.log(`[useAvatarAnimations] Total meshes in scene: ${meshes.length}`);
+
+    let skippedCount = 0;
+    let disposedCount = 0;
 
     meshes.forEach((mesh) => {
+      // Skip office environment meshes
+      if (mesh._isOfficeEnvironment) {
+        console.log(`[useAvatarAnimations] Skipping office environment mesh: ${mesh.name}`);
+        skippedCount++;
+        return;
+      }
+
+      // Check if any child meshes are office environment meshes
+      const hasOfficeEnvironmentChildren = mesh.getChildMeshes && 
+        mesh.getChildMeshes().some(child => child._isOfficeEnvironment);
+      
+      if (hasOfficeEnvironmentChildren) {
+        console.log(`[useAvatarAnimations] Skipping mesh with office environment children: ${mesh.name}`);
+        skippedCount++;
+        return;
+      }
+
       const isHidden = !mesh.isVisible || mesh.visibility === 0 || !mesh.isEnabled();
       const isFarAway =
         mesh.position &&
@@ -49,14 +71,20 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
         mesh.scaling && (mesh.scaling.x < 0.01 || mesh.scaling.y < 0.01 || mesh.scaling.z < 0.01);
 
       if ((isHidden && isFarAway) || isScaledDown) {
+        console.log(`[useAvatarAnimations] Disposing mesh: ${mesh.name} (hidden: ${isHidden}, farAway: ${isFarAway}, scaledDown: ${isScaledDown})`);
         try {
           if (mesh.material) {
             mesh.material.dispose();
           }
           mesh.dispose();
-        } catch (error) {}
+          disposedCount++;
+        } catch (error) {
+          console.error(`[useAvatarAnimations] Error disposing mesh ${mesh.name}:`, error);
+        }
       }
     });
+
+    console.log(`[useAvatarAnimations] Cleanup complete - Skipped: ${skippedCount}, Disposed: ${disposedCount}`);
   }, [scene]);
 
   /**

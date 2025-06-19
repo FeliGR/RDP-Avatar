@@ -12,4 +12,5 @@ export { BabylonAnimationRepository } from "./infrastructure/repositories/Babylo
 export { BabylonAnimationController } from "./infrastructure/controllers/BabylonAnimationController.js";
 export { BabylonMorphTargetController } from "./infrastructure/controllers/BabylonMorphTargetController.js";
 export { BabylonSceneManager } from "./infrastructure/services/BabylonSceneManager.js";
+export { OfficeEnvironmentService } from "./infrastructure/services/OfficeEnvironmentService.js";
 export { AudioAnalyzer } from "./infrastructure/services/AudioAnalyzer.js";

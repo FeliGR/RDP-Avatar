@@ -147,6 +147,12 @@ export class BabylonAnimationRepository extends IAnimationRepository {
    * Store animation meshes for controlled cleanup after cloning
    */
   _storeAnimationMeshesForCleanup(meshes) {
+    console.log("BabylonAnimationRepository: Storing meshes for cleanup:", meshes.map(m => m.name));
+    meshes.forEach(mesh => {
+      if (mesh._isOfficeEnvironment) {
+        console.warn("BabylonAnimationRepository: Office environment mesh added to cleanup array:", mesh.name);
+      }
+    });
     this.animationMeshesToCleanup.push(...meshes);
   }
 
@@ -171,9 +177,23 @@ export class BabylonAnimationRepository extends IAnimationRepository {
    * Clean up animation meshes after cloning is complete
    */
   cleanupAnimationMeshes() {
+    console.log("BabylonAnimationRepository: Starting animation mesh cleanup...");
+    console.log("BabylonAnimationRepository: Meshes to cleanup:", this.animationMeshesToCleanup.length);
+    
+    let disposedCount = 0;
+    let skippedCount = 0;
+    
     this.animationMeshesToCleanup.forEach((mesh) => {
       if (mesh && !mesh.isDisposed()) {
+        // Skip office environment meshes
+        if (mesh._isOfficeEnvironment) {
+          console.log("BabylonAnimationRepository: Skipping office environment mesh:", mesh.name);
+          skippedCount++;
+          return;
+        }
+        
         try {
+          console.log("BabylonAnimationRepository: Disposing animation mesh:", mesh.name);
           const childMeshes = mesh.getChildMeshes();
           childMeshes.forEach((childMesh) => {
             if (childMesh.material) {
@@ -186,9 +206,12 @@ export class BabylonAnimationRepository extends IAnimationRepository {
             mesh.material.dispose();
           }
           mesh.dispose();
+          disposedCount++;
         } catch (error) {}
       }
     });
+
+    console.log(`BabylonAnimationRepository: Cleanup complete - disposed: ${disposedCount}, skipped: ${skippedCount}`);
 
     this.animationMeshesToCleanup = [];
 

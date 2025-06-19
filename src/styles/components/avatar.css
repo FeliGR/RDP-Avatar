@@ -23,11 +23,9 @@
   transform: scale(1);
 }
 
-/* Multi-stage avatar entrance animation with enhanced effects */
+/* Simple avatar display without entrance animation */
 .avatar-background.loaded .avatar-viewer {
-  animation:
-    avatarEntrance 2.5s var(--animation-smooth) forwards,
-    avatarBreathing 6s ease-in-out 2.5s infinite;
+  animation: avatarBreathing 6s ease-in-out infinite;
   position: relative;
 }
 
@@ -51,44 +49,4 @@
   z-index: 1;
 }
 
-/* Avatar glow effect during entrance */
-.avatar-background.loaded .avatar-viewer::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(
-    circle at center,
-    rgba(100, 200, 255, 0.3) 0%,
-    rgba(100, 200, 255, 0.1) 30%,
-    transparent 60%
-  );
-  opacity: 1;
-  animation: avatarGlow 3s ease-out forwards;
-  pointer-events: none;
-  z-index: 2;
-}
-
-/* Avatar entrance particles effect */
-.avatar-background.loaded .avatar-viewer::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 200px;
-  height: 200px;
-  margin: -100px 0 0 -100px;
-  background: radial-gradient(
-    circle,
-    rgba(100, 200, 255, 0.4) 0%,
-    rgba(100, 200, 255, 0.2) 30%,
-    transparent 60%
-  );
-  border-radius: 50%;
-  opacity: 1;
-  animation: entranceParticles 2s ease-out forwards;
-  pointer-events: none;
-  z-index: 1;
-}
+/* Removed entrance effects - clean avatar display */

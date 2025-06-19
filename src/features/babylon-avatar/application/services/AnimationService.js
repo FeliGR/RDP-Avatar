@@ -196,6 +196,69 @@ export class AnimationService {
   }
 
   /**
+   * Initialize office environment
+   * @returns {Promise<{success: boolean, error?: string}>}
+   */
+  async initializeOfficeEnvironment() {
+    try {
+      const sceneManager = this.compositionRoot.getSceneManager();
+      const result = await sceneManager.initializeOfficeEnvironment();
+      return result;
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  }
+
+  /**
+   * Start office environment animations
+   * @returns {{success: boolean, error?: string}}
+   */
+  startOfficeAnimations() {
+    try {
+      const sceneManager = this.compositionRoot.getSceneManager();
+      sceneManager.startOfficeAnimations();
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  }
+
+  /**
+   * Control video playback in office environment
+   */
+  playVideo() {
+    try {
+      const sceneManager = this.compositionRoot.getSceneManager();
+      sceneManager.playVideo();
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  }
+
+  pauseVideo() {
+    try {
+      const sceneManager = this.compositionRoot.getSceneManager();
+      sceneManager.pauseVideo();
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  }
+
+  /**
    * Get current character
    * @returns {Character|null}
    */

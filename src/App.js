@@ -3,7 +3,7 @@ import { AvatarViewer } from './features/avatar';
 import { DialogBox } from './features/dialog';
 import { PersonalityControls } from './features/personality';
 import { AppProviders } from './app/providers';
-import './App.css';
+import './styles/index.css';
 
 const App = () => {
   const [showUI, setShowUI] = useState(false);

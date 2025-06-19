@@ -1,0 +1,123 @@
+/* Header Styles - Cohere Inspired */
+
+.app-header {
+  padding: 2.5rem 2rem 3rem;
+  position: relative;
+  z-index: 10;
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  height: auto;
+  min-height: var(--header-height);
+}
+
+.header-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.header-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    linear-gradient(to bottom, rgba(33, 150, 243, 0.06) 1px, transparent 1px);
+  background-size: 40px 40px;
+  transform: perspective(800px) rotateX(35deg);
+  transform-origin: top;
+  opacity: 0.4;
+  animation: grid-animation 60s linear infinite;
+}
+
+.header-glow {
+  position: absolute;
+  width: 80%;
+  height: 180px;
+  border-radius: 100%;
+  filter: blur(100px);
+  background: radial-gradient(circle, rgba(33, 150, 243, 0.15) 0%, rgba(33, 150, 243, 0) 70%);
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0.8;
+}
+
+.header-content {
+  position: relative;
+  width: 100%;
+  z-index: 5;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.logo-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.logo-circle {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  margin-right: 12px;
+  border: 1px solid rgba(33, 150, 243, 0.4);
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.1), rgba(33, 150, 243, 0.05));
+  box-shadow: 0 0 20px rgba(33, 150, 243, 0.3);
+}
+
+.logo-circle::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(33, 150, 243, 0.8);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 10px rgba(33, 150, 243, 0.8);
+}
+
+.app-header h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  margin: 0;
+  color: var(--text-primary);
+  display: inline-flex;
+  align-items: center;
+  line-height: 1.1;
+  position: relative;
+}
+
+.text-highlight {
+  position: relative;
+  color: var(--accent-blue);
+  background: var(--accent-blue-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0 0.2em;
+}
+
+.app-description {
+  font-size: 1.1rem;
+  font-weight: 400;
+  max-width: 800px;
+  margin: 1.2rem auto 0;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  text-align: center;
+}

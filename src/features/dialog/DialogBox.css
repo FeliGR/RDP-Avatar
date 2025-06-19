@@ -246,7 +246,7 @@
 
 /* Enhanced Message Input Form */
 .message-input-form {
-  padding: 1.5rem 1.5rem 1.5rem;
+  padding: 1.5rem 1.5rem 4rem;
   display: flex;
   gap: 0.75rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -573,7 +573,7 @@
   }
 
   .message-input-form {
-    padding: 1.5rem 2rem 2rem;
+    padding: 1.5rem 2rem 4rem;
     gap: 1rem;
   }
 }
@@ -595,7 +595,7 @@
   }
 
   .message-input-form {
-    padding: 1rem 1.5rem;
+    padding: 1rem 1.5rem 0;
   }
 
   .typing-indicator {

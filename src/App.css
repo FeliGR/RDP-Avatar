@@ -1268,7 +1268,8 @@
   }
 
   .panel-content {
-    padding: 1rem;
+    padding: 0;
+    height: calc(100% - 90px);
   }
 
   .avatar-info-card {

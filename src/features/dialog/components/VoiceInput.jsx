@@ -1,13 +1,5 @@
 import React from "react";
 
-/**
- * Component that renders a voice input button
- *
- * @param {Object} props - Component props
- * @param {boolean} props.isListening - Whether voice recognition is active
- * @param {boolean} props.disabled - Whether the button is disabled
- * @param {Function} props.onClick - Click handler for the button
- */
 const VoiceInput = ({ isListening, disabled, onClick }) => {
   return (
     <button

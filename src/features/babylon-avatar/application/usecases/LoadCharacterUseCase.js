@@ -1,7 +1,3 @@
-/**
- * Load Character Use Case
- * Handles the business logic for loading character models and animations
- */
 export class LoadCharacterUseCase {
   constructor({ animationRepository, sceneManager }) {
     this.animationRepository = animationRepository;
@@ -56,10 +52,6 @@ export class LoadCharacterUseCase {
     }
   }
 
-  /**
-   * Setup morph targets for facial animations
-   * @private
-   */
   _setupMorphTargets(character) {
     const headMesh = character.meshes.find(
       (mesh) => mesh.name.includes("Wolf3D_Head") || mesh.name.includes("Head")
@@ -112,10 +104,6 @@ export class LoadCharacterUseCase {
     }
   }
 
-  /**
-   * Clone animation to character using transform node mapping
-   * @private
-   */
   _cloneAnimationToCharacter(originalGroup, character) {
     const characterMesh =
       character.meshes.find((mesh) => mesh.name === "_Character_") || character.meshes[0];

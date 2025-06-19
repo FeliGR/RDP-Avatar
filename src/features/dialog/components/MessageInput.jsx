@@ -2,15 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { TYPING_DEBOUNCE_DELAY, TYPING_EVENTS } from "../constants/constants";
 import VoiceInput from "./VoiceInput";
 
-/**
- * Component for message input with text and voice capabilities
- *
- * @param {Object} props - Component props
- * @param {Function} props.onSendMessage - Function to call when sending a message
- * @param {boolean} props.isLoading - Whether the bot is currently responding
- * @param {boolean} props.isListening - Whether voice recognition is active
- * @param {Function} props.onToggleVoice - Function to toggle voice recognition
- */
 const MessageInput = ({ onSendMessage, isLoading, isListening, onToggleVoice }) => {
   const [inputText, setInputText] = useState("");
   const typingTimeoutRef = useRef(null);

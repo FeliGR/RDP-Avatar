@@ -1,7 +1,4 @@
-/* Design Tokens and CSS Variables */
-
 :root {
-  /* Chat Design Tokens */
   --chat-primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --chat-accent-gradient: linear-gradient(45deg, #64c8ff, #ff6b9d);
   --chat-glass-bg: rgba(255, 255, 255, 0.08);
@@ -16,24 +13,16 @@
   --chat-blur-intense: none;
   --chat-easing-smooth: cubic-bezier(0.23, 1, 0.32, 1);
   --chat-easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
-
-  /* App Colors */
   --text-primary: rgba(255, 255, 255, 0.95);
   --text-secondary: rgba(255, 255, 255, 0.7);
   --accent-blue: #03a9f4;
   --accent-blue-gradient: linear-gradient(90deg, #2196f3, #03a9f4);
-
-  /* Common Gradients */
   --app-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --card-background: rgba(255, 255, 255, 0.08);
   --card-border: rgba(255, 255, 255, 0.15);
-
-  /* Spacing & Layout */
   --panel-width: 450px;
   --control-btn-size: 60px;
   --header-height: 160px;
-
-  /* Animations */
   --animation-smooth: cubic-bezier(0.23, 1, 0.32, 1);
   --animation-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }

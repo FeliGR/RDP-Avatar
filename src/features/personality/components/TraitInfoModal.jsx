@@ -2,9 +2,6 @@ import React, { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { formatTrait } from "../../../shared/utils";
 
-/**
- * Modal dialog component for displaying detailed trait information
- */
 const TraitInfoModal = ({ trait, traitInfo, isOpen, onClose }) => {
   const modalRef = useRef(null);
   const overlayRef = useRef(null);

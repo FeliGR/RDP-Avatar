@@ -1,6 +1,3 @@
-/**
- * Animation Value Object - Represents animation properties and state
- */
 export class Animation {
   constructor({
     name,
@@ -49,9 +46,6 @@ export class Animation {
   }
 }
 
-/**
- * Animation Blending Configuration
- */
 export class AnimationBlend {
   constructor({
     fromAnimation,

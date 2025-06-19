@@ -1,7 +1,3 @@
-/**
- * Constants used throughout the dialog components
- */
-
 export const TYPING_EVENTS = {
   START: "user-typing-start",
   STOP: "user-typing-stop",

@@ -2,13 +2,6 @@ import React, { useRef } from "react";
 import useScrollToBottom from "../hooks/useScrollToBottom";
 import TypingIndicator from "./TypingIndicator";
 
-/**
- * Component that renders a list of chat messages
- *
- * @param {Object} props - Component props
- * @param {Array} props.messages - Array of message objects
- * @param {boolean} props.isLoading - Whether the bot is currently responding
- */
 const MessageList = ({ messages, isLoading }) => {
   const messagesEndRef = useRef(null);
 
@@ -46,7 +39,6 @@ const MessageList = ({ messages, isLoading }) => {
 
       {isLoading && <TypingIndicator />}
 
-      {/* This invisible element is used for scrolling to bottom */}
       <div ref={messagesEndRef} />
     </div>
   );

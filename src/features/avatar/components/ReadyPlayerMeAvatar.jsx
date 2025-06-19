@@ -22,10 +22,8 @@ const ReadyPlayerMeAvatar = ({
   setShowCreator,
 }) => {
   const { BABYLON, isLoading: babylonLoading, error: babylonError } = useBabylonJS();
-
   const savedAvatarUrl = localStorage.getItem("rpmAvatarUrl");
   const [avatarUrl, setAvatarUrl] = useState(savedAvatarUrl || null);
-  // Using props instead of local state for showCreator
   const [isLoading, setIsLoading] = useState(!!savedAvatarUrl);
   const [avatarError, setAvatarError] = useState(null);
   const [avatarLoaded, setAvatarLoaded] = useState(false);
@@ -36,9 +34,7 @@ const ReadyPlayerMeAvatar = ({
   const [sceneReady, setSceneReady] = useState(false);
   const loadingRef = useRef(false);
   const animationsLoadedRef = useRef(false);
-
   const { registerAnimationService, registerAIResponseCallback } = useAvatarAnimation();
-
   const {
     isInitialized: animationsInitialized,
     loadAvatarAnimations,
@@ -48,13 +44,10 @@ const ReadyPlayerMeAvatar = ({
     sceneReady ? sceneRef.current?.scene : null,
     sceneReady ? shadowGeneratorRef.current : null
   );
-
   const { triggerAIResponseAnimation } = useAIResponseAnimations(
     animationService,
     startSpecificIdleAnimation
   );
-
-  // Office environment hook
   const {
     environmentInitialized,
     isInitializing: environmentInitializing,
@@ -63,86 +56,65 @@ const ReadyPlayerMeAvatar = ({
     playVideo,
     pauseVideo,
   } = useOfficeEnvironment(animationService);
-
   useEffect(() => {
     if (animationService) {
       registerAnimationService(animationService);
     }
   }, [animationService, registerAnimationService]);
-
   useEffect(() => {
-    // Don't initialize scene until Babylon.js is loaded
     if (!BABYLON || !canvasRef.current) return;
-
     const engine = new BABYLON.Engine(canvasRef.current, true);
     const scene = new BABYLON.Scene(engine);
-
-    // Set transparent background for office environment to show
-    scene.clearColor = new BABYLON.Color4(0.55, 0.71, 1.0, 1.0); // Light blue background similar to original
-
+    scene.clearColor = new BABYLON.Color4(0.55, 0.71, 1.0, 1.0);
     const camera = new BABYLON.ArcRotateCamera(
       "camera",
-      -Math.PI / 6,   // Adjusted to show office from front-left angle
-      Math.PI / 4,    // Lower angle to see more of the office floor
-      8,              // Increased distance to show both avatar and office
+      -Math.PI / 6,
+      Math.PI / 4,
+      8,
       new BABYLON.Vector3(0, 1, 0),
       scene
     );
     camera.attachControl(canvasRef.current, true);
     camera.lowerRadiusLimit = 4;
     camera.upperRadiusLimit = 15;
-
-    // Enhanced lighting setup similar to original
     const hemiLight = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(0, 1, 0), scene);
     hemiLight.intensity = 0.15;
-
     const dirLight = new BABYLON.DirectionalLight("dirLight", new BABYLON.Vector3(-2, -7, -5), scene);
     dirLight.intensity = 1.75;
     dirLight.position = new BABYLON.Vector3(0, 30, 10);
     dirLight.shadowMinZ = -100;
     dirLight.shadowMaxZ = 100;
-
-    // Enhanced shadow generator
     const shadowGenerator = new BABYLON.ShadowGenerator(1024, dirLight, true);
     shadowGenerator.darkness = 0.4;
     shadowGenerator.bias = 0.001;
     shadowGenerator.usePercentageCloserFiltering = true;
     shadowGenerator.filteringQuality = 1;
     shadowGeneratorRef.current = shadowGenerator;
-
     engine.runRenderLoop(() => {
       scene.render();
     });
-
     window.addEventListener("resize", () => {
       engine.resize();
     });
-
     sceneRef.current = { scene, engine };
-
     setSceneReady(true);
-
     return () => {
       window.removeEventListener("resize", engine.resize);
       engine.dispose();
       scene.dispose();
     };
   }, [canvasRef, BABYLON]);
-
   const loadAvatar = useCallback(
     async (url) => {
       if (!BABYLON || !sceneRef.current || !sceneRef.current.scene || loadingRef.current) return;
-
       loadingRef.current = true;
       animationsLoadedRef.current = false;
       setAvatarLoaded(false);
       setAvatarFullyReady(false);
       setIsLoading(true);
       setAvatarError(null);
-
       try {
         const { scene } = sceneRef.current;
-
         if (avatarRef.current) {
           if (Array.isArray(avatarRef.current.getChildMeshes)) {
             const childMeshes = avatarRef.current.getChildMeshes();
@@ -153,21 +125,11 @@ const ReadyPlayerMeAvatar = ({
               mesh.dispose();
             });
           }
-
           avatarRef.current.dispose();
           avatarRef.current = null;
         }
-
         const sceneMeshes = scene.meshes.slice();
-
-        console.log("Avatar loading: Starting mesh cleanup...");
-        console.log("Avatar loading: Total scene meshes before cleanup:", sceneMeshes.length);
-        
-        let disposedCount = 0;
-        let keptCount = 0;
-        
         sceneMeshes.forEach((mesh) => {
-          // Check if this is an avatar mesh (should be disposed)
           const isAvatarMesh = mesh.name === "_Character_" || 
                                mesh.name.includes("Armature") ||
                                mesh.name.includes("Character") ||
@@ -180,8 +142,6 @@ const ReadyPlayerMeAvatar = ({
                                mesh.name.includes("Bottom") ||
                                mesh.name.includes("Shoes") ||
                                mesh.name.includes("Accessory");
-
-          // Check if this is an office environment mesh (should be kept)
           const isOfficeMesh = mesh.name.includes("Base") ||
                                mesh.name.includes("Chair") ||
                                mesh.name.includes("TV") ||
@@ -192,32 +152,14 @@ const ReadyPlayerMeAvatar = ({
                                mesh.name.includes("cloud") ||
                                mesh.name === "skybox" ||
                                mesh.name === "__root__" ||
-                               mesh._isOfficeEnvironment; // Check the flag we set in OfficeEnvironmentService
-
-          // Keep all non-avatar meshes (including office environment)
+                               mesh._isOfficeEnvironment;
           const shouldKeep = !isAvatarMesh || isOfficeMesh;
-
           const isFarAway =
             mesh.position &&
             (Math.abs(mesh.position.x) > 50000 ||
               Math.abs(mesh.position.y) > 50000 ||
               Math.abs(mesh.position.z) > 50000);
-
-          // Log what we're keeping for debugging
-          if (shouldKeep && !isFarAway && (isOfficeMesh || mesh._isOfficeEnvironment)) {
-            console.log("Keeping office environment mesh:", mesh.name);
-            keptCount++;
-          }
-
           if (!shouldKeep || isFarAway) {
-            console.log("Disposing mesh:", mesh.name, 
-              isFarAway ? "(far away)" : "", 
-              isAvatarMesh ? "(avatar)" : "",
-              isOfficeMesh ? "(office)" : "",
-              mesh._isOfficeEnvironment ? "(office flag)" : ""
-            );
-            disposedCount++;
-
             try {
               const childMeshes = mesh.getChildMeshes();
               childMeshes.forEach((childMesh) => {
@@ -226,7 +168,6 @@ const ReadyPlayerMeAvatar = ({
                 }
                 childMesh.dispose();
               });
-
               if (mesh.material) {
                 mesh.material.dispose();
               }
@@ -234,13 +175,7 @@ const ReadyPlayerMeAvatar = ({
             } catch (error) {}
           }
         });
-        
-        console.log("Avatar loading: Mesh cleanup complete.");
-        console.log(`Avatar loading: Disposed ${disposedCount} meshes, kept ${keptCount} office meshes`);
-        console.log("Avatar loading: Remaining scene meshes:", scene.meshes.length);
-
         const fullUrl = url.startsWith("http") ? url : `https://models.readyplayer.me/${url}`;
-
         BABYLON.SceneLoader.ImportMesh(
           "",
           fullUrl,
@@ -253,23 +188,17 @@ const ReadyPlayerMeAvatar = ({
               loadingRef.current = false;
               return;
             }
-
             const avatarMesh = meshes[0];
             avatarMesh.name = "_Character_";
             avatarMesh.scaling = new BABYLON.Vector3(1, 1, 1);
-            // Center the avatar and position it to face the camera
-            avatarMesh.position = new BABYLON.Vector3(0, 0, 0); // Center position
-             avatarMesh.rotation = new BABYLON.Vector3(0, 0, 0); // No rotation - face forward/ Rotate -90 degrees to face camera
-
+            avatarMesh.position = new BABYLON.Vector3(0, 0, 0);
+            avatarMesh.rotation = new BABYLON.Vector3(0, 0, 0);
             avatarMesh.setEnabled(false);
-
             avatarRef.current = avatarMesh;
             setAvatarLoaded(true);
-
             if (onAvatarLoaded) {
               onAvatarLoaded(avatarMesh);
             }
-
             loadingRef.current = false;
           },
           null,
@@ -287,13 +216,11 @@ const ReadyPlayerMeAvatar = ({
     },
     [onAvatarLoaded, BABYLON]
   );
-
   useEffect(() => {
     if (avatarUrl && sceneRef.current && sceneReady && !loadingRef.current) {
       loadAvatar(avatarUrl);
     }
   }, [avatarUrl, sceneReady, loadAvatar]);
-
   useEffect(() => {
     if (
       avatarRef.current &&
@@ -303,13 +230,11 @@ const ReadyPlayerMeAvatar = ({
       !animationsLoadedRef.current
     ) {
       animationsLoadedRef.current = true;
-
       setTimeout(() => {
         loadAvatarAnimations(avatarUrl).then((result) => {
           if (!result.success) {
             animationsLoadedRef.current = false;
             setIsLoading(false);
-
             if (avatarRef.current) {
               avatarRef.current.setEnabled(false);
             }
@@ -319,22 +244,15 @@ const ReadyPlayerMeAvatar = ({
                 triggerAIResponseAnimation("all");
               });
             }
-
-            // Simply enable the avatar without entrance animation
             setTimeout(() => {
               setIsLoading(false);
               setAvatarFullyReady(true);
-
               if (avatarRef.current) {
                 avatarRef.current.setEnabled(true);
-
-                // Office environment should persist - no need to reinitialize
-                // Just ensure animations are properly applied
                 setTimeout(() => {
                   if (startOfficeAnimations) {
                     startOfficeAnimations();
                   }
-                  // Check environment integrity for debugging
                   if (animationService?.sceneManager?.officeEnvironment?.checkEnvironmentIntegrity) {
                     animationService.sceneManager.officeEnvironment.checkEnvironmentIntegrity();
                   }
@@ -353,57 +271,43 @@ const ReadyPlayerMeAvatar = ({
     triggerAIResponseAnimation,
     animationService,
     registerAIResponseCallback,
-    BABYLON?.Vector3, // Added to satisfy exhaustive-deps
+    BABYLON?.Vector3,
   ]);
-
   useEffect(() => {
     if (avatarError) {
       if (localStorage.getItem("rpmAvatarUrl")) {
         localStorage.removeItem("rpmAvatarUrl");
       }
-
       if (setShowCreator) {
         setShowCreator(true);
       }
-
       setAvatarError(null);
       setAvatarUrl(null);
     }
   }, [avatarError, setShowCreator]);
-
-  // Handle triggerAvatarCustomization prop from App component
   useEffect(() => {
     if (triggerAvatarCustomization && BABYLON && setShowCreator) {
       setShowCreator(true);
     }
   }, [triggerAvatarCustomization, BABYLON, setShowCreator]);
-
-  // Initialize showCreator if it's undefined (compatibility with both prop-based and state-based approaches)
   useEffect(() => {
     if (setShowCreator && showCreator === undefined) {
       setShowCreator(!savedAvatarUrl);
     }
   }, [savedAvatarUrl, showCreator, setShowCreator]);
-
   const handleAvatarExported = (response) => {
     const urlValue = typeof response === "object" && response.data ? response.data.url : response;
-
     const avatarUrl =
       typeof urlValue === "string" && urlValue.endsWith(".glb") ? urlValue : `${urlValue}.glb`;
-
     const cacheBustedUrl = avatarUrl.includes("?")
       ? `${avatarUrl}&t=${Date.now()}`
       : `${avatarUrl}?t=${Date.now()}`;
-
     localStorage.setItem("rpmAvatarUrl", cacheBustedUrl);
-
     setIsLoading(true);
     setAvatarFullyReady(false);
-
     if (avatarRef.current) {
       avatarRef.current = null;
     }
-
     setTimeout(() => {
       setAvatarUrl(cacheBustedUrl);
       if (setShowCreator) {
@@ -411,8 +315,6 @@ const ReadyPlayerMeAvatar = ({
       }
     }, 100);
   };
-
-  // Debug: Log office environment status
   useEffect(() => {
     if (environmentInitialized) {
       console.log("✅ Office environment initialized successfully");
@@ -421,18 +323,12 @@ const ReadyPlayerMeAvatar = ({
       console.error("❌ Office environment error:", environmentError);
     }
   }, [environmentInitialized, environmentError]);
-
   return (
     <div className="ready-player-me-avatar">
-      {/* Show loading state while Babylon.js is loading - hidden in fullscreen */}
       {babylonLoading && !fullscreen && <div className="avatar-loading">Loading 3D engine...</div>}
-
-      {/* Show error if Babylon.js failed to load - hidden in fullscreen */}
       {babylonError && !fullscreen && (
         <div className="avatar-error">Failed to load 3D engine: {babylonError.message}</div>
       )}
-
-      {/* Office environment status - hidden in fullscreen */}
       {BABYLON && !fullscreen && (
         <div className="office-environment-status">
           {environmentInitializing && (
@@ -446,13 +342,10 @@ const ReadyPlayerMeAvatar = ({
           )}
         </div>
       )}
-
-      {/* Show normal loading states only after Babylon.js is loaded - hidden in fullscreen */}
       {BABYLON &&
         (isLoading || (avatarUrl && !avatarFullyReady)) &&
         !showCreator &&
         !fullscreen && <div className="avatar-loading">Loading avatar...</div>}
-
       {BABYLON && !avatarUrl && !showCreator && !isLoading && !fullscreen && (
         <div className="no-avatar-message">
           <p>No avatar created yet</p>
@@ -461,14 +354,11 @@ const ReadyPlayerMeAvatar = ({
           </button>
         </div>
       )}
-
       {BABYLON && avatarUrl && !showCreator && !fullscreen && (
         <button className="customize-avatar-button" onClick={() => setShowCreator && setShowCreator(true)}>
           Customize Avatar
         </button>
       )}
-
-      {/* Close button rendered outside the container, at the top level */}
       {BABYLON && showCreator && (
         <button
           className="creator-close-button"
@@ -478,8 +368,6 @@ const ReadyPlayerMeAvatar = ({
           Close Editor
         </button>
       )}
-
-      {/* Avatar creator container without the close button inside */}
       {BABYLON && showCreator && (
         <div className="avatar-creator-container">
           <AvatarCreator

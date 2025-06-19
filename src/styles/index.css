@@ -1,33 +1,13 @@
-/* Main CSS Index - Imports all modular styles */
-
-/* Design Tokens - Must be imported first */
 @import "./tokens.css";
-
-/* Layout Styles */
 @import "./layout/main-layout.css";
 @import "./layout/responsive.css";
-
-/* Component Styles */
 @import "./components/avatar.css";
 @import "./components/welcome.css";
 @import "./components/welcome-content.css";
 @import "./components/panels.css";
 @import "./components/header.css";
 @import "./components/cards.css";
-
-/* Animation Styles */
 @import "./animations/avatar-animations.css";
 @import "./animations/welcome-animations.css";
 @import "./animations/panel-animations.css";
 @import "./animations/general-animations.css";
-
-/* 
-  Note: This file replaces the large App.css file with a modular approach.
-  Each component and feature now has its own focused CSS file.
-  
-  File Organization:
-  - tokens.css: CSS variables and design tokens
-  - layout/: Layout and responsive styles
-  - components/: Component-specific styles
-  - animations/: All animation keyframes
-*/

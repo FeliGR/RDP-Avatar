@@ -1,9 +1,5 @@
 import { useState, useEffect } from "react";
 
-/**
- * Hook to dynamically load Babylon.js only when needed
- * This helps reduce the initial bundle size
- */
 export const useBabylonJS = () => {
   const [BABYLON, setBabylon] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -11,20 +7,15 @@ export const useBabylonJS = () => {
 
   useEffect(() => {
     let mounted = true;
-
     const loadBabylon = async () => {
-      if (BABYLON) return; // Already loaded
-
+      if (BABYLON) return;
       setIsLoading(true);
       setError(null);
-
       try {
-        // Dynamic import of Babylon.js
         const [babylonCore] = await Promise.all([
           import("babylonjs"),
-          import("babylonjs-loaders"), // Still needed for loaders, but not stored
+          import("babylonjs-loaders"),
         ]);
-
         if (mounted) {
           setBabylon(babylonCore);
           setIsLoading(false);
@@ -36,9 +27,7 @@ export const useBabylonJS = () => {
         }
       }
     };
-
     loadBabylon();
-
     return () => {
       mounted = false;
     };

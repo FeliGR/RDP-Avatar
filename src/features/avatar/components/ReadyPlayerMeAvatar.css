@@ -8,7 +8,6 @@
   pointer-events: none;
 }
 
-/* Enable pointer events specifically for interactive elements */
 .ready-player-me-avatar button,
 .avatar-error,
 .no-avatar-message,
@@ -138,7 +137,6 @@
   opacity: 1;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .customize-avatar-button {
     bottom: 30px;
@@ -231,7 +229,6 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-/* Office Environment Status Styling */
 .office-environment-status {
   position: absolute;
   top: 10px;
@@ -267,7 +264,6 @@
   animation: fadeIn 0.5s ease-in-out;
 }
 
-/* Disable background animations when avatar creator is open */
 body.creator-open .header-grid,
 body.creator-open .floating-particles,
 body.creator-open .neural-network,
@@ -282,12 +278,10 @@ body.creator-open .data-stream {
   animation-play-state: paused !important;
 }
 
-/* Hide welcome experience completely when creator is open */
 body.creator-open .welcome-experience {
   display: none !important;
 }
 
-/* Completely stabilize the page when creator is open */
 body.creator-open {
   overflow: hidden !important;
 }
@@ -307,7 +301,6 @@ body.creator-open .app-container {
   transform: none !important;
 }
 
-/* Ensure stable positioning for the avatar creator */
 body.creator-open .ready-player-me-avatar {
   position: fixed !important;
   top: 0 !important;

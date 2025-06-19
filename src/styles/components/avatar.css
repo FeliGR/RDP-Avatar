@@ -1,5 +1,3 @@
-/* Avatar Background and Entrance Animations */
-
 .avatar-background {
   position: absolute;
   top: 0;
@@ -23,13 +21,11 @@
   transform: scale(1);
 }
 
-/* Simple avatar display without entrance animation */
 .avatar-background.loaded .avatar-viewer {
   animation: avatarBreathing 6s ease-in-out infinite;
   position: relative;
 }
 
-/* Loading shimmer effect before avatar appears */
 .avatar-background:not(.loaded)::before {
   content: "";
   position: absolute;
@@ -48,5 +44,3 @@
     shimmerPulse 1.5s ease-in-out infinite alternate;
   z-index: 1;
 }
-
-/* Removed entrance effects - clean avatar display */

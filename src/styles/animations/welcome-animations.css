@@ -1,5 +1,3 @@
-/* Welcome Screen Animations */
-
 @keyframes floatParticle {
   0% {
     transform: translateY(100vh) translateX(0px);

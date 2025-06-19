@@ -1,7 +1,3 @@
-/**
- * Play Idle Animation Use Case
- * Handles the business logic for playing idle animations
- */
 export class PlayIdleAnimationUseCase {
   constructor({ animationController, morphTargetController }) {
     this.animationController = animationController;
@@ -59,10 +55,6 @@ export class PlayIdleAnimationUseCase {
     }
   }
 
-  /**
-   * Setup cycling between different idle animation variations
-   * @private
-   */
   _setupIdleVariationCycling(character, availableAnimations) {
     if (availableAnimations.length <= 1) {
       return;
@@ -81,9 +73,6 @@ export class PlayIdleAnimationUseCase {
     });
   }
 
-  /**
-   * Stop idle animations
-   */
   stop(character) {
     try {
       this.animationController.removeObservers(character);

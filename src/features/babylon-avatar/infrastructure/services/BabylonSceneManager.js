@@ -1,9 +1,6 @@
 import { ISceneManager } from "../../domain/interfaces/index.js";
 import { OfficeEnvironmentService } from "./OfficeEnvironmentService.js";
 
-/**
- * Babylon.js implementation of Scene Manager
- */
 export class BabylonSceneManager extends ISceneManager {
   constructor(scene, shadowGenerator = null) {
     super();
@@ -18,9 +15,6 @@ export class BabylonSceneManager extends ISceneManager {
     return this.scene;
   }
 
-  /**
-   * Initialize office environment
-   */
   async initializeOfficeEnvironment() {
     if (!this.environmentInitialized) {
       const result = await this.officeEnvironment.initializeEnvironment();
@@ -32,18 +26,12 @@ export class BabylonSceneManager extends ISceneManager {
     return { success: true };
   }
 
-  /**
-   * Start office environment animations
-   */
   startOfficeAnimations() {
     if (this.environmentInitialized) {
       this.officeEnvironment.startSphereAnimations();
     }
   }
 
-  /**
-   * Control video playback
-   */
   playVideo() {
     if (this.environmentInitialized) {
       this.officeEnvironment.playVideo();
@@ -77,11 +65,9 @@ export class BabylonSceneManager extends ISceneManager {
   }
 
   dispose() {
-    // Dispose office environment
     if (this.officeEnvironment) {
       this.officeEnvironment.dispose();
     }
-
     this.beforeRenderCallbacks.forEach((callback) => {
       this.scene.unregisterBeforeRender(callback);
     });

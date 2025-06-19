@@ -1,7 +1,3 @@
-/**
- * Play Talking Animation Use Case
- * Handles the business logic for playing talking animations with morph target sync
- */
 export class PlayTalkingAnimationUseCase {
   constructor({ animationController, morphTargetController, audioAnalyzer }) {
     this.animationController = animationController;
@@ -44,9 +40,6 @@ export class PlayTalkingAnimationUseCase {
     };
   }
 
-  /**
-   * Stop talking animations
-   */
   stop(character) {
     this.isTalking = false;
 
@@ -69,10 +62,6 @@ export class PlayTalkingAnimationUseCase {
     };
   }
 
-  /**
-   * Play random talking animation
-   * @private
-   */
   async _playRandomTalkingAnimation(character, talkingAnimations) {
     const randomAnimation = talkingAnimations[Math.floor(Math.random() * talkingAnimations.length)];
 
@@ -82,10 +71,6 @@ export class PlayTalkingAnimationUseCase {
     });
   }
 
-  /**
-   * Setup audio-driven morph targets
-   * @private
-   */
   _setupAudioMorphTargets(character, audioSource) {
     this.morphCallback = (frequencyData) => {
       if (!this.isTalking) return;
@@ -98,10 +83,6 @@ export class PlayTalkingAnimationUseCase {
     this.audioAnalyzer.addCallback(this.morphCallback);
   }
 
-  /**
-   * Setup talking animation loop
-   * @private
-   */
   _setupTalkingLoop(character, talkingAnimations) {
     this.animationController.setupIdleObservers(character, () => {
       if (this.isTalking) {
@@ -110,10 +91,6 @@ export class PlayTalkingAnimationUseCase {
     });
   }
 
-  /**
-   * Calculate volume from frequency data
-   * @private
-   */
   _calculateVolume(frequencyData) {
     let sum = 0;
     for (let i = 0; i < frequencyData.length; i++) {
@@ -122,10 +99,6 @@ export class PlayTalkingAnimationUseCase {
     return sum / (frequencyData.length * 255);
   }
 
-  /**
-   * Update mouth morph targets based on audio volume
-   * @private
-   */
   _updateMouthMorphTargets(character, volume) {
     const jawOpen = character.getMorphTarget("jawOpen");
     const mouthOpen = character.getMorphTarget("mouthOpen");
@@ -144,10 +117,6 @@ export class PlayTalkingAnimationUseCase {
     }
   }
 
-  /**
-   * Reset mouth morph targets to default
-   * @private
-   */
   _resetMouthMorphTargets(character) {
     const jawOpen = character.getMorphTarget("jawOpen");
     const mouthOpen = character.getMorphTarget("mouthOpen");

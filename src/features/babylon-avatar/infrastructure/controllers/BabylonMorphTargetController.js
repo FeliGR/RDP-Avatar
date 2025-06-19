@@ -1,9 +1,6 @@
 import * as BABYLON from "babylonjs";
 import { IMorphTargetController } from "../../domain/interfaces/index.js";
 
-/**
- * Babylon.js implementation of Morph Target Controller
- */
 export class BabylonMorphTargetController extends IMorphTargetController {
   constructor(scene) {
     super();

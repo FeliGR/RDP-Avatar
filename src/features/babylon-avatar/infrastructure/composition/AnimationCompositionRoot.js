@@ -1,17 +1,12 @@
 import { LoadCharacterUseCase } from "../../application/usecases/LoadCharacterUseCase.js";
 import { PlayIdleAnimationUseCase } from "../../application/usecases/PlayIdleAnimationUseCase.js";
 import { PlayTalkingAnimationUseCase } from "../../application/usecases/PlayTalkingAnimationUseCase.js";
-
 import { BabylonAnimationRepository } from "../repositories/BabylonAnimationRepository.js";
 import { BabylonAnimationController } from "../controllers/BabylonAnimationController.js";
 import { BabylonMorphTargetController } from "../controllers/BabylonMorphTargetController.js";
 import { BabylonSceneManager } from "../services/BabylonSceneManager.js";
 import { AudioAnalyzer } from "../services/AudioAnalyzer.js";
 
-/**
- * Composition Root - Dependency Injection Container
- * Sets up all dependencies and provides configured use cases
- */
 export class AnimationCompositionRoot {
   constructor(scene, shadowGenerator = null) {
     this.scene = scene;

@@ -1,9 +1,5 @@
 import { AnimationCompositionRoot } from "../../infrastructure/composition/AnimationCompositionRoot.js";
 
-/**
- * Animation Service - High-level facade for animation system
- * Provides clean API for consuming components
- */
 export class AnimationService {
   constructor(scene, shadowGenerator = null) {
     this.compositionRoot = new AnimationCompositionRoot(scene, shadowGenerator);
@@ -11,12 +7,6 @@ export class AnimationService {
     this.isInitialized = false;
   }
 
-  /**
-   * Load character model with animations
-   * @param {string} modelPath - Path to character model
-   * @param {string[]} animationPaths - Array of animation file paths
-   * @returns {Promise<{success: boolean, character?: Character, error?: string}>}
-   */
   async loadCharacter(modelPath, animationPaths = []) {
     try {
       const loadCharacterUseCase = this.compositionRoot.getLoadCharacterUseCase();
@@ -36,10 +26,6 @@ export class AnimationService {
     }
   }
 
-  /**
-   * Start idle animations
-   * @returns {Promise<{success: boolean, error?: string}>}
-   */
   async startIdleAnimations() {
     if (!this._checkInitialized()) {
       return { success: false, error: "Character not loaded" };
@@ -57,11 +43,6 @@ export class AnimationService {
     }
   }
 
-  /**
-   * Start talking animations with optional audio
-   * @param {BABYLON.Sound} audioSource - Optional audio source for lip-sync
-   * @returns {Promise<{success: boolean, error?: string}>}
-   */
   async startTalkingAnimations(audioSource = null) {
     if (!this._checkInitialized()) {
       return { success: false, error: "Character not loaded" };
@@ -85,10 +66,6 @@ export class AnimationService {
     }
   }
 
-  /**
-   * Stop talking animations and return to idle
-   * @returns {Promise<{success: boolean, error?: string}>}
-   */
   async stopTalkingAnimations() {
     if (!this._checkInitialized()) {
       return { success: false, error: "Character not loaded" };
@@ -111,12 +88,6 @@ export class AnimationService {
     }
   }
 
-  /**
-   * Play a specific animation
-   * @param {string} animationName - Name of animation to play
-   * @param {Object} options - Animation options
-   * @returns {Promise<{success: boolean, error?: string}>}
-   */
   async playAnimation(animationName, options = {}) {
     if (!this._checkInitialized()) {
       return { success: false, error: "Character not loaded" };
@@ -135,12 +106,6 @@ export class AnimationService {
     }
   }
 
-  /**
-   * Play a specific animation with smooth transition
-   * @param {string} animationName - Name of animation to play
-   * @param {Object} options - Animation options including transition settings
-   * @returns {Promise<{success: boolean, error?: string}>}
-   */
   async playAnimationWithTransition(animationName, options = {}) {
     if (!this._checkInitialized()) {
       return { success: false, error: "Character not loaded" };
@@ -170,13 +135,6 @@ export class AnimationService {
     }
   }
 
-  /**
-   * Set morph target value
-   * @param {string} morphName - Name of morph target
-   * @param {number} value - Target value (0-1)
-   * @param {number} duration - Animation duration in ms
-   * @returns {{success: boolean, error?: string}}
-   */
   setMorphTarget(morphName, value, duration = 0) {
     if (!this._checkInitialized()) {
       return { success: false, error: "Character not loaded" };
@@ -195,10 +153,6 @@ export class AnimationService {
     }
   }
 
-  /**
-   * Initialize office environment
-   * @returns {Promise<{success: boolean, error?: string}>}
-   */
   async initializeOfficeEnvironment() {
     try {
       const sceneManager = this.compositionRoot.getSceneManager();
@@ -212,10 +166,6 @@ export class AnimationService {
     }
   }
 
-  /**
-   * Start office environment animations
-   * @returns {{success: boolean, error?: string}}
-   */
   startOfficeAnimations() {
     try {
       const sceneManager = this.compositionRoot.getSceneManager();
@@ -229,9 +179,6 @@ export class AnimationService {
     }
   }
 
-  /**
-   * Control video playback in office environment
-   */
   playVideo() {
     try {
       const sceneManager = this.compositionRoot.getSceneManager();
@@ -258,25 +205,14 @@ export class AnimationService {
     }
   }
 
-  /**
-   * Get current character
-   * @returns {Character|null}
-   */
   getCurrentCharacter() {
     return this.currentCharacter;
   }
 
-  /**
-   * Check if service is initialized with a character
-   * @returns {boolean}
-   */
   isReady() {
     return this.isInitialized && this.currentCharacter !== null;
   }
 
-  /**
-   * Dispose of all resources
-   */
   dispose() {
     if (this.compositionRoot) {
       this.compositionRoot.dispose();
@@ -286,11 +222,6 @@ export class AnimationService {
     this.isInitialized = false;
   }
 
-  /**
-   * Check if service is initialized with a character
-   * @private
-   * @returns {boolean}
-   */
   _checkInitialized() {
     return this.isInitialized && this.currentCharacter !== null;
   }

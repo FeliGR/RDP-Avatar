@@ -1,4 +1,3 @@
-/* Modal styles */
 .trait-modal-container {
   position: fixed;
   top: 0;
@@ -9,9 +8,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  pointer-events: none; /* Allow clicking through container but not children */
+  pointer-events: none;
 }
-
 .trait-modal-overlay {
   position: absolute;
   top: 0;
@@ -21,9 +19,8 @@
   background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(8px);
   animation: fade-in 0.3s ease forwards;
-  pointer-events: auto; /* Ensure overlay catches clicks */
+  pointer-events: auto;
 }
-
 .trait-modal {
   position: relative;
   width: 90%;
@@ -40,11 +37,9 @@
   min-height: 300px;
   box-shadow: var(--shadow-lg);
   transform-origin: center bottom;
-  pointer-events: auto; /* Ensure modal catches clicks */
-  z-index: 1001; /* Ensure modal is above overlay */
+  pointer-events: auto;
+  z-index: 1001;
 }
-
-/* Animation keyframes */
 @keyframes fade-in {
   from {
     opacity: 0;
@@ -53,7 +48,6 @@
     opacity: 1;
   }
 }
-
 @keyframes modal-in {
   from {
     opacity: 0;
@@ -64,7 +58,6 @@
     transform: scale(1) translateY(0);
   }
 }
-
 .trait-modal-header {
   display: flex;
   align-items: center;
@@ -73,7 +66,6 @@
   background: rgba(20, 25, 35, 0.5);
   position: relative;
 }
-
 .trait-modal-header::after {
   content: "";
   position: absolute;
@@ -89,7 +81,6 @@
   );
   z-index: 2;
 }
-
 .trait-modal-icon {
   font-size: 1.25rem;
   margin-right: 1rem;
@@ -105,11 +96,9 @@
     transform 0.3s ease,
     box-shadow 0.3s ease;
 }
-
 .trait-modal:hover .trait-modal-icon {
   transform: scale(1.05);
 }
-
 .trait-modal-title {
   font-size: 1.3rem;
   font-weight: 600;
@@ -118,7 +107,6 @@
   flex: 1;
   letter-spacing: -0.01em;
 }
-
 .trait-modal-close {
   width: 2rem;
   height: 2rem;
@@ -134,13 +122,11 @@
   border: none;
   outline: none;
 }
-
 .trait-modal-close:hover {
   background: rgba(255, 255, 255, 0.1);
   color: var(--text-primary);
   transform: rotate(90deg);
 }
-
 .trait-modal-content {
   padding: 1.5rem;
   overflow-y: auto;
@@ -149,47 +135,38 @@
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.05);
 }
-
 .trait-modal-content::-webkit-scrollbar {
   width: 4px;
 }
-
 .trait-modal-content::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.05);
   border-radius: 2px;
 }
-
 .trait-modal-content::-webkit-scrollbar-thumb {
   background-color: rgba(255, 255, 255, 0.2);
   border-radius: 2px;
 }
-
 .trait-modal-section {
   margin-bottom: 1.75rem;
   animation: fade-in-up 0.5s ease forwards;
   opacity: 0;
   transform: translateY(10px);
 }
-
 .trait-modal-section:nth-child(1) {
   animation-delay: 0.1s;
 }
-
 .trait-modal-section:nth-child(2) {
   animation-delay: 0.2s;
 }
-
 .trait-modal-section:nth-child(3) {
   animation-delay: 0.3s;
 }
-
 @keyframes fade-in-up {
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
-
 .trait-modal-section-title {
   font-size: 0.9rem;
   font-weight: 500;
@@ -202,7 +179,6 @@
   display: flex;
   align-items: center;
 }
-
 .trait-modal-section-title::after {
   content: "";
   flex: 1;
@@ -210,21 +186,18 @@
   height: 1px;
   background: linear-gradient(90deg, rgba(33, 150, 243, 0.3) 0%, rgba(33, 150, 243, 0) 100%);
 }
-
 .trait-modal-text {
   font-size: 1rem;
   line-height: 1.6;
   color: var(--text-secondary);
   margin: 0 0 1rem 0;
 }
-
 .trait-modal-examples {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
   margin-top: 1.25rem;
 }
-
 .trait-modal-example {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border-color);
@@ -232,28 +205,24 @@
   padding: 1.25rem;
   transition: var(--transition);
 }
-
 .trait-modal-example:hover {
   background: rgba(255, 255, 255, 0.05);
   border-color: var(--border-hover);
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
-
 .trait-modal-example-title {
   font-size: 0.9rem;
   font-weight: 500;
   color: var(--text-secondary);
   margin: 0 0 0.5rem 0;
 }
-
 .trait-modal-example-text {
   font-size: 0.95rem;
   font-style: italic;
   color: var(--text-primary);
   margin: 0;
 }
-
 .trait-modal-footer {
   padding: 1.25rem;
   display: flex;
@@ -262,7 +231,6 @@
   background: rgba(20, 25, 35, 0.3);
   position: relative;
 }
-
 .trait-modal-footer::before {
   content: "";
   position: absolute;
@@ -277,7 +245,6 @@
     rgba(255, 255, 255, 0) 100%
   );
 }
-
 .trait-modal-button {
   padding: 0.75rem 1.5rem;
   background: var(--primary);
@@ -292,74 +259,57 @@
   font-size: 0.9rem;
   letter-spacing: 0.01em;
 }
-
 .trait-modal-button:hover {
   background: var(--primary-dark);
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
-
-/* Maintain trait-specific colors */
 .openness .trait-modal-icon {
   background: rgba(72, 187, 120, 0.15);
   color: #48bb78;
 }
-
 .openness .trait-modal-section-title {
   border-color: #48bb78;
 }
-
 .conscientiousness .trait-modal-icon {
   background: rgba(66, 153, 225, 0.15);
   color: #4299e1;
 }
-
 .conscientiousness .trait-modal-section-title {
   border-color: #4299e1;
 }
-
 .extraversion .trait-modal-icon {
   background: rgba(237, 137, 54, 0.15);
   color: #ed8936;
 }
-
 .extraversion .trait-modal-section-title {
   border-color: #ed8936;
 }
-
 .agreeableness .trait-modal-icon {
   background: rgba(56, 178, 172, 0.15);
   color: #38b2ac;
 }
-
 .agreeableness .trait-modal-section-title {
   border-color: #38b2ac;
 }
-
 .neuroticism .trait-modal-icon {
   background: rgba(128, 90, 213, 0.15);
   color: #805ad5;
 }
-
 .neuroticism .trait-modal-section-title {
   border-color: #805ad5;
 }
-
-/* Responsive adjustments */
 @media (max-width: 640px) {
   .trait-modal {
     width: 95%;
     max-height: 90vh;
   }
-
   .trait-modal-examples {
     grid-template-columns: 1fr;
   }
-
   .trait-modal-title {
     font-size: 1.1rem;
   }
-
   .trait-modal-icon {
     width: 2rem;
     height: 2rem;

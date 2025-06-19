@@ -1,7 +1,3 @@
-/**
- * Character Entity - Core domain model
- * Represents a 3D character with animation capabilities
- */
 export class Character {
   constructor({
     id,

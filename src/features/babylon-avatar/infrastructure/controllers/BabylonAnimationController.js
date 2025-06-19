@@ -1,8 +1,5 @@
 import { IAnimationController } from "../../domain/interfaces/index.js";
 
-/**
- * Babylon.js implementation of Animation Controller
- */
 export class BabylonAnimationController extends IAnimationController {
   constructor(scene) {
     super();
@@ -15,11 +12,8 @@ export class BabylonAnimationController extends IAnimationController {
     if (!animationGroup) {
       throw new Error(`Animation '${animationName}' not found`);
     }
-
     const { isLooping = false, speedRatio = 1.0, frameStart = 0, frameEnd = null } = options;
-
     animationGroup.speedRatio = speedRatio;
-
     animationGroup.start(
       isLooping,
       speedRatio,
@@ -27,25 +21,15 @@ export class BabylonAnimationController extends IAnimationController {
       frameEnd || animationGroup.duration,
       false
     );
-
     character.setCurrentAnimation(animationGroup);
-
     return Promise.resolve();
   }
 
-  /**
-   * Play animation with smooth transition from current animation
-   * @param {Character} character - The character to animate
-   * @param {string} animationName - Name of the animation to play
-   * @param {Object} options - Animation and transition options
-   * @returns {Promise}
-   */
   async playAnimationWithTransition(character, animationName, options = {}) {
     const targetAnimationGroup = character.getAnimationGroup(animationName);
     if (!targetAnimationGroup) {
       throw new Error(`Animation '${animationName}' not found`);
     }
-
     const {
       isLooping = false,
       speedRatio = 1.0,
@@ -53,22 +37,16 @@ export class BabylonAnimationController extends IAnimationController {
       frameEnd = null,
       transitionDuration = 0.3,
     } = options;
-
     targetAnimationGroup.speedRatio = speedRatio;
     const endFrame = frameEnd || targetAnimationGroup.to || targetAnimationGroup.duration;
-
     const currentAnimation = character.currentAnimation;
-
     if (!currentAnimation || !currentAnimation.isPlaying) {
       this._resetAllAnimationWeights(character);
       targetAnimationGroup.start(isLooping, speedRatio, frameStart, endFrame, false);
       character.setCurrentAnimation(targetAnimationGroup);
       return Promise.resolve();
     }
-
-    // Improved blend speed calculation for smoother transitions
     const blendSpeed = Math.max(0.008, Math.min(0.05, 1.0 / (transitionDuration * 60)));
-
     return new Promise((resolve) => {
       this.scene.onBeforeRenderObservable.runCoroutineAsync(
         this._smoothAnimationBlending(
@@ -90,7 +68,6 @@ export class BabylonAnimationController extends IAnimationController {
     if (character.animationGroups) {
       character.animationGroups.forEach((animGroup) => {
         try {
-          // Only reset weights for non-playing animations
           if (!animGroup.isPlaying) {
             animGroup.setWeightForAllAnimatables(1);
           }
@@ -114,28 +91,20 @@ export class BabylonAnimationController extends IAnimationController {
   ) {
     let currentWeight = 1;
     let newWeight = 0;
-
-    // Ensure animations are properly configured before blending
     try {
       toAnim.start(isLooping, speedRatio, frameStart, frameEnd, false);
-
       fromAnim.speedRatio = speedRatio;
       toAnim.speedRatio = speedRatio;
-
-      // Start with proper initial weights
       fromAnim.setWeightForAllAnimatables(1);
       toAnim.setWeightForAllAnimatables(0);
     } catch (error) {
       console.warn("Error setting up animation blending:", error);
     }
-
     while (newWeight < 1) {
       newWeight += speed;
       currentWeight -= speed;
-
       newWeight = Math.min(newWeight, 1);
       currentWeight = Math.max(currentWeight, 0);
-
       try {
         toAnim.setWeightForAllAnimatables(newWeight);
         fromAnim.setWeightForAllAnimatables(currentWeight);
@@ -143,16 +112,11 @@ export class BabylonAnimationController extends IAnimationController {
         console.warn("Error during animation blending:", error);
         break;
       }
-
       yield;
     }
-
-    // Final cleanup - ensure clean transition
     try {
       toAnim.setWeightForAllAnimatables(1);
       fromAnim.setWeightForAllAnimatables(0);
-
-      // Small delay before stopping the previous animation to ensure smooth handoff
       setTimeout(() => {
         try {
           fromAnim.stop();
@@ -163,9 +127,7 @@ export class BabylonAnimationController extends IAnimationController {
     } catch (error) {
       console.warn("Error in final animation cleanup:", error);
     }
-
     character.setCurrentAnimation(toAnim);
-
     if (onComplete) {
       onComplete();
     }
@@ -173,7 +135,6 @@ export class BabylonAnimationController extends IAnimationController {
 
   async blendAnimations(character, blendConfig) {
     const { fromAnimation, toAnimation, blendSpeed, maxWeight, frameRange } = blendConfig;
-
     return new Promise((resolve) => {
       this.scene.onBeforeRenderObservable.runCoroutineAsync(
         this._animationBlendingCoroutine(
@@ -200,27 +161,20 @@ export class BabylonAnimationController extends IAnimationController {
   ) {
     const frameIn = frameRange?.start || 0;
     const frameOut = frameRange?.end || toAnim.duration;
-
     let currentWeight = 1;
     let newWeight = 0;
-
     fromAnim.stop();
     toAnim.start(false, toAnim.speedRatio, frameIn, frameOut, false);
-
     while (newWeight < maxWeight) {
       newWeight += speed;
       currentWeight -= speed;
-
       toAnim.setWeightForAllAnimatables(newWeight);
       fromAnim.setWeightForAllAnimatables(currentWeight);
-
       yield;
     }
-
     if (character) {
       character.setCurrentAnimation(toAnim);
     }
-
     if (onComplete) {
       onComplete();
     }
@@ -235,15 +189,12 @@ export class BabylonAnimationController extends IAnimationController {
 
   setupIdleObservers(character, onIdleEnd) {
     this.removeObservers(character);
-
     const idleAnimations = [
       "M_Standing_Idle_Variations_001",
       "M_Standing_Idle_Variations_002",
       "M_Standing_Idle_Variations_003",
     ];
-
     const observers = [];
-
     idleAnimations.forEach((animName) => {
       const animGroup = character.getAnimationGroup(animName);
       if (animGroup) {
@@ -253,7 +204,6 @@ export class BabylonAnimationController extends IAnimationController {
         observers.push({ animGroup, observer });
       }
     });
-
     this.observers.set(character.id, observers);
   }
 

@@ -7,28 +7,23 @@ const AvatarViewer = ({ fullscreen = false, triggerAvatarCustomization = false, 
   const canvasRef = useRef(null);
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
-
   const { personalityTraits } = usePersonality();
 
   useEffect(() => {
     if (canvasRef.current) {
       let interactionTimeout;
-
       const handleInteraction = () => {
         if (!hasInteracted) {
           setHasInteracted(true);
           setTooltipVisible(true);
-
           interactionTimeout = setTimeout(() => {
             setTooltipVisible(false);
           }, 5000);
         }
       };
-
       const canvas = canvasRef.current;
       canvas.addEventListener("pointerdown", handleInteraction);
       canvas.addEventListener("wheel", handleInteraction);
-
       return () => {
         canvas.removeEventListener("pointerdown", handleInteraction);
         canvas.removeEventListener("wheel", handleInteraction);
@@ -41,7 +36,6 @@ const AvatarViewer = ({ fullscreen = false, triggerAvatarCustomization = false, 
     <div className={`avatar-viewer ${fullscreen ? "fullscreen" : ""}`}>
       <div className="avatar-canvas-container">
         <canvas ref={canvasRef} className="avatar-canvas" />
-
         <ReadyPlayerMeAvatar
           canvasRef={canvasRef}
           personalityTraits={personalityTraits}
@@ -50,8 +44,6 @@ const AvatarViewer = ({ fullscreen = false, triggerAvatarCustomization = false, 
           showCreator={showCreator}
           setShowCreator={setShowCreator}
         />
-
-        {/* Tooltip for interaction instructions - only show in non-fullscreen mode */}
         {!fullscreen && (
           <div className={`avatar-tooltip ${tooltipVisible ? "visible" : ""}`}>
             <p>Drag to rotate • Scroll to zoom</p>

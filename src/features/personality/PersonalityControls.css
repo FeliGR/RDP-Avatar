@@ -9,7 +9,6 @@
   gap: 1.25rem;
 }
 
-/* Custom scrollbar for WebKit browsers */
 .personality-controls::-webkit-scrollbar {
   width: 4px;
 }
@@ -34,17 +33,17 @@
   border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border-color);
-  transition: all 0.25s ease; /* Smoother transition */
+  transition: all 0.25s ease;
   transform: translateZ(0);
-  will-change: transform, box-shadow, border-color, background; /* Specify properties */
-  backface-visibility: hidden; /* Add hint for rendering */
+  will-change: transform, box-shadow, border-color, background;
+  backface-visibility: hidden;
 }
 
 .trait-control:hover {
-  background: rgba(255, 255, 255, 0.06); /* Slightly brighter hover */
+  background: rgba(255, 255, 255, 0.06);
   border-color: var(--border-hover);
-  transform: translateY(-3px); /* Removed scale */
-  box-shadow: var(--shadow-lg); /* Use larger shadow on hover */
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
 }
 
 .trait-control label {
@@ -79,42 +78,42 @@
 
 .trait-control input[type="range"] {
   width: 100%;
-  height: 8px; /* Increased height for better touch area */
+  height: 8px;
   -webkit-appearance: none;
   appearance: none;
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px; /* Increased radius for smoother appearance */
+  border-radius: 4px;
   outline: none;
   cursor: pointer;
   position: relative;
   margin: 0.75rem 0;
-  transition: all 0.2s ease; /* Added transition for smoother interaction */
+  transition: all 0.2s ease;
 }
 
 .trait-control input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 24px; /* Slightly larger */
-  height: 24px; /* Slightly larger */
+  width: 24px;
+  height: 24px;
   background: var(--primary);
   border-radius: 50%;
   cursor: pointer;
-  box-shadow: 0 0 0 4px rgba(33, 150, 243, 0.18); /* Adjusted shadow */
+  box-shadow: 0 0 0 4px rgba(33, 150, 243, 0.18);
   transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
   z-index: 2;
-  border: 2px solid rgba(255, 255, 255, 0.95); /* Slightly more opaque border */
-  margin-top: -8px; /* Adjusted vertical alignment */
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  margin-top: -8px;
 }
 
 .trait-control input[type="range"]::-moz-range-thumb {
-  width: 24px; /* Slightly larger */
-  height: 24px; /* Slightly larger */
+  width: 24px;
+  height: 24px;
   background: var(--primary);
   border-radius: 50%;
   cursor: pointer;
-  box-shadow: 0 0 0 4px rgba(33, 150, 243, 0.18); /* Adjusted shadow */
+  box-shadow: 0 0 0 4px rgba(33, 150, 243, 0.18);
   transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  border: 2px solid rgba(255, 255, 255, 0.95); /* Slightly more opaque border */
+  border: 2px solid rgba(255, 255, 255, 0.95);
 }
 
 .trait-control input[type="range"]::-webkit-slider-runnable-track {
@@ -130,23 +129,23 @@
 }
 
 .trait-control input[type="range"]:hover::-webkit-slider-thumb {
-  box-shadow: 0 0 0 6px rgba(33, 150, 243, 0.3); /* Enhanced hover shadow */
-  transform: scale(1.18); /* Slightly increased scale */
+  box-shadow: 0 0 0 6px rgba(33, 150, 243, 0.3);
+  transform: scale(1.18);
 }
 
 .trait-control input[type="range"]:hover::-moz-range-thumb {
-  box-shadow: 0 0 0 6px rgba(33, 150, 243, 0.3); /* Enhanced hover shadow */
-  transform: scale(1.18); /* Slightly increased scale */
+  box-shadow: 0 0 0 6px rgba(33, 150, 243, 0.3);
+  transform: scale(1.18);
 }
 
 .trait-control input[type="range"]:active::-webkit-slider-thumb {
-  transform: scale(1.25); /* Slightly increased scale */
-  box-shadow: 0 0 0 7px rgba(33, 150, 243, 0.35); /* Enhanced active shadow */
+  transform: scale(1.25);
+  box-shadow: 0 0 0 7px rgba(33, 150, 243, 0.35);
 }
 
 .trait-control input[type="range"]:active::-moz-range-thumb {
-  transform: scale(1.25); /* Slightly increased scale */
-  box-shadow: 0 0 0 7px rgba(33, 150, 243, 0.35); /* Enhanced active shadow */
+  transform: scale(1.25);
+  box-shadow: 0 0 0 7px rgba(33, 150, 243, 0.35);
 }
 
 .trait-progress {
@@ -167,7 +166,6 @@
   transition: width 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
-/* Trait-specific colors */
 .openness-bar {
   background: linear-gradient(90deg, #48bb78, #68d391);
 }
@@ -188,7 +186,6 @@
   background: linear-gradient(90deg, #805ad5, #9f7aea);
 }
 
-/* Trait controls subtle indicators */
 .trait-control.openness {
   border-left: 2px solid rgba(72, 187, 120, 0.5);
 }
@@ -260,7 +257,6 @@
   opacity: 1;
 }
 
-/* Fullscreen Personality Controls Styles */
 .fullscreen-avatar-container .personality-controls {
   background: transparent;
   border: none;

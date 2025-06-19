@@ -13,7 +13,7 @@ body {
   padding: 0;
   width: 100%;
   height: 100vh;
-  overflow: hidden; /* Prevent scrolling for fullscreen app */
+  overflow: hidden;
   font-family:
     "Inter",
     -apple-system,
@@ -30,7 +30,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   letter-spacing: -0.01em;
-  line-height: 1.5; /* Added base line-height */
+  line-height: 1.5;
 }
 
 #root {
@@ -39,10 +39,8 @@ body {
   overflow: hidden;
 }
 
-/* Import Inter font similar to Cohere's typography */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
-/* Global variables */
 :root {
   --primary: rgb(33, 150, 243);
   --primary-dark: rgb(25, 118, 210);
@@ -63,12 +61,10 @@ body {
   --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-/* Reset for all elements */
 *,
 *::before,
 *::after {
-  /* Apply box-sizing more broadly */
-  box-sizing: inherit; /* Inherit from html */
+  box-sizing: inherit;
   margin: 0;
   padding: 0;
 }

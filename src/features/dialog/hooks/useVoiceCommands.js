@@ -2,12 +2,6 @@ import { useCallback, useEffect, useState } from "react";
 import VoiceCommandProcessor from "../../voice/services/voiceCommands";
 import { TYPING_EVENTS } from "../constants/constants";
 
-/**
- * A hook for voice command processing functionality
- * @param {Function} sendMessage - Function to send dialog messages
- * @param {Function} updateTrait - Function to update personality traits
- * @param {Object} traits - Current personality traits
- */
 const useVoiceCommands = (sendMessage, updateTrait, traits) => {
   const [isListening, setIsListening] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");

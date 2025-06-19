@@ -1,5 +1,3 @@
-/* Panel and Chat Animations */
-
 @keyframes panelSlideIn {
   0% {
     right: -500px;

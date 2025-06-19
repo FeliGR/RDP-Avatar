@@ -4,22 +4,16 @@ import { formatTrait } from "../../../shared/utils";
 import TraitInfoModal from "./TraitInfoModal";
 import "./TraitInfoModal.css";
 
-/**
- * TraitSlider component for individual personality trait control
- */
 const TraitSlider = ({ trait, value, onChange, disabled = false }) => {
   const rangeRef = useRef(null);
   const infoIconRef = useRef(null);
   const [isPulse, setIsPulse] = useState(false);
   const prevValueRef = useRef(value);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const numericValue = typeof value === "number" ? Math.round(value) : parseInt(value, 10) || 3;
-
   const calculatePercentage = (value) => {
     return ((value - 1) / 4) * 100;
   };
-
   useEffect(() => {
     if (prevValueRef.current !== numericValue) {
       setIsPulse(true);
@@ -28,7 +22,6 @@ const TraitSlider = ({ trait, value, onChange, disabled = false }) => {
       return () => clearTimeout(timer);
     }
   }, [numericValue]);
-
   useEffect(() => {
     const updateRangePosition = () => {
       if (rangeRef.current) {
@@ -39,23 +32,18 @@ const TraitSlider = ({ trait, value, onChange, disabled = false }) => {
         element.style.setProperty("--range-percent", `${percent}%`);
       }
     };
-
     updateRangePosition();
-
     const element = rangeRef.current;
     if (element) {
       element.addEventListener("input", updateRangePosition);
     }
-
     return () => {
       if (element) {
         element.removeEventListener("input", updateRangePosition);
       }
     };
   }, [numericValue]);
-
   const percentage = calculatePercentage(numericValue);
-
   const getValueDescription = (trait, value) => {
     const descriptions = {
       openness: [
@@ -94,19 +82,15 @@ const TraitSlider = ({ trait, value, onChange, disabled = false }) => {
         "Very sensitive",
       ],
     };
-
     return descriptions[trait] ? descriptions[trait][value - 1] : "";
   };
-
   const openTraitInfoModal = (e) => {
     e.stopPropagation();
     setIsModalOpen(true);
   };
-
   const closeTraitInfoModal = () => {
     setIsModalOpen(false);
   };
-
   return (
     <div className={`trait-control ${trait}`}>
       <label htmlFor={trait}>
@@ -126,11 +110,9 @@ const TraitSlider = ({ trait, value, onChange, disabled = false }) => {
         <span className="trait-value">({numericValue})</span>
       </label>
       <p className="trait-description">{TRAIT_DESCRIPTIONS[trait]}</p>
-
       <div className="trait-progress">
         <div className={`trait-progress-bar ${trait}-bar`} style={{ width: `${percentage}%` }} />
       </div>
-
       <input
         type="range"
         id={trait}
@@ -145,13 +127,10 @@ const TraitSlider = ({ trait, value, onChange, disabled = false }) => {
         className={isPulse ? "pulse" : ""}
         aria-valuetext={`${numericValue} - ${getValueDescription(trait, numericValue)}`}
       />
-
       <div className="trait-range">
         <span>{getValueDescription(trait, 1)}</span>
         <span>{getValueDescription(trait, 5)}</span>
       </div>
-
-      {/* Modal for trait information */}
       <TraitInfoModal
         trait={trait}
         traitInfo={DETAILED_TRAIT_DESCRIPTIONS[trait]}

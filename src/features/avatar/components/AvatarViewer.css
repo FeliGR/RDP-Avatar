@@ -77,7 +77,6 @@
   box-shadow: 0 0 25px rgba(33, 150, 243, 0.15);
 }
 
-/* Hide the duplicate loading indicator from AvatarViewer since ReadyPlayerMeAvatar provides one */
 .avatar-canvas-container > .avatar-loading {
   display: none;
 }
@@ -145,12 +144,10 @@
   }
 }
 
-/* Replace static instructions with tooltip */
 .avatar-instructions {
   display: none;
 }
 
-/* Add some AR-style grid lines in the background */
 .avatar-canvas::before {
   content: "";
   position: absolute;
@@ -167,7 +164,6 @@
   opacity: 0.6;
 }
 
-/* Larger sizes for desktop */
 @media (min-width: 992px) {
   .avatar-viewer-header h2 {
     font-size: 1.2rem;
@@ -180,7 +176,6 @@
   }
 }
 
-/* Fullscreen Mode Styles */
 .avatar-viewer.fullscreen {
   position: fixed;
   top: 0;

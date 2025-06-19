@@ -1,6 +1,3 @@
-/* Responsive Design Breakpoints */
-
-/* Mobile and Tablet Responsive Design */
 @media (max-width: 768px) {
   .control-buttons {
     left: 15px;
@@ -28,7 +25,6 @@
     height: calc(100% - 70px);
   }
 
-  /* Welcome Experience Mobile */
   .welcome-content {
     max-width: 90vw;
     padding: 1rem;
@@ -128,7 +124,6 @@
   }
 }
 
-/* Large desktop adjustments */
 @media (min-width: 768px) {
   .voice-button {
     width: 100px;
@@ -137,7 +132,6 @@
   }
 }
 
-/* Ultra-wide screen adjustments */
 @media (min-width: 1920px) {
   .app-content {
     max-width: 1600px;
@@ -158,7 +152,6 @@
   }
 }
 
-/* High DPI screen adjustments */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
   .app-container::before {
     background-size: 100px 100px;

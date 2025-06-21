@@ -8,7 +8,6 @@ RUN --mount=type=cache,target=/root/.npm npm install
 
 COPY . .
 
-# Create a .env file at build time based on build args
 ARG REACT_APP_PERSONA_ENGINE_URL
 ARG REACT_APP_DIALOG_ORCHESTRATOR_URL
 ARG REACT_APP_RPM_CLIENT_ID
@@ -16,17 +15,14 @@ ENV REACT_APP_PERSONA_ENGINE_URL=${REACT_APP_PERSONA_ENGINE_URL:-http://persona-
 ENV REACT_APP_DIALOG_ORCHESTRATOR_URL=${REACT_APP_DIALOG_ORCHESTRATOR_URL:-http://adaptiveai-personaar-dialogorch:5002}
 ENV REACT_APP_RPM_CLIENT_ID=${REACT_APP_RPM_CLIENT_ID:-684b2978d8c346fff8566d83}
 
-# Build the React app
 RUN npm run build
 
 RUN npm install -g serve
 
 EXPOSE 3000
 
-# Make sure the entrypoint script is executable
 RUN chmod +x /app/entrypoint.sh
 
-# Add a script tag to index.html to load runtime-env.js
 RUN sed -i 's/<head>/<head><script src="\/runtime-env.js"><\/script>/' /app/build/index.html
 
 ENTRYPOINT ["/app/entrypoint.sh"]

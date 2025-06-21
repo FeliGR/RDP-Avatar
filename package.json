@@ -4,24 +4,16 @@
   "private": true,
   "dependencies": {
     "@readyplayerme/react-avatar-creator": "^0.5.0",
-    "@readyplayerme/visage": "^6.10.0",
-    "@testing-library/dom": "^10.4.0",
-    "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.2.0",
-    "@testing-library/user-event": "^13.5.0",
     "axios": "^1.8.4",
     "babylonjs": "^8.0.1",
     "babylonjs-loaders": "^8.0.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
-    "eject": "react-scripts eject",
     "lint": "eslint src --ext .js,.jsx",
     "lint:fix": "eslint src --ext .js,.jsx --fix",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
@@ -29,8 +21,7 @@
   },
   "eslintConfig": {
     "extends": [
-      "react-app",
-      "react-app/jest"
+      "react-app"
     ]
   },
   "browserslist": {
@@ -54,7 +45,6 @@
     "react-app-rewired": "^2.2.1",
     "stream-browserify": "^3.0.0",
     "util": "^0.12.5",
-    "webpack": "^5.99.5",
-    "webpack-bundle-analyzer": "^4.10.2"
+    "webpack": "^5.99.5"
   }
 }

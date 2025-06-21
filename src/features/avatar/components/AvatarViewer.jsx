@@ -16,12 +16,6 @@ const AvatarViewer = ({
   const { personalityTraits } = usePersonality();
 
   useEffect(() => {
-    if (triggerZoomEffect) {
-      console.log('AvatarViewer received triggerZoomEffect:', triggerZoomEffect);
-    }
-  }, [triggerZoomEffect]);
-
-  useEffect(() => {
     if (canvasRef.current) {
       let interactionTimeout;
       const handleInteraction = () => {

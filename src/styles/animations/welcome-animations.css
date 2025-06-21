@@ -181,7 +181,8 @@
     opacity: 1;
   }
   100% {
-    transform: scale(0.5) translateX(calc(var(--burst-x, 0) * 2)) translateY(calc(var(--burst-y, 0) * 2));
+    transform: scale(0.5) translateX(calc(var(--burst-x, 0) * 2))
+      translateY(calc(var(--burst-y, 0) * 2));
     opacity: 0;
   }
 }

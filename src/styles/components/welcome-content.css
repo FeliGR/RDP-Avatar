@@ -4,7 +4,9 @@
   position: relative;
   max-width: 600px;
   padding: 2rem;
-  transition: transform 0.8s ease-out, opacity 0.6s ease-out;
+  transition:
+    transform 0.8s ease-out,
+    opacity 0.6s ease-out;
 }
 
 .welcome-content.starting {

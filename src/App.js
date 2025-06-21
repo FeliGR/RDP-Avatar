@@ -76,52 +76,40 @@ const App = () => {
   }, [showCreator]);
 
   const handleStart = () => {
-    console.log('handleStart called - triggering zoom effect');
-    
-    // Add clicked animation to the orb
-    const orbElement = document.querySelector('.start-orb');
+    const orbElement = document.querySelector(".start-orb");
     if (orbElement) {
-      orbElement.classList.add('clicked');
-      console.log('Added clicked class to orb');
+      orbElement.classList.add("clicked");
     }
-    
-    // Add starting animation to welcome content
-    const welcomeContentElement = document.querySelector('.welcome-content');
+
+    const welcomeContentElement = document.querySelector(".welcome-content");
     if (welcomeContentElement) {
-      welcomeContentElement.classList.add('starting');
-      console.log('Added starting class to welcome content');
+      welcomeContentElement.classList.add("starting");
     }
-    
-    // Add burst effect to particles
-    const particlesElement = document.querySelector('.floating-particles');
+
+    const particlesElement = document.querySelector(".floating-particles");
     if (particlesElement) {
-      particlesElement.classList.add('burst');
-      console.log('Added burst class to particles');
-      
-      // Add random burst directions to particles
-      const particles = particlesElement.querySelectorAll('.particle');
+      particlesElement.classList.add("burst");
+
+      const particles = particlesElement.querySelectorAll(".particle");
       particles.forEach((particle, index) => {
         const burstX = (Math.random() - 0.5) * 100;
         const burstY = (Math.random() - 0.5) * 100;
-        particle.style.setProperty('--burst-x', `${burstX}px`);
-        particle.style.setProperty('--burst-y', `${burstY}px`);
+        particle.style.setProperty("--burst-x", `${burstX}px`);
+        particle.style.setProperty("--burst-y", `${burstY}px`);
       });
     }
-    
+
     setIsStarted(true);
     setShowUI(true);
     setTriggerZoomEffect(true);
-    console.log('Set triggerZoomEffect to true');
-    
+
     if (logoRef.current) {
       logoRef.current.classList.add("fade-out");
     }
-    
-    // Reset zoom trigger after animation
+
     setTimeout(() => {
       setTriggerZoomEffect(false);
-      console.log('Reset triggerZoomEffect to false');
-    }, 3000); // Give more time for the animation to start and complete
+    }, 3000);
   };
 
   const togglePanel = (panel) => {

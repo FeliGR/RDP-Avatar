@@ -79,9 +79,6 @@ const App = () => {
     setShowUI(true);
     if (logoRef.current) {
       logoRef.current.classList.add("fade-out");
-      setTimeout(() => {
-        setActivePanel("chat");
-      }, 500);
     }
   };
 

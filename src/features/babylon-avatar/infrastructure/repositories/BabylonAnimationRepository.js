@@ -146,12 +146,9 @@ export class BabylonAnimationRepository extends IAnimationRepository {
   }
 
   cleanupAnimationMeshes() {
-    let disposedCount = 0;
-    let skippedCount = 0;
     this.animationMeshesToCleanup.forEach((mesh) => {
       if (mesh && !mesh.isDisposed()) {
         if (mesh._isOfficeEnvironment) {
-          skippedCount++;
           return;
         }
         try {
@@ -166,7 +163,6 @@ export class BabylonAnimationRepository extends IAnimationRepository {
             mesh.material.dispose();
           }
           mesh.dispose();
-          disposedCount++;
         } catch (error) {}
       }
     });

@@ -1,6 +1,6 @@
 import { useLayoutEffect } from "react";
 
-const useScrollToBottom = (ref, deps = []) => {
+const useScrollToBottom = (ref, dependencies = []) => {
   useLayoutEffect(() => {
     if (ref.current) {
       ref.current.scrollIntoView(false);
@@ -12,7 +12,7 @@ const useScrollToBottom = (ref, deps = []) => {
         }
       }, 50);
     }
-  }, [ref, ...deps]);
+  }, [ref, ...dependencies]);
 };
 
 export default useScrollToBottom;

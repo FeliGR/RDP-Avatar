@@ -245,9 +245,6 @@ export class OfficeEnvironmentService {
     const presentMeshes = this.environmentMeshes.filter(
       (mesh) => mesh && !mesh.isDisposed() && mesh.isEnabled()
     );
-    const visibleMeshes = this.environmentMeshes.filter(
-      (mesh) => mesh && !mesh.isDisposed() && mesh.isEnabled() && mesh.isVisible
-    );
     if (presentMeshes.length === 0) {
       return false;
     }

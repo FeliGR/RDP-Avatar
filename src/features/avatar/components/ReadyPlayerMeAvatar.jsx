@@ -16,7 +16,6 @@ const ReadyPlayerMeAvatar = ({
   canvasRef,
   onAvatarLoaded,
   fullscreen = false,
-  personalityTraits,
   triggerAvatarCustomization = false,
   showCreator,
   setShowCreator,
@@ -53,8 +52,6 @@ const ReadyPlayerMeAvatar = ({
     isInitializing: environmentInitializing,
     error: environmentError,
     startOfficeAnimations,
-    playVideo,
-    pauseVideo,
   } = useOfficeEnvironment(animationService);
   useEffect(() => {
     if (animationService) {
@@ -284,6 +281,7 @@ const ReadyPlayerMeAvatar = ({
     animationService,
     registerAIResponseCallback,
     BABYLON?.Vector3,
+    startOfficeAnimations,
   ]);
   useEffect(() => {
     if (avatarError) {
@@ -327,14 +325,6 @@ const ReadyPlayerMeAvatar = ({
       }
     }, 100);
   };
-  useEffect(() => {
-    if (environmentInitialized) {
-      console.log("✅ Office environment initialized successfully");
-    }
-    if (environmentError) {
-      console.error("❌ Office environment error:", environmentError);
-    }
-  }, [environmentInitialized, environmentError]);
   return (
     <div className="ready-player-me-avatar">
       {babylonLoading && !fullscreen && <div className="avatar-loading">Loading 3D engine...</div>}

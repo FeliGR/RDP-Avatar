@@ -130,31 +130,24 @@ const ReadyPlayerMeAvatar = ({
     if (triggerZoomEffect && BABYLON && cameraRef.current && sceneRef.current) {
       const camera = cameraRef.current;
       const scene = sceneRef.current.scene;
-      
-      
-      
+
       const startRadius = camera.radius;
-      const targetRadius = 6; 
-      
-      const duration = 2500; 
+      const targetRadius = 6;
+      const duration = 2500;
       const startTime = Date.now();
-      
-      
+
       const animate = () => {
         const elapsed = Date.now() - startTime;
         const progress = Math.min(elapsed / duration, 1);
-        
-        
         const easeOut = 1 - Math.pow(1 - progress, 2);
-        
-        
+
         camera.radius = startRadius + (targetRadius - startRadius) * easeOut;
-        
+
         if (progress < 1) {
           requestAnimationFrame(animate);
+        }
       };
-      
-      
+
       requestAnimationFrame(animate);
     }
   }, [triggerZoomEffect, BABYLON]);

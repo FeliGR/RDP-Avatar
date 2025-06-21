@@ -65,15 +65,25 @@ const ReadyPlayerMeAvatar = ({
     scene.clearColor = new BABYLON.Color4(0.55, 0.71, 1.0, 1.0);
     const camera = new BABYLON.ArcRotateCamera(
       "camera",
-      -Math.PI / 6,
-      Math.PI / 4,
-      8,
-      new BABYLON.Vector3(0, 1, 0),
+      BABYLON.Tools.ToRadians(-90),
+      BABYLON.Tools.ToRadians(65),
+      6,
+      new BABYLON.Vector3(0, 1.25, 0),
       scene
     );
     camera.attachControl(canvasRef.current, true);
-    camera.lowerRadiusLimit = 4;
-    camera.upperRadiusLimit = 15;
+    camera.allowUpsideDown = false;
+    camera.panningSensibility = 0;
+    camera.lowerRadiusLimit = 1.5;
+    camera.upperRadiusLimit = 16;
+    camera.lowerBetaLimit = 0.75;
+    camera.upperBetaLimit = Math.PI / 2;
+    camera.pinchDeltaPercentage = 0.0006;
+    camera.wheelPrecision = 60;
+    camera.useBouncingBehavior = false;
+    camera.alpha = 1.57;
+    camera.beta = 1.42;
+    camera.radius = 15;
     const hemiLight = new BABYLON.HemisphericLight(
       "hemiLight",
       new BABYLON.Vector3(0, 1, 0),

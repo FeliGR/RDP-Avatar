@@ -49,8 +49,7 @@ export const DETAILED_TRAIT_DESCRIPTIONS = {
     description: "Reflects sociability, assertiveness, and emotional expressiveness.",
     effects:
       "Higher extraversion values make the AI more enthusiastic, talkative, and socially engaged. Lower values result in more reserved, thoughtful responses that are less emotionally expressive.",
-    highExample:
-      "I'm excited to work with you on this project! Let's collaborate and share ideas!",
+    highExample: "I'm excited to work with you on this project! Let's collaborate and share ideas!",
     lowExample: "I've given this careful thought and would suggest a measured approach...",
     icon: "👥",
   },
@@ -59,10 +58,8 @@ export const DETAILED_TRAIT_DESCRIPTIONS = {
     description: "Reflects cooperation, compassion, and consideration for others.",
     effects:
       "Higher agreeableness values make the AI more empathetic, supportive, and focused on creating harmony. Lower values result in more direct, challenging responses that prioritize honesty over tact.",
-    highExample:
-      "I understand how you feel, and I'm here to support you in finding a solution...",
-    lowExample:
-      "To be direct, there are several issues with this approach that need addressing...",
+    highExample: "I understand how you feel, and I'm here to support you in finding a solution...",
+    lowExample: "To be direct, there are several issues with this approach that need addressing...",
     icon: "🤝",
   },
   neuroticism: {
@@ -70,8 +67,7 @@ export const DETAILED_TRAIT_DESCRIPTIONS = {
     description: "Reflects emotional reactivity and sensitivity to stressors.",
     effects:
       "Higher sensitivity values make the AI more emotionally nuanced, cautious, and attentive to potential problems. Lower values result in more emotionally stable, optimistic responses with less focus on risks.",
-    highExample:
-      "I'm concerned about potential challenges we might face with this approach...",
+    highExample: "I'm concerned about potential challenges we might face with this approach...",
     lowExample: "I'm confident we can handle any challenges that come up along the way...",
     icon: "🧠",
   },

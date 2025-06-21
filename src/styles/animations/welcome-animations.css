@@ -144,3 +144,44 @@
     opacity: 1;
   }
 }
+
+@keyframes zoomOut {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes orbExplosion {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+
+@keyframes particleBurst {
+  0% {
+    transform: scale(1) translateX(0) translateY(0);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.5) translateX(var(--burst-x, 0)) translateY(var(--burst-y, 0));
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.5) translateX(calc(var(--burst-x, 0) * 2)) translateY(calc(var(--burst-y, 0) * 2));
+    opacity: 0;
+  }
+}

@@ -8,11 +8,18 @@ const AvatarViewer = ({
   triggerAvatarCustomization = false,
   showCreator,
   setShowCreator,
+  triggerZoomEffect = false,
 }) => {
   const canvasRef = useRef(null);
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
   const { personalityTraits } = usePersonality();
+
+  useEffect(() => {
+    if (triggerZoomEffect) {
+      console.log('AvatarViewer received triggerZoomEffect:', triggerZoomEffect);
+    }
+  }, [triggerZoomEffect]);
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -48,6 +55,7 @@ const AvatarViewer = ({
           triggerAvatarCustomization={triggerAvatarCustomization}
           showCreator={showCreator}
           setShowCreator={setShowCreator}
+          triggerZoomEffect={triggerZoomEffect}
         />
         {!fullscreen && (
           <div className={`avatar-tooltip ${tooltipVisible ? "visible" : ""}`}>

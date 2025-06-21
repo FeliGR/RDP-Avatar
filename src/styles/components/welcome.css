@@ -47,6 +47,10 @@
   transition: transform 0.1s ease-out;
 }
 
+.floating-particles.burst .particle {
+  animation: particleBurst 1s ease-out forwards, floatParticle 20s infinite linear;
+}
+
 .particle-0 {
   left: 10%;
   animation-delay: 0s;

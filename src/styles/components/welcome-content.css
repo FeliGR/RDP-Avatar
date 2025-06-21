@@ -4,6 +4,12 @@
   position: relative;
   max-width: 600px;
   padding: 2rem;
+  transition: transform 0.8s ease-out, opacity 0.6s ease-out;
+}
+
+.welcome-content.starting {
+  transform: scale(0.8);
+  opacity: 0;
 }
 
 .logo-animation {
@@ -155,6 +161,14 @@
 
 .start-orb:hover {
   transform: scale(1.1);
+}
+
+.start-orb.clicked {
+  animation: orbExplosion 0.8s ease-out forwards;
+}
+
+.start-orb.clicked .orb-core {
+  animation: zoomOut 0.6s ease-out forwards;
 }
 
 .orb-inner {

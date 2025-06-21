@@ -22,12 +22,6 @@ const ReadyPlayerMeAvatar = ({
   triggerZoomEffect = false,
 }) => {
   const { BABYLON, isLoading: babylonLoading, error: babylonError } = useBabylonJS();
-
-  useEffect(() => {
-    if (triggerZoomEffect) {
-      console.log("ReadyPlayerMeAvatar received triggerZoomEffect:", triggerZoomEffect);
-    }
-  }, [triggerZoomEffect]);
   const savedAvatarUrl = localStorage.getItem("rpmAvatarUrl");
   const [avatarUrl, setAvatarUrl] = useState(savedAvatarUrl || null);
   const [isLoading, setIsLoading] = useState(!!savedAvatarUrl);
@@ -92,8 +86,8 @@ const ReadyPlayerMeAvatar = ({
     camera.alpha = 1.57;
     camera.beta = 1.42;
     camera.radius = 15;
-
-    // Store camera reference for effects
+    
+    
     cameraRef.current = camera;
     const hemiLight = new BABYLON.HemisphericLight(
       "hemiLight",
@@ -131,41 +125,36 @@ const ReadyPlayerMeAvatar = ({
     };
   }, [canvasRef, BABYLON]);
 
-  // Zoom effect when triggered
+  
   useEffect(() => {
     if (triggerZoomEffect && BABYLON && cameraRef.current && sceneRef.current) {
       const camera = cameraRef.current;
       const scene = sceneRef.current.scene;
-
-      console.log("Starting zoom effect - Camera radius before:", camera.radius);
-
-      // Manual animation using requestAnimationFrame for smooth zoom only
+      
+      
+      
       const startRadius = camera.radius;
-      const targetRadius = 6; // Smoother zoom, not too close
-
-      const duration = 2500; // 2.5 seconds for smoother effect
+      const targetRadius = 6; 
+      
+      const duration = 2500; 
       const startTime = Date.now();
-
-      console.log(`Smooth zoom from radius ${startRadius} to ${targetRadius}`);
-
+      
+      
       const animate = () => {
         const elapsed = Date.now() - startTime;
         const progress = Math.min(elapsed / duration, 1);
-
-        // Easing function (ease-out for smooth deceleration)
+        
+        
         const easeOut = 1 - Math.pow(1 - progress, 2);
-
-        // Only animate the radius (distance), keep angles unchanged
+        
+        
         camera.radius = startRadius + (targetRadius - startRadius) * easeOut;
-
+        
         if (progress < 1) {
           requestAnimationFrame(animate);
-        } else {
-          console.log("Smooth camera zoom completed - Final radius:", camera.radius);
-        }
       };
-
-      // Start the animation
+      
+      
       requestAnimationFrame(animate);
     }
   }, [triggerZoomEffect, BABYLON]);

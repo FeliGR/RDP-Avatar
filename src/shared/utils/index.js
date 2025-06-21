@@ -1,7 +1,4 @@
 /**
- * Shared utility functions for the a */
-
-/**
  * Formats a trait name for display
  * @param {string} trait - The trait name
  * @returns {string} Formatted trait name

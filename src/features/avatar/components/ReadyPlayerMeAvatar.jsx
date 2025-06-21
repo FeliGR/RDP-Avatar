@@ -86,8 +86,7 @@ const ReadyPlayerMeAvatar = ({
     camera.alpha = 1.57;
     camera.beta = 1.42;
     camera.radius = 15;
-    
-    
+
     cameraRef.current = camera;
     const hemiLight = new BABYLON.HemisphericLight(
       "hemiLight",
@@ -125,7 +124,6 @@ const ReadyPlayerMeAvatar = ({
     };
   }, [canvasRef, BABYLON]);
 
-  
   useEffect(() => {
     if (triggerZoomEffect && BABYLON && cameraRef.current && sceneRef.current) {
       const camera = cameraRef.current;

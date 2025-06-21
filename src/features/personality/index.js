@@ -3,7 +3,6 @@ export { PersonalityProvider, usePersonality } from "./context/PersonalityContex
 
 export { default as TraitSlider } from "./components/TraitSlider";
 export { default as TraitInfoModal } from "./components/TraitInfoModal";
-export { default as ErrorMessage } from "./components/ErrorMessage";
 
 export { default as useDebounce } from "./hooks/useDebounce";
 export { default as useLocalTraits } from "./hooks/useLocalTraits";

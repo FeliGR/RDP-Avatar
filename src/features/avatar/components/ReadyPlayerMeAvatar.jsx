@@ -323,7 +323,6 @@ const ReadyPlayerMeAvatar = ({
     triggerAIResponseAnimation,
     animationService,
     registerAIResponseCallback,
-    BABYLON?.Vector3,
     startOfficeAnimations,
   ]);
   useEffect(() => {

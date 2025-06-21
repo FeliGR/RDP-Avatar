@@ -6,7 +6,6 @@ export { default as MessageList } from "./components/MessageList";
 export { default as MessageInput } from "./components/MessageInput";
 export { default as VoiceInput } from "./components/VoiceInput";
 export { default as TypingIndicator } from "./components/TypingIndicator";
-export { default as ErrorMessage } from "./components/ErrorMessage";
 
 export { default as useScrollToBottom } from "./hooks/useScrollToBottom";
 export { default as useVoiceCommands } from "./hooks/useVoiceCommands";

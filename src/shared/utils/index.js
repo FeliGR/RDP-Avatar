@@ -33,22 +33,3 @@ export const debounce = (func, wait, immediate) => {
     if (callNow) func(...args);
   };
 };
-
-/**
- * Formats timestamp for display
- * @param {number|Date} timestamp - Timestamp to format
- * @returns {string} Formatted time string
- */
-export const formatTime = (timestamp) => {
-  return new Date(timestamp).toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
-
-const utils = {
-  formatTrait,
-  debounce,
-};
-
-export default utils;

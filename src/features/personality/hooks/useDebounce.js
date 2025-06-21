@@ -11,7 +11,7 @@ const useDebounce = (callback, delay) => {
         callback(...args);
       }, delay);
     },
-    [callback, delay]
+    [callback, delay],
   );
   return debouncedCallback;
 };

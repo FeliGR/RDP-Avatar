@@ -49,7 +49,7 @@ const useVoiceCommands = (sendMessage, updateTrait, traits) => {
       const processor = new VoiceCommandProcessor(
         handleDialog,
         handlePersonality,
-        handleRecognitionEnd
+        handleRecognitionEnd,
       );
       setCommandProcessor(processor);
     }

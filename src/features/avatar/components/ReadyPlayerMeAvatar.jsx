@@ -43,11 +43,11 @@ const ReadyPlayerMeAvatar = ({
     animationService,
   } = useAvatarAnimations(
     sceneReady ? sceneRef.current?.scene : null,
-    sceneReady ? shadowGeneratorRef.current : null
+    sceneReady ? shadowGeneratorRef.current : null,
   );
   const { triggerAIResponseAnimation } = useAIResponseAnimations(
     animationService,
-    startSpecificIdleAnimation
+    startSpecificIdleAnimation,
   );
   const {
     environmentInitialized,
@@ -71,7 +71,7 @@ const ReadyPlayerMeAvatar = ({
       BABYLON.Tools.ToRadians(65),
       6,
       new BABYLON.Vector3(0, 1.25, 0),
-      scene
+      scene,
     );
     camera.attachControl(canvasRef.current, true);
     camera.allowUpsideDown = false;
@@ -91,13 +91,13 @@ const ReadyPlayerMeAvatar = ({
     const hemiLight = new BABYLON.HemisphericLight(
       "hemiLight",
       new BABYLON.Vector3(0, 1, 0),
-      scene
+      scene,
     );
     hemiLight.intensity = 0.15;
     const dirLight = new BABYLON.DirectionalLight(
       "dirLight",
       new BABYLON.Vector3(-2, -7, -5),
-      scene
+      scene,
     );
     dirLight.intensity = 1.75;
     dirLight.position = new BABYLON.Vector3(0, 30, 10);
@@ -254,7 +254,7 @@ const ReadyPlayerMeAvatar = ({
             setAvatarError(`Failed to load avatar: ${message}`);
             setIsLoading(false);
             loadingRef.current = false;
-          }
+          },
         );
       } catch (error) {
         setAvatarError(`Failed to load avatar: ${error.message}`);
@@ -262,7 +262,7 @@ const ReadyPlayerMeAvatar = ({
         loadingRef.current = false;
       }
     },
-    [onAvatarLoaded, BABYLON]
+    [onAvatarLoaded, BABYLON],
   );
   useEffect(() => {
     if (avatarUrl && sceneRef.current && sceneReady && !loadingRef.current) {

@@ -20,7 +20,7 @@ module.exports = function override(config, env) {
     new webpack.ProvidePlugin({
       process: "process/browser.js",
       Buffer: ["buffer", "Buffer"],
-    })
+    }),
   );
 
   return config;

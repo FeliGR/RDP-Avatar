@@ -19,7 +19,7 @@ export class BabylonAnimationController extends IAnimationController {
       speedRatio,
       frameStart,
       frameEnd || animationGroup.duration,
-      false
+      false,
     );
     character.setCurrentAnimation(animationGroup);
     return Promise.resolve();
@@ -58,8 +58,8 @@ export class BabylonAnimationController extends IAnimationController {
           frameStart,
           endFrame,
           character,
-          resolve
-        )
+          resolve,
+        ),
       );
     });
   }
@@ -87,7 +87,7 @@ export class BabylonAnimationController extends IAnimationController {
     frameStart,
     frameEnd,
     character,
-    onComplete
+    onComplete,
   ) {
     let currentWeight = 1;
     let newWeight = 0;
@@ -144,8 +144,8 @@ export class BabylonAnimationController extends IAnimationController {
           maxWeight,
           frameRange,
           character,
-          resolve
-        )
+          resolve,
+        ),
       );
     });
   }
@@ -157,7 +157,7 @@ export class BabylonAnimationController extends IAnimationController {
     maxWeight = 1,
     frameRange = null,
     character = null,
-    onComplete = null
+    onComplete = null,
   ) {
     const frameIn = frameRange?.start || 0;
     const frameOut = frameRange?.end || toAnim.duration;

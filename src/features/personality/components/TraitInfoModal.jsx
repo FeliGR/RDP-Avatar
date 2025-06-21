@@ -95,7 +95,7 @@ const TraitInfoModal = ({ trait, traitInfo, isOpen, onClose }) => {
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 };
 

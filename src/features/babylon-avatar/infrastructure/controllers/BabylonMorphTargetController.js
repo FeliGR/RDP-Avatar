@@ -48,17 +48,17 @@ export class BabylonMorphTargetController extends IMorphTargetController {
     intervals.push(setInterval(() => this._animateSmile(character), 8000 + Math.random() * 5000));
 
     intervals.push(
-      setInterval(() => this._animateMouthLeftRight(character), 6000 + Math.random() * 4000)
+      setInterval(() => this._animateMouthLeftRight(character), 6000 + Math.random() * 4000),
     );
 
     intervals.push(setInterval(() => this._animateNose(character), 10000 + Math.random() * 5000));
 
     intervals.push(
-      setInterval(() => this._animateJawForward(character), 12000 + Math.random() * 8000)
+      setInterval(() => this._animateJawForward(character), 12000 + Math.random() * 8000),
     );
 
     intervals.push(
-      setInterval(() => this._animateCheeks(character), 15000 + Math.random() * 10000)
+      setInterval(() => this._animateCheeks(character), 15000 + Math.random() * 10000),
     );
 
     this.automaticAnimations.set(character.id, intervals);

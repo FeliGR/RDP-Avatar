@@ -54,7 +54,7 @@ export class LoadCharacterUseCase {
 
   _setupMorphTargets(character) {
     const headMesh = character.meshes.find(
-      (mesh) => mesh.name.includes("Wolf3D_Head") || mesh.name.includes("Head")
+      (mesh) => mesh.name.includes("Wolf3D_Head") || mesh.name.includes("Head"),
     );
 
     if (headMesh && headMesh.morphTargetManager) {
@@ -93,7 +93,7 @@ export class LoadCharacterUseCase {
     }
 
     const teethMesh = character.meshes.find(
-      (mesh) => mesh.name.includes("Wolf3D_Teeth") || mesh.name.includes("Teeth")
+      (mesh) => mesh.name.includes("Wolf3D_Teeth") || mesh.name.includes("Teeth"),
     );
 
     if (teethMesh && teethMesh.morphTargetManager) {

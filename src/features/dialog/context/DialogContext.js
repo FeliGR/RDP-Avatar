@@ -63,7 +63,7 @@ export const DialogProvider = ({ children }) => {
         return getFallbackResponse();
       }
     },
-    [dialogApiAvailable, personalityApiAvailable, parseApiResponse, getFallbackResponse]
+    [dialogApiAvailable, personalityApiAvailable, parseApiResponse, getFallbackResponse],
   );
   const sendUserMessage = useCallback(
     async (text) => {
@@ -92,7 +92,7 @@ export const DialogProvider = ({ children }) => {
       fetchBotResponse,
       createMessage,
       triggerAIResponseAnimation,
-    ]
+    ],
   );
   const clearConversation = useCallback(() => {
     setMessages([]);

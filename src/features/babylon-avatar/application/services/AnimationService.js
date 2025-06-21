@@ -123,7 +123,7 @@ export class AnimationService {
       await animationController.playAnimationWithTransition(
         this.currentCharacter,
         animationName,
-        transitionOptions
+        transitionOptions,
       );
 
       return { success: true };

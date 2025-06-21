@@ -76,7 +76,7 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
             speedRatio: 1.0,
             transitionDuration,
             ...options,
-          }
+          },
         );
         if (result.success) {
           setAnimationState("idle");
@@ -87,7 +87,7 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
         return { success: false, error: error.message };
       }
     },
-    []
+    [],
   );
 
   const loadAvatarAnimations = useCallback(
@@ -140,7 +140,7 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
                   isLooping: true,
                   speedRatio: 1.0,
                   transitionDuration: 0.3,
-                }
+                },
               );
               if (idleResult.success) {
                 setAnimationState("idle");
@@ -161,7 +161,7 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
         return { success: false, error: error.message };
       }
     },
-    [_cleanupDuplicateAvatars, registerAnimationService, setAnimations]
+    [_cleanupDuplicateAvatars, registerAnimationService, setAnimations],
   );
 
   const startIdleAnimations = useCallback(async () => {
@@ -184,7 +184,7 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
         return { success: false, error: error.message };
       }
     },
-    [currentCharacter]
+    [currentCharacter],
   );
 
   const stopTalkingAnimations = useCallback(async () => {
@@ -214,7 +214,7 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
           {
             transitionDuration: 0.3,
             ...options,
-          }
+          },
         );
         return result;
       } catch (error) {
@@ -222,7 +222,7 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
         return { success: false, error: error.message };
       }
     },
-    [currentCharacter]
+    [currentCharacter],
   );
 
   const setMorphTarget = useCallback(
@@ -238,7 +238,7 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
         return { success: false, error: error.message };
       }
     },
-    [currentCharacter]
+    [currentCharacter],
   );
 
   const clearError = useCallback(() => {

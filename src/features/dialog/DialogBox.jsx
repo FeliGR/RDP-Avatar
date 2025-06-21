@@ -13,7 +13,7 @@ const DialogBox = () => {
   const { isListening, statusMessage, toggleVoiceInput } = useVoiceCommands(
     sendUserMessage,
     updateTrait,
-    personalityTraits
+    personalityTraits,
   );
   return (
     <div className="dialog-box">

@@ -84,7 +84,7 @@ export class VoiceCommandProcessor {
         if (this.onRecognitionEnd) {
           this.onRecognitionEnd();
         }
-      }
+      },
     );
   }
   startListening() {
@@ -126,19 +126,19 @@ export class VoiceCommandProcessor {
     if (/increase/i.test(text)) {
       action = "increase";
       const match = text.match(
-        /(openness|conscientiousness|extraversion|agreeableness|neuroticism)/i
+        /(openness|conscientiousness|extraversion|agreeableness|neuroticism)/i,
       );
       if (match) trait = match[0].toLowerCase();
     } else if (/decrease/i.test(text)) {
       action = "decrease";
       const match = text.match(
-        /(openness|conscientiousness|extraversion|agreeableness|neuroticism)/i
+        /(openness|conscientiousness|extraversion|agreeableness|neuroticism)/i,
       );
       if (match) trait = match[0].toLowerCase();
     } else if (/set/i.test(text)) {
       action = "set";
       const traitMatch = text.match(
-        /(openness|conscientiousness|extraversion|agreeableness|neuroticism)/i
+        /(openness|conscientiousness|extraversion|agreeableness|neuroticism)/i,
       );
       if (traitMatch) trait = traitMatch[0].toLowerCase();
       const valueMatch = text.match(/to (\d+(\.\d+)?)/i);

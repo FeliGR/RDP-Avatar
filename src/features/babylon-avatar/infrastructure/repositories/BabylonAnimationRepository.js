@@ -23,7 +23,7 @@ export class BabylonAnimationRepository extends IAnimationRepository {
         (mesh) =>
           mesh.name.includes("Wolf3D") ||
           mesh.name.includes("_Character_") ||
-          mesh.name.includes("Armature")
+          mesh.name.includes("Armature"),
       );
       if (existingMeshes.length > 0) {
         const character = new Character({
@@ -39,7 +39,7 @@ export class BabylonAnimationRepository extends IAnimationRepository {
         });
         const rootMesh =
           existingMeshes.find(
-            (mesh) => mesh.name.includes("Wolf3D") || mesh.name.includes("Armature")
+            (mesh) => mesh.name.includes("Wolf3D") || mesh.name.includes("Armature"),
           ) || existingMeshes[0];
         if (rootMesh && rootMesh.name !== "_Character_") {
           rootMesh.name = "_Character_";
@@ -50,7 +50,7 @@ export class BabylonAnimationRepository extends IAnimationRepository {
         null,
         this._getBasePath(modelPath),
         this._getFileName(modelPath),
-        this.scene
+        this.scene,
       );
       if (!result.meshes || result.meshes.length === 0) {
         throw new Error("No meshes found in model");
@@ -81,7 +81,7 @@ export class BabylonAnimationRepository extends IAnimationRepository {
         null,
         this._getBasePath(animationPath),
         this._getFileName(animationPath),
-        this.scene
+        this.scene,
       );
       if (!result.animationGroups || result.animationGroups.length === 0) {
         return null;

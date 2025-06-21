@@ -28,7 +28,7 @@ export const useAIResponseAnimations = (animationService, startSpecificIdleAnima
       "/animations/masculine/dance/M_Dances_005.glb",
       "/animations/masculine/dance/M_Dances_006.glb",
     ],
-    []
+    [],
   );
 
   const isCharacterReady = useCallback(() => {
@@ -59,7 +59,7 @@ export const useAIResponseAnimations = (animationService, startSpecificIdleAnima
 
         const categoryFolders = ANIMATION_CATEGORIES[category] || ANIMATION_CATEGORIES.all;
         const availableAnimations = defaultAnimations.filter((animPath) =>
-          categoryFolders.some((folder) => animPath.includes(`/${folder}/`))
+          categoryFolders.some((folder) => animPath.includes(`/${folder}/`)),
         );
 
         if (availableAnimations.length === 0) {
@@ -110,7 +110,7 @@ export const useAIResponseAnimations = (animationService, startSpecificIdleAnima
         isProcessingRef.current = false;
       }
     },
-    [animationService, isCharacterReady, defaultAnimations, startSpecificIdleAnimation]
+    [animationService, isCharacterReady, defaultAnimations, startSpecificIdleAnimation],
   );
 
   return {

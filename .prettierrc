@@ -1,8 +1,23 @@
 {
   "semi": true,
-  "trailingComma": "es5",
-  "singleQuote": false,
+  "singleQuote": false,         
+  "jsxSingleQuote": false,      
+  "trailingComma": "all",       
+  "arrowParens": "always",      
   "printWidth": 100,
   "tabWidth": 2,
-  "useTabs": false
+  "useTabs": false,
+  "bracketSpacing": true,       
+  "bracketSameLine": false,     
+  "endOfLine": "lf",
+  "embeddedLanguageFormatting": "auto",
+  "proseWrap": "preserve",
+  "overrides": [
+    {
+      "files": ["*.css", "*.scss", "*.less"],
+      "options": {
+        "tabWidth": 2           
+      }
+    }
+  ]
 }

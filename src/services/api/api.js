@@ -14,11 +14,11 @@ const isLocalDevelopment =
 const API_ENDPOINTS = {
   personaEngine: getRuntimeEnv(
     "REACT_APP_PERSONA_ENGINE_URL",
-    isLocalDevelopment ? "http://localhost:5001" : "http://persona-engine-service:5001"
+    isLocalDevelopment ? "http://localhost:5001" : "http://persona-engine-service:5001",
   ),
   dialogOrchestrator: getRuntimeEnv(
     "REACT_APP_DIALOG_ORCHESTRATOR_URL",
-    isLocalDevelopment ? "http://localhost:5002" : "http://dialog-orchestrator-service:5002"
+    isLocalDevelopment ? "http://localhost:5002" : "http://dialog-orchestrator-service:5002",
   ),
 };
 
@@ -40,7 +40,7 @@ const createApiClient = (baseURL) => {
     (error) => {
       const processedError = handleApiError(error);
       return Promise.reject(processedError);
-    }
+    },
   );
 
   return client;

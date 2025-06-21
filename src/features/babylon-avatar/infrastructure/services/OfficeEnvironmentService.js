@@ -30,7 +30,7 @@ export class OfficeEnvironmentService {
   setupLighting() {
     this.hdrTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
       "/assets/env/environment_19.env",
-      this.scene
+      this.scene,
     );
     this.hdrTexture.rotationY = BABYLON.Tools.ToRadians(this.hdrRotation);
     this.hdrSkybox = BABYLON.MeshBuilder.CreateBox("skybox", { size: 1024 }, this.scene);
@@ -77,7 +77,7 @@ export class OfficeEnvironmentService {
           "/assets/videos/video.mp4",
           this.scene,
           true,
-          true
+          true,
         );
         tvMaterial.albedoTexture = this.videoTexture;
         tvMaterial.emissiveTexture = this.videoTexture;
@@ -173,7 +173,7 @@ export class OfficeEnvironmentService {
       "position.y",
       30,
       BABYLON.Animation.ANIMATIONTYPE_FLOAT,
-      BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
+      BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE,
     );
     const keys = [];
     const baseY = mesh.position.y;
@@ -243,7 +243,7 @@ export class OfficeEnvironmentService {
 
   checkEnvironmentIntegrity() {
     const presentMeshes = this.environmentMeshes.filter(
-      (mesh) => mesh && !mesh.isDisposed() && mesh.isEnabled()
+      (mesh) => mesh && !mesh.isDisposed() && mesh.isEnabled(),
     );
     if (presentMeshes.length === 0) {
       return false;

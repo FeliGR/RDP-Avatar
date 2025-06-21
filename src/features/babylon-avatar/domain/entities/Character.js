@@ -25,7 +25,7 @@ export class Character {
   hasAnimation(animationName) {
     const lowerAnimationName = animationName.toLowerCase();
     return this.animationGroups.some((group) =>
-      group.name.toLowerCase().includes(lowerAnimationName)
+      group.name.toLowerCase().includes(lowerAnimationName),
     );
   }
 
@@ -36,7 +36,7 @@ export class Character {
   getAnimationGroup(animationName) {
     const lowerAnimationName = animationName.toLowerCase();
     return this.animationGroups.find((group) =>
-      group.name.toLowerCase().includes(lowerAnimationName)
+      group.name.toLowerCase().includes(lowerAnimationName),
     );
   }
 

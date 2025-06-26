@@ -473,6 +473,67 @@
   margin-right: 0;
   background: rgba(100, 200, 255, 1);
 }
+.speaking-indicator {
+  padding: 12px 18px;
+  display: inline-block;
+  border-radius: var(--chat-radius-md) var(--chat-radius-md) var(--chat-radius-md)
+    var(--chat-radius-sm);
+  background: rgba(76, 175, 80, 0.1);
+  backdrop-filter: var(--chat-blur-soft);
+  margin-bottom: 1.5rem;
+  max-width: fit-content;
+  align-self: flex-start;
+  box-shadow: var(--chat-shadow-soft);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  animation: messageSlideIn 0.4s ease forwards;
+}
+
+.speaking-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(76, 175, 80, 0.9);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.speaking-content svg {
+  width: 16px;
+  height: 16px;
+  animation: speakingPulse 2s ease-in-out infinite;
+}
+
+.speaking-content span {
+  color: var(--chat-text-secondary);
+}
+
+.speaking-waves {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+}
+
+.speaking-waves span {
+  width: 4px;
+  height: 4px;
+  background: rgba(76, 175, 80, 0.8);
+  border-radius: 50%;
+  display: inline-block;
+  animation: speakingWave 1.2s ease-in-out infinite;
+}
+
+.speaking-waves span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.speaking-waves span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.speaking-waves span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
 @keyframes typing {
   0%,
   100% {
@@ -490,6 +551,27 @@
     opacity: 0.4;
   }
   50% {
+    opacity: 1;
+  }
+}
+@keyframes speakingPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+@keyframes speakingWave {
+  0%, 60%, 100% {
+    transform: scaleY(1);
+    opacity: 0.5;
+  }
+  30% {
+    transform: scaleY(1.5);
     opacity: 1;
   }
 }

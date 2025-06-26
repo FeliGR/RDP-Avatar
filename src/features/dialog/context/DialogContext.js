@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useState } from "react";
 import { sendMessage } from "../../../services/api";
 import { usePersonality } from "../../personality";
 import { useAvatarAnimation } from "../../avatar/context/AvatarAnimationContext";
+import { useTTS } from "../../voice/context/TTSContext";
 
 export const DialogContext = createContext();
 
@@ -18,6 +19,7 @@ const FALLBACK_RESPONSES = [
 export const DialogProvider = ({ children }) => {
   const { personalityTraits, apiAvailable: personalityApiAvailable } = usePersonality();
   const { triggerAIResponseAnimation } = useAvatarAnimation();
+  const { speak, isAvailable: ttsAvailable } = useTTS();
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -75,9 +77,23 @@ export const DialogProvider = ({ children }) => {
         const responseText = await fetchBotResponse(personalityTraits.userId, text);
         const botMessage = createMessage(responseText, "bot", !dialogApiAvailable);
         setMessages((prevMessages) => [...prevMessages, botMessage]);
+        
+        
         if (triggerAIResponseAnimation) {
           triggerAIResponseAnimation("all");
         }
+        
+        
+        if (ttsAvailable && dialogApiAvailable && responseText) {
+          console.log('Speaking AI response:', responseText.substring(0, 50) + '...');
+          try {
+            await speak(responseText);
+          } catch (ttsError) {
+            console.warn('TTS failed for AI response:', ttsError);
+            
+          }
+        }
+        
         return botMessage;
       } catch (err) {
         setError("Failed to get a response. Please try again.");
@@ -92,6 +108,8 @@ export const DialogProvider = ({ children }) => {
       fetchBotResponse,
       createMessage,
       triggerAIResponseAnimation,
+      ttsAvailable,
+      speak,
     ],
   );
   const clearConversation = useCallback(() => {

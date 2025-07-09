@@ -33,3 +33,4 @@ Thumbs.db
 *.tmp
 *.bak
 *.cache
+tts-key.json

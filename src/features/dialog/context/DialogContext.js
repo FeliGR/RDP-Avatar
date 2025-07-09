@@ -77,23 +77,20 @@ export const DialogProvider = ({ children }) => {
         const responseText = await fetchBotResponse(personalityTraits.userId, text);
         const botMessage = createMessage(responseText, "bot", !dialogApiAvailable);
         setMessages((prevMessages) => [...prevMessages, botMessage]);
-        
-        
+
         if (triggerAIResponseAnimation) {
           triggerAIResponseAnimation("all");
         }
-        
-        
+
         if (ttsAvailable && dialogApiAvailable && responseText) {
-          console.log('Speaking AI response:', responseText.substring(0, 50) + '...');
+          console.log("Speaking AI response:", responseText.substring(0, 50) + "...");
           try {
             await speak(responseText);
           } catch (ttsError) {
-            console.warn('TTS failed for AI response:', ttsError);
-            
+            console.warn("TTS failed for AI response:", ttsError);
           }
         }
-        
+
         return botMessage;
       } catch (err) {
         setError("Failed to get a response. Please try again.");

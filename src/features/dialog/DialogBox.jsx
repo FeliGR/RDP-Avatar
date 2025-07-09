@@ -2,7 +2,6 @@ import React from "react";
 import { usePersonality } from "../personality";
 import "./DialogBox.css";
 import { useDialog } from "./context/DialogContext";
-import { ErrorMessage } from "../../shared";
 import MessageInput from "./components/MessageInput";
 import MessageList from "./components/MessageList";
 import useVoiceCommands from "./hooks/useVoiceCommands";
@@ -17,7 +16,6 @@ const DialogBox = () => {
   );
   return (
     <div className="dialog-box">
-      <ErrorMessage message={error} />
       {statusMessage && <div className="voice-status-message">{statusMessage}</div>}
       <MessageList messages={messages} isLoading={isLoading} />
       <MessageInput

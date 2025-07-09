@@ -262,7 +262,7 @@ const App = () => {
             ></div>
             <div className={`side-panel chat-panel ${activePanel === "chat" ? "active" : ""}`}>
               <div className="panel-header">
-                <h3>Chat with Alex</h3>
+                <h3>Chat Assistant</h3>
                 <button
                   className="close-panel-btn"
                   onClick={() => setActivePanel(null)}

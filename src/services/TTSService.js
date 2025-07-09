@@ -4,13 +4,13 @@
  */
 class TTSService {
   constructor() {
-    this.baseUrl = 'http://localhost:5003';
+    this.baseUrl = "http://localhost:5003";
     this.defaultVoiceConfig = {
       language_code: "en-US",
       name: "en-US-Wavenet-D",
       ssml_gender: "NEUTRAL",
       speaking_rate: 1.0,
-      pitch: 0.0
+      pitch: 0.0,
     };
   }
 
@@ -21,24 +21,24 @@ class TTSService {
    * @returns {Promise<string>} Base64 encoded audio data
    */
   async synthesizeText(text, voiceConfig = null) {
-    if (!text || typeof text !== 'string') {
-      throw new Error('Text is required for TTS synthesis');
+    if (!text || typeof text !== "string") {
+      throw new Error("Text is required for TTS synthesis");
     }
 
     if (text.length > 5000) {
-      throw new Error('Text exceeds maximum length of 5000 characters');
+      throw new Error("Text exceeds maximum length of 5000 characters");
     }
 
     try {
       const requestBody = {
         text: text.trim(),
-        ...(voiceConfig && { voiceConfig: { ...this.defaultVoiceConfig, ...voiceConfig } })
+        ...(voiceConfig && { voiceConfig: { ...this.defaultVoiceConfig, ...voiceConfig } }),
       };
 
       const response = await fetch(`${this.baseUrl}/api/tts`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(requestBody),
       });
@@ -50,17 +50,17 @@ class TTSService {
       }
 
       if (!result.success) {
-        throw new Error(result.message || 'TTS synthesis failed');
+        throw new Error(result.message || "TTS synthesis failed");
       }
 
       // Handle the actual response format: data.audioContent (camelCase)
       if (!result.data?.audioContent) {
-        throw new Error('No audio content returned from TTS service');
+        throw new Error("No audio content returned from TTS service");
       }
 
       return result.data.audioContent;
     } catch (error) {
-      console.error('TTS Service Error:', error);
+      console.error("TTS Service Error:", error);
       throw new Error(`Failed to synthesize speech: ${error.message}`);
     }
   }
@@ -72,24 +72,24 @@ class TTSService {
    */
   createAudioElement(base64Audio) {
     if (!base64Audio) {
-      throw new Error('Base64 audio data is required');
+      throw new Error("Base64 audio data is required");
     }
 
     try {
       // Create audio blob from base64 data
-      const audioBlob = this.base64ToBlob(base64Audio, 'audio/mp3');
+      const audioBlob = this.base64ToBlob(base64Audio, "audio/mp3");
       const audioUrl = URL.createObjectURL(audioBlob);
-      
+
       const audio = new Audio(audioUrl);
-      
+
       // Clean up the object URL when the audio is done playing
-      audio.addEventListener('ended', () => {
+      audio.addEventListener("ended", () => {
         URL.revokeObjectURL(audioUrl);
       });
 
       return audio;
     } catch (error) {
-      console.error('Error creating audio element:', error);
+      console.error("Error creating audio element:", error);
       throw new Error(`Failed to create audio element: ${error.message}`);
     }
   }
@@ -103,11 +103,11 @@ class TTSService {
   base64ToBlob(base64, mimeType) {
     const byteCharacters = atob(base64);
     const byteNumbers = new Array(byteCharacters.length);
-    
+
     for (let i = 0; i < byteCharacters.length; i++) {
       byteNumbers[i] = byteCharacters.charCodeAt(i);
     }
-    
+
     const byteArray = new Uint8Array(byteNumbers);
     return new Blob([byteArray], { type: mimeType });
   }
@@ -119,16 +119,16 @@ class TTSService {
   async checkAvailability() {
     try {
       const response = await fetch(`${this.baseUrl}/api/tts`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text: 'test' }),
+        body: JSON.stringify({ text: "test" }),
       });
-      
+
       return response.ok;
     } catch (error) {
-      console.warn('TTS service unavailable:', error);
+      console.warn("TTS service unavailable:", error);
       return false;
     }
   }

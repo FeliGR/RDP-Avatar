@@ -5,6 +5,7 @@ export class BabylonAnimationController extends IAnimationController {
     super();
     this.scene = scene;
     this.observers = new Map();
+    this.animationTransitions = new Map(); // Track ongoing transitions
   }
 
   playAnimation(character, animationName, options = {}) {
@@ -178,6 +179,182 @@ export class BabylonAnimationController extends IAnimationController {
     if (onComplete) {
       onComplete();
     }
+  }  /**
+   * Animation blending coroutine similar to the JavaScript example
+   * This provides smooth transitions between animations
+   */
+  *animationBlendingCoroutine(
+    fromAnim,
+    fromAnimSpeedRatio,
+    toAnim,
+    toAnimSpeedRatio,
+    repeat,
+    speed,
+    toAnimFrameIn,
+    toAnimFrameOut,
+    maxWeight,
+    character
+  ) {
+    console.log(`[Animation Blending] Starting transition from ${fromAnim?.name || 'none'} to ${toAnim?.name} with speed: ${speed}`);
+    
+    if (!toAnimFrameIn) toAnimFrameIn = 0;
+    if (!toAnimFrameOut) toAnimFrameOut = toAnim.to || toAnim.duration;
+    if (!maxWeight) maxWeight = 1;
+
+    let currentWeight = fromAnim ? 1 : 0; // If no fromAnim, start from 0
+    let newWeight = 0;
+    let blendSteps = 0;
+
+    try {
+      // Stop the previous animation if it exists and start the new one
+      if (fromAnim) {
+        fromAnim.stop();
+        fromAnim.speedRatio = fromAnimSpeedRatio;
+      }
+      
+      toAnim.start(repeat, toAnimSpeedRatio, toAnimFrameIn, toAnimFrameOut, false);
+      toAnim.speedRatio = toAnimSpeedRatio;
+
+      // Set initial weights
+      if (fromAnim) {
+        fromAnim.setWeightForAllAnimatables(currentWeight);
+      }
+      toAnim.setWeightForAllAnimatables(newWeight);
+
+      // Blend the animations
+      while (newWeight < maxWeight) {
+        newWeight += speed;
+        if (fromAnim) {
+          currentWeight -= speed;
+        }
+        blendSteps++;
+        
+        // Clamp values to prevent overshooting
+        newWeight = Math.min(newWeight, maxWeight);
+        currentWeight = Math.max(currentWeight, 0);
+        
+        try {
+          toAnim.setWeightForAllAnimatables(newWeight);
+          if (fromAnim) {
+            fromAnim.setWeightForAllAnimatables(currentWeight);
+          }
+          
+          // Log progress every 20 steps for debugging
+          if (blendSteps % 20 === 0) {
+            console.log(`[Animation Blending] Step ${blendSteps}: new weight: ${newWeight.toFixed(3)}${fromAnim ? `, old weight: ${currentWeight.toFixed(3)}` : ''}`);
+          }
+        } catch (error) {
+          console.warn("[Animation Blending] Error setting animation weights:", error);
+          break;
+        }
+        
+        yield;
+      }
+
+      console.log(`[Animation Blending] Completed in ${blendSteps} steps`);
+
+      // Ensure final weights are set correctly
+      try {
+        toAnim.setWeightForAllAnimatables(maxWeight);
+        if (fromAnim) {
+          fromAnim.setWeightForAllAnimatables(0);
+        }
+      } catch (error) {
+        console.warn("[Animation Blending] Error setting final weights:", error);
+      }
+
+      // Update character's current animation
+      if (character) {
+        character.setCurrentAnimation(toAnim);
+      }
+
+      console.log(`[Animation Blending] Transition complete to ${toAnim?.name}`);
+    } catch (error) {
+      console.error("[Animation Blending] Critical error during blending:", error);
+      // Fallback: just start the new animation directly
+      try {
+        toAnim.start(repeat, toAnimSpeedRatio, toAnimFrameIn, toAnimFrameOut, false);
+        toAnim.setWeightForAllAnimatables(maxWeight);
+        if (character) {
+          character.setCurrentAnimation(toAnim);
+        }
+      } catch (fallbackError) {
+        console.error("[Animation Blending] Fallback failed:", fallbackError);
+      }
+    }
+  }
+
+  /**
+   * Play animation with smooth blending transition
+   */
+  async playAnimationWithBlending(character, animationName, options = {}) {
+    const targetAnimationGroup = character.getAnimationGroup(animationName);
+    if (!targetAnimationGroup) {
+      throw new Error(`Animation '${animationName}' not found`);
+    }
+
+    // Check if we're already blending to this animation
+    if (this.isBlendingToAnimation(animationName)) {
+      console.log(`[Animation] Already blending to ${animationName}, skipping duplicate request`);
+      return Promise.resolve();
+    }
+
+    const {
+      isLooping = false,
+      speedRatio = 1.0,
+      frameStart = 0,
+      frameEnd = null,
+      transitionSpeed = 0.02,
+      maxWeight = 1.0,
+      animationOffset = 0,
+    } = options;
+
+    const currentAnimation = character.currentAnimation;
+    const endFrame = frameEnd || targetAnimationGroup.to || targetAnimationGroup.duration;
+    const adjustedFrameStart = frameStart + animationOffset;
+    const adjustedFrameEnd = endFrame - animationOffset;
+
+    // Always use blending for smoother transitions, even if there's no previous animation
+    console.log(`[Animation] Blending to ${animationName} from ${currentAnimation?.name || 'none'}`);
+
+    // If trying to play the same animation, skip
+    if (currentAnimation === targetAnimationGroup) {
+      console.log(`[Animation] Animation ${animationName} is already playing`);
+      return Promise.resolve();
+    }
+
+    // Track this transition
+    this.animationTransitions.set(animationName, {
+      startTime: Date.now(),
+      fromAnimation: currentAnimation?.name,
+      toAnimation: animationName
+    });
+
+    // Use the blending coroutine for all transitions
+    return new Promise((resolve) => {
+      this.scene.onBeforeRenderObservable.runCoroutineAsync(
+        this.animationBlendingCoroutine(
+          currentAnimation, // Can be null
+          speedRatio,
+          targetAnimationGroup,
+          speedRatio,
+          isLooping,
+          transitionSpeed,
+          adjustedFrameStart,
+          adjustedFrameEnd,
+          maxWeight,
+          character
+        )
+      ).then(() => {
+        // Remove from transitions when complete
+        this.animationTransitions.delete(animationName);
+        resolve();
+      }).catch(error => {
+        console.error("[Animation] Error in blending coroutine:", error);
+        this.animationTransitions.delete(animationName);
+        resolve();
+      });
+    });
   }
 
   stopAnimation(character) {
@@ -188,33 +365,110 @@ export class BabylonAnimationController extends IAnimationController {
   }
 
   setupIdleObservers(character, onIdleEnd) {
+    // Always remove existing observers first
     this.removeObservers(character);
-    const idleAnimations = [
-      "M_Standing_Idle_Variations_001",
-      "M_Standing_Idle_Variations_002",
-      "M_Standing_Idle_Variations_003",
-    ];
-    const observers = [];
-    idleAnimations.forEach((animName) => {
-      const animGroup = character.getAnimationGroup(animName);
-      if (animGroup) {
-        const observer = animGroup.onAnimationEndObservable.add(() => {
-          onIdleEnd(animGroup);
-        });
-        observers.push({ animGroup, observer });
+    
+    // Only observe the current animation, not all idle animations
+    const currentAnimation = character.currentAnimation;
+    if (!currentAnimation) {
+      console.warn("[Idle Observer] No current animation to observe");
+      return;
+    }
+    
+    // Add a small delay to ensure the animation has properly started
+    setTimeout(() => {
+      // Double-check that this is still the current animation before setting up observer
+      if (character.currentAnimation !== currentAnimation) {
+        console.log(`[Idle Observer] Animation changed before observer setup (${currentAnimation.name} -> ${character.currentAnimation?.name}), skipping`);
+        return;
       }
-    });
-    this.observers.set(character.id, observers);
+      
+      try {
+        const observer = currentAnimation.onAnimationEndObservable.add(() => {
+          // Verify this is still the current animation before triggering callback
+          if (character.currentAnimation === currentAnimation) {
+            console.log(`[Idle Observer] Current animation ${currentAnimation.name} ended, triggering callback`);
+            // Remove the observer immediately to prevent multiple triggers
+            currentAnimation.onAnimationEndObservable.remove(observer);
+            onIdleEnd(currentAnimation);
+          } else {
+            console.log(`[Idle Observer] Old animation ${currentAnimation.name} ended, but it's no longer current (${character.currentAnimation?.name}) - ignoring`);
+            // Still remove the observer to clean up
+            currentAnimation.onAnimationEndObservable.remove(observer);
+          }
+        });
+        
+        this.observers.set(character.id, [{ animGroup: currentAnimation, observer }]);
+        console.log(`[Idle Observer] Set up observer for current animation: ${currentAnimation.name}`);
+      } catch (error) {
+        console.warn("[Idle Observer] Error setting up observer:", error);
+      }
+    }, 100);
   }
 
   removeObservers(character) {
     const characterObservers = this.observers.get(character.id);
     if (characterObservers) {
+      console.log(`[Idle Observer] Removing ${characterObservers.length} observers for character ${character.id}`);
       characterObservers.forEach(({ animGroup, observer }) => {
-        animGroup.onAnimationEndObservable.remove(observer);
-        animGroup.stop();
+        try {
+          if (animGroup && observer) {
+            animGroup.onAnimationEndObservable.remove(observer);
+            console.log(`[Idle Observer] Removed observer for ${animGroup.name}`);
+          }
+        } catch (error) {
+          console.warn(`[Idle Observer] Error removing observer:`, error);
+        }
       });
       this.observers.delete(character.id);
     }
+  }
+
+  /**
+   * Quick blend in for animations starting from 0 weight
+   */
+  *_quickBlendIn(targetAnimation, speed = 0.05) {
+    let weight = 0;
+    
+    while (weight < 1) {
+      weight += speed;
+      weight = Math.min(weight, 1);
+      
+      try {
+        targetAnimation.setWeightForAllAnimatables(weight);
+      } catch (error) {
+        console.warn("[Quick Blend] Error setting weight:", error);
+        break;
+      }
+      
+      yield;
+    }
+    
+    try {
+      targetAnimation.setWeightForAllAnimatables(1);
+    } catch (error) {
+      console.warn("[Quick Blend] Error setting final weight:", error);
+    }
+  }
+
+  /**
+   * Check if there are pending animation transitions
+   */
+  hasPendingTransitions() {
+    return this.animationTransitions.size > 0;
+  }
+
+  /**
+   * Check if an animation is currently being blended
+   */
+  isBlendingToAnimation(animationName) {
+    return this.animationTransitions.has(animationName);
+  }
+
+  /**
+   * Clear pending transitions (used in error cases)
+   */
+  clearPendingTransitions() {
+    this.animationTransitions.clear();
   }
 }

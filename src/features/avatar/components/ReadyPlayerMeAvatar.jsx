@@ -40,6 +40,7 @@ const ReadyPlayerMeAvatar = ({
     isInitialized: animationsInitialized,
     loadAvatarAnimations,
     startSpecificIdleAnimation,
+    playMessageResponseAnimation,
     animationService,
   } = useAvatarAnimations(
     sceneReady ? sceneRef.current?.scene : null,
@@ -48,6 +49,7 @@ const ReadyPlayerMeAvatar = ({
   const { triggerAIResponseAnimation } = useAIResponseAnimations(
     animationService,
     startSpecificIdleAnimation,
+    playMessageResponseAnimation,
   );
   const {
     environmentInitialized,

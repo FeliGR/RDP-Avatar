@@ -58,31 +58,47 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
   const startSpecificIdleAnimation = useCallback(
     async (animationName = "F_Standing_Idle_Variations_002", options = {}) => {
       if (!animationServiceRef.current) {
+        console.warn("[Avatar Animations] Animation service not available");
         return { success: false, error: "Animation service not available" };
       }
       if (!animationServiceRef.current.isReady()) {
+        console.warn("[Avatar Animations] Animation service not ready");
         return { success: false, error: "Animation service not ready" };
       }
       const character = animationServiceRef.current.getCurrentCharacter();
       if (!character) {
+        console.warn("[Avatar Animations] Character not available");
         return { success: false, error: "Character not available" };
       }
       try {
         const transitionDuration = options.transitionDuration || 0.8;
+        console.log(`[Avatar Animations] Starting idle animation: ${animationName} with transition duration: ${transitionDuration}`);
+        
+        // Check if we're already in an idle state to prevent conflicts
+        if (animationState === "idle" && !options.force) {
+          console.log(`[Avatar Animations] Already in idle state, skipping duplicate idle animation: ${animationName}`);
+          return { success: true, message: "Already in idle state" };
+        }
+        
         const result = await animationServiceRef.current.playAnimationWithTransition(
           animationName,
           {
             isLooping: true,
             speedRatio: 1.0,
             transitionDuration,
+            maxWeight: 1.0,
             ...options,
           },
         );
         if (result.success) {
           setAnimationState("idle");
+          console.log(`[Avatar Animations] Successfully started idle animation: ${animationName}`);
+        } else {
+          console.error(`[Avatar Animations] Failed to start idle animation: ${result.error}`);
         }
         return result;
       } catch (error) {
+        console.error(`[Avatar Animations] Error starting idle animation:`, error);
         setError(error.message);
         return { success: false, error: error.message };
       }
@@ -134,21 +150,19 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
           setAnimations(animationPaths);
           setTimeout(async () => {
             try {
-              const idleResult = await animationServiceRef.current.playAnimationWithTransition(
-                "F_Standing_Idle_Variations_002",
-                {
-                  isLooping: true,
-                  speedRatio: 1.0,
-                  transitionDuration: 0.3,
-                },
-              );
+              // Use the idle animation use case for proper setup
+              const idleResult = await animationServiceRef.current.startIdleAnimations();
               if (idleResult.success) {
                 setAnimationState("idle");
                 setTimeout(() => {
                   _cleanupDuplicateAvatars();
                 }, 300);
+              } else {
+                console.warn("[Avatar Animations] Failed to start idle animations:", idleResult.error);
               }
-            } catch (error) {}
+            } catch (error) {
+              console.error("[Avatar Animations] Error starting idle animations:", error);
+            }
           }, 50);
         } else {
           setError(result.error || "Failed to load character");
@@ -171,15 +185,21 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
   const startTalkingAnimations = useCallback(
     async (audioSource = null) => {
       if (!animationServiceRef.current || !currentCharacter) {
+        console.warn("[Avatar Animations] Service or character not available for talking");
         return { success: false, error: "Service or character not available" };
       }
       try {
+        console.log("[Avatar Animations] Starting talking animations", audioSource ? "with audio source" : "without audio source");
         const result = await animationServiceRef.current.startTalkingAnimations(audioSource);
         if (result.success) {
           setAnimationState("talking");
+          console.log("[Avatar Animations] Successfully started talking animations");
+        } else {
+          console.error("[Avatar Animations] Failed to start talking animations:", result.error);
         }
         return result;
       } catch (error) {
+        console.error("[Avatar Animations] Error starting talking animations:", error);
         setError(error.message);
         return { success: false, error: error.message };
       }
@@ -245,6 +265,38 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
     setError(null);
   }, []);
 
+  const playMessageResponseAnimation = useCallback(
+    async (options = {}) => {
+      if (!animationServiceRef.current) {
+        console.warn("[Avatar Animations] Animation service not available for message response");
+        return { success: false, error: "Animation service not available" };
+      }
+      
+      // Check if the animation service is ready (has character loaded)
+      if (!animationServiceRef.current.isReady()) {
+        console.warn("[Avatar Animations] Animation service not ready for message response");
+        return { success: false, error: "Animation service not ready" };
+      }
+      
+      try {
+        console.log("[Avatar Animations] Playing message response animation");
+        const result = await animationServiceRef.current.playMessageResponseAnimation(options);
+        if (result.success) {
+          setAnimationState("talking");
+          console.log(`[Avatar Animations] Successfully played message response animation: ${result.animation}`);
+        } else {
+          console.error("[Avatar Animations] Failed to play message response animation:", result.error);
+        }
+        return result;
+      } catch (error) {
+        console.error("[Avatar Animations] Error playing message response animation:", error);
+        setError(error.message);
+        return { success: false, error: error.message };
+      }
+    },
+    [], // Remove currentCharacter dependency as we check service readiness instead
+  );
+
   return {
     isInitialized,
     isLoading,
@@ -261,5 +313,6 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
     setMorphTarget,
     clearError,
     animationService: animationServiceRef.current,
+    playMessageResponseAnimation,
   };
 };

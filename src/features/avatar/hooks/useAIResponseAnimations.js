@@ -7,7 +7,7 @@ const ANIMATION_CATEGORIES = {
   all: ["expression", "dance"],
 };
 
-export const useAIResponseAnimations = (animationService, startSpecificIdleAnimation) => {
+export const useAIResponseAnimations = (animationService, startSpecificIdleAnimation, playMessageResponseAnimation) => {
   const isProcessingRef = useRef(false);
 
   const defaultAnimations = useMemo(
@@ -71,13 +71,26 @@ export const useAIResponseAnimations = (animationService, startSpecificIdleAnima
 
         const animationName = selectedAnimationPath.split("/").pop().replace(".glb", "");
 
-        const result = await animationService.playAnimationWithTransition(animationName, {
-          isLooping: false,
-          speedRatio: 1.0,
-          transitionDuration: 0.3,
-        });
+        console.log(`[AI Response Animation] Playing ${animationName} for category: ${category}`);
+
+        // Use the new message response animation method for better blending
+        const result = playMessageResponseAnimation 
+          ? await playMessageResponseAnimation({ 
+              category,
+              animationName,
+              isLooping: false,
+              speedRatio: 1.0,
+              transitionSpeed: 0.015,
+              maxWeight: 0.8
+            })
+          : await animationService.playAnimationWithTransition(animationName, {
+              isLooping: false,
+              speedRatio: 1.0,
+              transitionDuration: 0.3,
+            });
 
         if (result.success) {
+          console.log(`[AI Response Animation] Successfully played ${animationName}`);
           const character = animationService.getCurrentCharacter();
           const animationGroup = character?.getAnimationGroup(animationName);
 
@@ -94,6 +107,19 @@ export const useAIResponseAnimations = (animationService, startSpecificIdleAnima
 
           setTimeout(async () => {
             try {
+              // Check if we should return to idle or let the main idle system handle it
+              const character = animationService?.getCurrentCharacter();
+              
+              if (character && character.currentAnimation) {
+                // If there's already an idle animation playing, don't interfere
+                const currentAnimName = character.currentAnimation.name;
+                if (currentAnimName && currentAnimName.includes('_Idle_')) {
+                  console.log(`[AI Response Animation] Idle animation already playing (${currentAnimName}), not interfering`);
+                  return;
+                }
+              }
+              
+              // Only start idle if no idle system is active
               if (startSpecificIdleAnimation) {
                 await startSpecificIdleAnimation();
               } else {
@@ -103,14 +129,16 @@ export const useAIResponseAnimations = (animationService, startSpecificIdleAnima
               console.error("Failed to revert to idle:", error);
             }
           }, timeoutDuration);
+        } else {
+          console.error(`[AI Response Animation] Failed to play ${animationName}:`, result.error);
         }
       } catch (error) {
-        console.error("Error playing animation:", error);
+        console.error("[AI Response Animation] Error playing animation:", error);
       } finally {
         isProcessingRef.current = false;
       }
     },
-    [animationService, isCharacterReady, defaultAnimations, startSpecificIdleAnimation],
+    [animationService, isCharacterReady, defaultAnimations, startSpecificIdleAnimation, playMessageResponseAnimation],
   );
 
   return {

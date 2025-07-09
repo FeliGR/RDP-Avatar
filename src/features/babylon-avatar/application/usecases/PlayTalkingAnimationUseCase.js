@@ -64,10 +64,15 @@ export class PlayTalkingAnimationUseCase {
 
   async _playRandomTalkingAnimation(character, talkingAnimations) {
     const randomAnimation = talkingAnimations[Math.floor(Math.random() * talkingAnimations.length)];
+    
+    console.log(`[Talking Animation] Starting talking animation: ${randomAnimation}`);
 
-    return this.animationController.playAnimation(character, randomAnimation, {
+    return this.animationController.playAnimationWithBlending(character, randomAnimation, {
       isLooping: false,
       speedRatio: 1.0,
+      transitionSpeed: 0.02,
+      maxWeight: 0.75, // Slightly lower weight for talking animations
+      animationOffset: 50 // Frame offset like in the JavaScript example
     });
   }
 
@@ -86,7 +91,16 @@ export class PlayTalkingAnimationUseCase {
   _setupTalkingLoop(character, talkingAnimations) {
     this.animationController.setupIdleObservers(character, () => {
       if (this.isTalking) {
-        this._playRandomTalkingAnimation(character, talkingAnimations);
+        console.log(`[Talking Loop] Current animation ended, playing next talking animation`);
+        
+        // Add a small delay to prevent rapid cycling
+        setTimeout(() => {
+          if (this.isTalking) {  // Double-check we're still talking
+            this._playRandomTalkingAnimation(character, talkingAnimations).catch(error => {
+              console.warn(`[Talking Loop] Error playing talking animation:`, error);
+            });
+          }
+        }, 100);
       }
     });
   }

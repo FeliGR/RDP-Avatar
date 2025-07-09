@@ -114,20 +114,25 @@ export class AnimationService {
     try {
       const animationController = this.compositionRoot.getAnimationController();
 
-      const transitionOptions = {
-        transitionDuration: options.transitionDuration || 0.3,
-        blendMode: options.blendMode || "add",
+      // Use the new blending system for smooth transitions
+      const blendingOptions = {
+        transitionSpeed: options.transitionDuration ? 1.0 / (options.transitionDuration * 60) : 0.02,
+        maxWeight: options.maxWeight || 1.0,
+        animationOffset: options.animationOffset || 0,
         ...options,
       };
 
-      await animationController.playAnimationWithTransition(
+      console.log(`[Animation Service] Playing animation with blending: ${animationName}`);
+      
+      await animationController.playAnimationWithBlending(
         this.currentCharacter,
         animationName,
-        transitionOptions,
+        blendingOptions,
       );
 
       return { success: true };
     } catch (error) {
+      console.error(`[Animation Service] Error playing animation with blending:`, error);
       return {
         success: false,
         error: error.message,
@@ -224,5 +229,70 @@ export class AnimationService {
 
   _checkInitialized() {
     return this.isInitialized && this.currentCharacter !== null;
+  }
+
+  async playMessageResponseAnimation(options = {}) {
+    if (!this._checkInitialized()) {
+      console.warn("[Animation Service] Character not loaded for message response");
+      return { success: false, error: "Character not loaded" };
+    }
+
+    try {
+      const animationController = this.compositionRoot.getAnimationController();
+      
+      // Get available talking/expression animations that are actually loaded
+      const availableAnimations = [];
+      
+      // Check what animations are actually available on the character
+      const character = this.currentCharacter;
+      if (character && character.animationGroups) {
+        character.animationGroups.forEach(animGroup => {
+          const name = animGroup.name.toLowerCase();
+          if (name.includes('talking') || name.includes('expression') || name.includes('standing_expressions')) {
+            availableAnimations.push(animGroup.name);
+          }
+        });
+      }
+
+      if (availableAnimations.length === 0) {
+        console.warn("[Animation Service] No talking/expression animations available for message response");
+        // Fall back to any available animation
+        if (character && character.animationGroups && character.animationGroups.length > 0) {
+          const fallbackAnim = character.animationGroups[0].name;
+          console.log(`[Animation Service] Using fallback animation: ${fallbackAnim}`);
+          availableAnimations.push(fallbackAnim);
+        } else {
+          return { success: false, error: "No animations available" };
+        }
+      }
+
+      // Pick a random available animation
+      const selectedAnimation = availableAnimations[Math.floor(Math.random() * availableAnimations.length)];
+      
+      console.log(`[Animation Service] Playing message response animation: ${selectedAnimation} from ${availableAnimations.length} available`);
+      
+      const blendingOptions = {
+        isLooping: false,
+        speedRatio: 1.0,
+        transitionSpeed: 0.015, // Slightly faster transition for response
+        maxWeight: 0.8,
+        animationOffset: 0, // Remove offset for now
+        ...options,
+      };
+
+      await animationController.playAnimationWithBlending(
+        this.currentCharacter,
+        selectedAnimation,
+        blendingOptions,
+      );
+
+      return { success: true, animation: selectedAnimation };
+    } catch (error) {
+      console.error("[Animation Service] Error playing message response animation:", error);
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
   }
 }

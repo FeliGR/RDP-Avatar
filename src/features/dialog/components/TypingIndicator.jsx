@@ -13,7 +13,7 @@ const TypingIndicator = () => {
   }, []);
 
   return (
-    <div className={`typing-indicator ${isVisible ? 'visible' : ''}`} aria-label="AI is typing">
+    <div className={`typing-indicator ${isVisible ? "visible" : ""}`} aria-label="AI is typing">
       <span></span>
       <span></span>
       <span></span>

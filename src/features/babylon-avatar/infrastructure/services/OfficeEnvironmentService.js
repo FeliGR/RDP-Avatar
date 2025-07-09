@@ -1,4 +1,5 @@
 import * as BABYLON from "babylonjs";
+import { MODELS } from "../../../../shared/config/glbAssets.js";
 
 export class OfficeEnvironmentService {
   constructor(scene, shadowGenerator = null) {
@@ -15,7 +16,7 @@ export class OfficeEnvironmentService {
   async initializeEnvironment() {
     try {
       this.setupLighting();
-      await this.importBaseModel("/assets/models/base.glb");
+      await this.importBaseModel(MODELS.BASE);
       this.applyReflections();
       this.startSphereAnimations();
       return { success: true };

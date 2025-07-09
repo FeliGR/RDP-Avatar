@@ -1,4 +1,5 @@
 import { AnimationCompositionRoot } from "../../infrastructure/composition/AnimationCompositionRoot.js";
+import { getAnimationsByCategory } from "../../../../shared/config/glbAssets.js";
 
 export class AnimationService {
   constructor(scene, shadowGenerator = null) {
@@ -116,14 +117,16 @@ export class AnimationService {
 
       // Use the new blending system for smooth transitions
       const blendingOptions = {
-        transitionSpeed: options.transitionDuration ? 1.0 / (options.transitionDuration * 60) : 0.02,
+        transitionSpeed: options.transitionDuration
+          ? 1.0 / (options.transitionDuration * 60)
+          : 0.02,
         maxWeight: options.maxWeight || 1.0,
         animationOffset: options.animationOffset || 0,
         ...options,
       };
 
       console.log(`[Animation Service] Playing animation with blending: ${animationName}`);
-      
+
       await animationController.playAnimationWithBlending(
         this.currentCharacter,
         animationName,
@@ -239,38 +242,44 @@ export class AnimationService {
 
     try {
       const animationController = this.compositionRoot.getAnimationController();
-      
-      // Get available talking/expression animations that are actually loaded
+
+      // Get ALL available animations for maximum variety
+      const allResponseAnimations = getAnimationsByCategory("ai_response");
       const availableAnimations = [];
-      
+
       // Check what animations are actually available on the character
       const character = this.currentCharacter;
       if (character && character.animationGroups) {
-        character.animationGroups.forEach(animGroup => {
-          const name = animGroup.name.toLowerCase();
-          if (name.includes('talking') || name.includes('expression') || name.includes('standing_expressions')) {
-            availableAnimations.push(animGroup.name);
+        allResponseAnimations.forEach((animPath) => {
+          const animName = animPath.split("/").pop().replace(".glb", "");
+          if (character.hasAnimation(animName)) {
+            availableAnimations.push(animName);
           }
         });
       }
 
       if (availableAnimations.length === 0) {
-        console.warn("[Animation Service] No talking/expression animations available for message response");
-        // Fall back to any available animation
+        console.warn(
+          "[Animation Service] No response animations available from config, checking character animations",
+        );
+        // Fall back to any available animation on the character
         if (character && character.animationGroups && character.animationGroups.length > 0) {
-          const fallbackAnim = character.animationGroups[0].name;
-          console.log(`[Animation Service] Using fallback animation: ${fallbackAnim}`);
-          availableAnimations.push(fallbackAnim);
+          character.animationGroups.forEach((animGroup) => {
+            availableAnimations.push(animGroup.name);
+          });
         } else {
           return { success: false, error: "No animations available" };
         }
       }
 
-      // Pick a random available animation
-      const selectedAnimation = availableAnimations[Math.floor(Math.random() * availableAnimations.length)];
-      
-      console.log(`[Animation Service] Playing message response animation: ${selectedAnimation} from ${availableAnimations.length} available`);
-      
+      // Pick a random available animation for variety
+      const selectedAnimation =
+        availableAnimations[Math.floor(Math.random() * availableAnimations.length)];
+
+      console.log(
+        `[Animation Service] Playing message response animation: ${selectedAnimation} from ${availableAnimations.length} available animations`,
+      );
+
       const blendingOptions = {
         isLooping: false,
         speedRatio: 1.0,

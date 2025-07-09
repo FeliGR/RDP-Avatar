@@ -579,7 +579,9 @@
   position: relative;
   opacity: 0;
   transform: translateY(10px);
-  transition: opacity 0.3s var(--chat-easing-smooth), transform 0.3s var(--chat-easing-smooth);
+  transition:
+    opacity 0.3s var(--chat-easing-smooth),
+    transform 0.3s var(--chat-easing-smooth);
 }
 
 .typing-indicator.visible {
@@ -614,16 +616,17 @@
 }
 
 @keyframes typingDots {
-  0%, 100% { 
-    opacity: 0.4; 
+  0%,
+  100% {
+    opacity: 0.4;
     transform: translate(-50%, -50%) scale(1);
   }
-  33% { 
-    opacity: 1; 
+  33% {
+    opacity: 1;
     transform: translate(-50%, -50%) scale(1.1);
   }
-  66% { 
-    opacity: 0.4; 
+  66% {
+    opacity: 0.4;
     transform: translate(-50%, -50%) scale(1);
   }
 }
@@ -631,8 +634,6 @@
 .typing-indicator span {
   display: none;
 }
-
-
 
 @keyframes fadeIn {
   from {

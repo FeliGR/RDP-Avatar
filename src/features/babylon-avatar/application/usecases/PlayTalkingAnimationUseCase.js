@@ -1,3 +1,5 @@
+import { getAnimationsByCategory } from "../../../../shared/config/glbAssets.js";
+
 export class PlayTalkingAnimationUseCase {
   constructor({ animationController, morphTargetController, audioAnalyzer }) {
     this.animationController = animationController;
@@ -14,15 +16,19 @@ export class PlayTalkingAnimationUseCase {
 
     this.isTalking = true;
 
-    const talkingAnimations = [
-      "M_Talking_Variations_005",
-      "M_Talking_Variations_006",
-      "M_Talking_Variations_007",
-    ].filter((name) => character.hasAnimation(name));
+    // Get ALL available talking animations for maximum variety
+    const allTalkingAnimations = getAnimationsByCategory("talking");
+    const talkingAnimations = allTalkingAnimations
+      .map((path) => path.split("/").pop().replace(".glb", ""))
+      .filter((name) => character.hasAnimation(name));
 
     if (talkingAnimations.length === 0) {
       throw new Error("No talking animations available");
     }
+
+    console.log(
+      `[Talking Animation] Found ${talkingAnimations.length} talking animations for variety`,
+    );
 
     this.animationController.removeObservers(character);
 
@@ -36,7 +42,7 @@ export class PlayTalkingAnimationUseCase {
 
     return {
       success: true,
-      message: "Started talking animations",
+      message: `Started talking animations with ${talkingAnimations.length} variations`,
     };
   }
 
@@ -64,7 +70,7 @@ export class PlayTalkingAnimationUseCase {
 
   async _playRandomTalkingAnimation(character, talkingAnimations) {
     const randomAnimation = talkingAnimations[Math.floor(Math.random() * talkingAnimations.length)];
-    
+
     console.log(`[Talking Animation] Starting talking animation: ${randomAnimation}`);
 
     return this.animationController.playAnimationWithBlending(character, randomAnimation, {
@@ -72,7 +78,7 @@ export class PlayTalkingAnimationUseCase {
       speedRatio: 1.0,
       transitionSpeed: 0.02,
       maxWeight: 0.75, // Slightly lower weight for talking animations
-      animationOffset: 50 // Frame offset like in the JavaScript example
+      animationOffset: 50, // Frame offset like in the JavaScript example
     });
   }
 
@@ -92,11 +98,12 @@ export class PlayTalkingAnimationUseCase {
     this.animationController.setupIdleObservers(character, () => {
       if (this.isTalking) {
         console.log(`[Talking Loop] Current animation ended, playing next talking animation`);
-        
+
         // Add a small delay to prevent rapid cycling
         setTimeout(() => {
-          if (this.isTalking) {  // Double-check we're still talking
-            this._playRandomTalkingAnimation(character, talkingAnimations).catch(error => {
+          if (this.isTalking) {
+            // Double-check we're still talking
+            this._playRandomTalkingAnimation(character, talkingAnimations).catch((error) => {
               console.warn(`[Talking Loop] Error playing talking animation:`, error);
             });
           }

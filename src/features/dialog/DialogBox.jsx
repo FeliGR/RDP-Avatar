@@ -5,6 +5,7 @@ import { useDialog } from "./context/DialogContext";
 import MessageInput from "./components/MessageInput";
 import MessageList from "./components/MessageList";
 import useVoiceCommands from "./hooks/useVoiceCommands";
+import { useTTS } from "../voice/context/TTSContext";
 
 const DialogBox = () => {
   const { messages, sendUserMessage, isLoading, error } = useDialog();
@@ -14,6 +15,8 @@ const DialogBox = () => {
     updateTrait,
     personalityTraits,
   );
+  const { isPlaying } = useTTS();
+
   return (
     <div className="dialog-box">
       {statusMessage && <div className="voice-status-message">{statusMessage}</div>}

@@ -3,6 +3,7 @@ import { AvatarViewer } from "./features/avatar";
 import { DialogBox } from "./features/dialog";
 import { PersonalityControls } from "./features/personality";
 import { AppProviders } from "./app/providers";
+import ChatPanelHeader from "./features/dialog/components/ChatPanelHeader";
 import "./styles/index.css";
 
 const App = () => {
@@ -261,16 +262,7 @@ const App = () => {
               onClick={() => setActivePanel(null)}
             ></div>
             <div className={`side-panel chat-panel ${activePanel === "chat" ? "active" : ""}`}>
-              <div className="panel-header">
-                <h3>Chat Assistant</h3>
-                <button
-                  className="close-panel-btn"
-                  onClick={() => setActivePanel(null)}
-                  title="Close Chat"
-                >
-                  ×
-                </button>
-              </div>
+              <ChatPanelHeader onClose={() => setActivePanel(null)} />
               <div className="panel-content">
                 <DialogBox />
               </div>

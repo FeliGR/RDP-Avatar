@@ -77,7 +77,7 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
           `[Avatar Animations] Starting idle animation: ${animationName} with transition duration: ${transitionDuration}`,
         );
 
-        // Check if we're already in an idle state to prevent conflicts
+        
         if (animationState === "idle" && !options.force) {
           console.log(
             `[Avatar Animations] Already in idle state, skipping duplicate idle animation: ${animationName}`,
@@ -130,7 +130,7 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
           setAnimations(animationPaths);
           setTimeout(async () => {
             try {
-              // Use the idle animation use case for proper setup
+              
               const idleResult = await animationServiceRef.current.startIdleAnimations();
               if (idleResult.success) {
                 setAnimationState("idle");
@@ -258,7 +258,7 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
         return { success: false, error: "Animation service not available" };
       }
 
-      // Check if the animation service is ready (has character loaded)
+      
       if (!animationServiceRef.current.isReady()) {
         console.warn("[Avatar Animations] Animation service not ready for message response");
         return { success: false, error: "Animation service not ready" };
@@ -285,7 +285,7 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
         return { success: false, error: error.message };
       }
     },
-    [], // Remove currentCharacter dependency as we check service readiness instead
+    [], 
   );
 
   return {

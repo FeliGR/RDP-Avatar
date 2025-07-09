@@ -5,7 +5,7 @@ export class BabylonAnimationController extends IAnimationController {
     super();
     this.scene = scene;
     this.observers = new Map();
-    this.animationTransitions = new Map(); // Track ongoing transitions
+    this.animationTransitions = new Map(); 
   }
 
   playAnimation(character, animationName, options = {}) {
@@ -203,12 +203,12 @@ export class BabylonAnimationController extends IAnimationController {
     if (!toAnimFrameOut) toAnimFrameOut = toAnim.to || toAnim.duration;
     if (!maxWeight) maxWeight = 1;
 
-    let currentWeight = fromAnim ? 1 : 0; // If no fromAnim, start from 0
+    let currentWeight = fromAnim ? 1 : 0; 
     let newWeight = 0;
     let blendSteps = 0;
 
     try {
-      // Stop the previous animation if it exists and start the new one
+      
       if (fromAnim) {
         fromAnim.stop();
         fromAnim.speedRatio = fromAnimSpeedRatio;
@@ -217,13 +217,13 @@ export class BabylonAnimationController extends IAnimationController {
       toAnim.start(repeat, toAnimSpeedRatio, toAnimFrameIn, toAnimFrameOut, false);
       toAnim.speedRatio = toAnimSpeedRatio;
 
-      // Set initial weights
+      
       if (fromAnim) {
         fromAnim.setWeightForAllAnimatables(currentWeight);
       }
       toAnim.setWeightForAllAnimatables(newWeight);
 
-      // Blend the animations
+      
       while (newWeight < maxWeight) {
         newWeight += speed;
         if (fromAnim) {
@@ -231,7 +231,7 @@ export class BabylonAnimationController extends IAnimationController {
         }
         blendSteps++;
 
-        // Clamp values to prevent overshooting
+        
         newWeight = Math.min(newWeight, maxWeight);
         currentWeight = Math.max(currentWeight, 0);
 
@@ -241,7 +241,7 @@ export class BabylonAnimationController extends IAnimationController {
             fromAnim.setWeightForAllAnimatables(currentWeight);
           }
 
-          // Log progress every 20 steps for debugging
+          
           if (blendSteps % 20 === 0) {
             console.log(
               `[Animation Blending] Step ${blendSteps}: new weight: ${newWeight.toFixed(3)}${fromAnim ? `, old weight: ${currentWeight.toFixed(3)}` : ""}`,
@@ -257,7 +257,7 @@ export class BabylonAnimationController extends IAnimationController {
 
       console.log(`[Animation Blending] Completed in ${blendSteps} steps`);
 
-      // Ensure final weights are set correctly
+      
       try {
         toAnim.setWeightForAllAnimatables(maxWeight);
         if (fromAnim) {
@@ -267,7 +267,7 @@ export class BabylonAnimationController extends IAnimationController {
         console.warn("[Animation Blending] Error setting final weights:", error);
       }
 
-      // Update character's current animation
+      
       if (character) {
         character.setCurrentAnimation(toAnim);
       }
@@ -275,7 +275,7 @@ export class BabylonAnimationController extends IAnimationController {
       console.log(`[Animation Blending] Transition complete to ${toAnim?.name}`);
     } catch (error) {
       console.error("[Animation Blending] Critical error during blending:", error);
-      // Fallback: just start the new animation directly
+      
       try {
         toAnim.start(repeat, toAnimSpeedRatio, toAnimFrameIn, toAnimFrameOut, false);
         toAnim.setWeightForAllAnimatables(maxWeight);
@@ -297,7 +297,7 @@ export class BabylonAnimationController extends IAnimationController {
       throw new Error(`Animation '${animationName}' not found`);
     }
 
-    // Check if we're already blending to this animation
+    
     if (this.isBlendingToAnimation(animationName)) {
       console.log(`[Animation] Already blending to ${animationName}, skipping duplicate request`);
       return Promise.resolve();
@@ -318,30 +318,30 @@ export class BabylonAnimationController extends IAnimationController {
     const adjustedFrameStart = frameStart + animationOffset;
     const adjustedFrameEnd = endFrame - animationOffset;
 
-    // Always use blending for smoother transitions, even if there's no previous animation
+    
     console.log(
       `[Animation] Blending to ${animationName} from ${currentAnimation?.name || "none"}`,
     );
 
-    // If trying to play the same animation, skip
+    
     if (currentAnimation === targetAnimationGroup) {
       console.log(`[Animation] Animation ${animationName} is already playing`);
       return Promise.resolve();
     }
 
-    // Track this transition
+    
     this.animationTransitions.set(animationName, {
       startTime: Date.now(),
       fromAnimation: currentAnimation?.name,
       toAnimation: animationName,
     });
 
-    // Use the blending coroutine for all transitions
+    
     return new Promise((resolve) => {
       this.scene.onBeforeRenderObservable
         .runCoroutineAsync(
           this.animationBlendingCoroutine(
-            currentAnimation, // Can be null
+            currentAnimation, 
             speedRatio,
             targetAnimationGroup,
             speedRatio,
@@ -354,7 +354,7 @@ export class BabylonAnimationController extends IAnimationController {
           ),
         )
         .then(() => {
-          // Remove from transitions when complete
+          
           this.animationTransitions.delete(animationName);
           resolve();
         })
@@ -374,19 +374,19 @@ export class BabylonAnimationController extends IAnimationController {
   }
 
   setupIdleObservers(character, onIdleEnd) {
-    // Always remove existing observers first
+    
     this.removeObservers(character);
 
-    // Only observe the current animation, not all idle animations
+    
     const currentAnimation = character.currentAnimation;
     if (!currentAnimation) {
       console.warn("[Idle Observer] No current animation to observe");
       return;
     }
 
-    // Add a small delay to ensure the animation has properly started
+    
     setTimeout(() => {
-      // Double-check that this is still the current animation before setting up observer
+      
       if (character.currentAnimation !== currentAnimation) {
         console.log(
           `[Idle Observer] Animation changed before observer setup (${currentAnimation.name} -> ${character.currentAnimation?.name}), skipping`,
@@ -396,19 +396,19 @@ export class BabylonAnimationController extends IAnimationController {
 
       try {
         const observer = currentAnimation.onAnimationEndObservable.add(() => {
-          // Verify this is still the current animation before triggering callback
+          
           if (character.currentAnimation === currentAnimation) {
             console.log(
               `[Idle Observer] Current animation ${currentAnimation.name} ended, triggering callback`,
             );
-            // Remove the observer immediately to prevent multiple triggers
+            
             currentAnimation.onAnimationEndObservable.remove(observer);
             onIdleEnd(currentAnimation);
           } else {
             console.log(
               `[Idle Observer] Old animation ${currentAnimation.name} ended, but it's no longer current (${character.currentAnimation?.name}) - ignoring`,
             );
-            // Still remove the observer to clean up
+            
             currentAnimation.onAnimationEndObservable.remove(observer);
           }
         });

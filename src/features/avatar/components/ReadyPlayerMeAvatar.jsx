@@ -1,11 +1,10 @@
 import { AvatarCreator } from "@readyplayerme/react-avatar-creator";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAvatarAnimations } from "../hooks/useAvatarAnimations.js";
 import { useAIResponseAnimations } from "../hooks/useAIResponseAnimations.js";
 import { useOfficeEnvironment } from "../hooks/useOfficeEnvironment.js";
 import { useAvatarAnimation } from "../context/AvatarAnimationContext.js";
 import { useBabylonJS } from "../hooks/useBabylonJS.js";
-import { ensureGlbExtension } from "../../../shared/config/glbAssets.js";
 import "./ReadyPlayerMeAvatar.css";
 
 const RPM_CLIENT_ID =

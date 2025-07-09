@@ -4,12 +4,6 @@ import {
   getAnimationNameFromPath,
 } from "../../../shared/config/glbAssets";
 
-const ANIMATION_CATEGORIES = {
-  expression: ["expression"],
-  talking: ["expression"],
-  dance: ["dance"],
-  all: ["expression", "dance"],
-};
 
 export const useAIResponseAnimations = (
   animationService,
@@ -46,7 +40,6 @@ export const useAIResponseAnimations = (
       try {
         isProcessingRef.current = true;
 
-        const categoryFolders = ANIMATION_CATEGORIES[category] || ANIMATION_CATEGORIES.all;
         const availableAnimations = getAnimationsByCategory(category);
 
         if (availableAnimations.length === 0) {
@@ -60,7 +53,7 @@ export const useAIResponseAnimations = (
 
         console.log(`[AI Response Animation] Playing ${animationName} for category: ${category}`);
 
-        // Use the new message response animation method for better blending
+        
         const result = playMessageResponseAnimation
           ? await playMessageResponseAnimation({
               category,
@@ -94,11 +87,11 @@ export const useAIResponseAnimations = (
 
           setTimeout(async () => {
             try {
-              // Check if we should return to idle or let the main idle system handle it
+              
               const character = animationService?.getCurrentCharacter();
 
               if (character && character.currentAnimation) {
-                // If there's already an idle animation playing, don't interfere
+                
                 const currentAnimName = character.currentAnimation.name;
                 if (currentAnimName && currentAnimName.includes("_Idle_")) {
                   console.log(
@@ -108,14 +101,14 @@ export const useAIResponseAnimations = (
                 }
               }
 
-              // Check if there's already an idle cycling system running by looking for observers
+              
               const playIdleUseCase =
                 animationService.compositionRoot?.getPlayIdleAnimationUseCase();
 
               if (playIdleUseCase && playIdleUseCase.isIdleSystemActive(character)) {
                 console.log("[AI Response Animation] Idle cycling system already active, resuming");
 
-                // Resume the existing idle system instead of restarting
+                
                 const resumeResult = await playIdleUseCase.resume(character);
 
                 if (resumeResult.success) {
@@ -130,7 +123,7 @@ export const useAIResponseAnimations = (
                 return;
               }
 
-              // If no idle system is running, start a new one
+              
               if (startSpecificIdleAnimation) {
                 await startSpecificIdleAnimation();
               } else {

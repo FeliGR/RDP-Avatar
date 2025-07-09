@@ -78,11 +78,11 @@ export const DialogProvider = ({ children }) => {
         const botMessage = createMessage(responseText, "bot", !dialogApiAvailable);
         setMessages((prevMessages) => [...prevMessages, botMessage]);
 
-        // Only trigger AI response animation when actually speaking, not just when getting response
+        
         if (ttsAvailable && dialogApiAvailable && responseText) {
           console.log("Speaking AI response:", responseText.substring(0, 50) + "...");
           try {
-            // Trigger animation only when AI starts speaking
+            
             if (triggerAIResponseAnimation) {
               triggerAIResponseAnimation("all");
             }

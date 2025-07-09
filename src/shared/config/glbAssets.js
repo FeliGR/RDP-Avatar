@@ -4,7 +4,7 @@
  * to avoid hardcoded paths scattered across the codebase.
  */
 
-// Base paths for different asset types
+
 const BASE_PATHS = {
   ANIMATIONS: "/animations",
   MODELS: "/assets/models",
@@ -12,18 +12,18 @@ const BASE_PATHS = {
   MASCULINE: "/animations/masculine",
 };
 
-// Main models
+
 export const MODELS = {
   BASE: "/assets/models/base.glb",
 };
 
-// T-Pose models
+
 export const T_POSE = {
   FEMININE: "/animations/feminine/Feminine_TPose.glb",
   MASCULINE: "/animations/masculine/Masculine_TPose.glb",
 };
 
-// Idle animations
+
 export const IDLE_ANIMATIONS = {
   FEMININE: {
     F_STANDING_IDLE_001: "/animations/feminine/idle/F_Standing_Idle_001.glb",
@@ -53,7 +53,7 @@ export const IDLE_ANIMATIONS = {
   },
 };
 
-// Expression animations
+
 export const EXPRESSION_ANIMATIONS = {
   FEMININE: {
     F_TALKING_VARIATIONS_001: "/animations/feminine/expression/F_Talking_Variations_001.glb",
@@ -94,7 +94,7 @@ export const EXPRESSION_ANIMATIONS = {
   },
 };
 
-// Dance animations
+
 export const DANCE_ANIMATIONS = {
   FEMININE: {
     F_DANCES_001: "/animations/feminine/dance/F_Dances_001.glb",
@@ -117,39 +117,39 @@ export const DANCE_ANIMATIONS = {
   },
 };
 
-// Utility functions to get animation arrays
+
 export const getAnimationArrays = () => ({
-  // Default animations used in useAvatarAnimations - ALL animations for maximum variety
+  
   DEFAULT_ANIMATIONS: [
-    // All idle animations
+    
     ...Object.values(IDLE_ANIMATIONS.MASCULINE),
     ...Object.values(IDLE_ANIMATIONS.FEMININE),
-    // All expression animations
+    
     ...Object.values(EXPRESSION_ANIMATIONS.MASCULINE),
     ...Object.values(EXPRESSION_ANIMATIONS.FEMININE),
-    // All dance animations
+    
     ...Object.values(DANCE_ANIMATIONS.MASCULINE),
     ...Object.values(DANCE_ANIMATIONS.FEMININE),
   ],
 
-  // AI Response animations - ALL animations for maximum variety
+  
   AI_RESPONSE_ANIMATIONS: [
-    // All expression animations (masculine)
+    
     ...Object.values(EXPRESSION_ANIMATIONS.MASCULINE),
-    // All expression animations (feminine)
+    
     ...Object.values(EXPRESSION_ANIMATIONS.FEMININE),
-    // All dance animations for dynamic responses
+    
     ...Object.values(DANCE_ANIMATIONS.MASCULINE),
     ...Object.values(DANCE_ANIMATIONS.FEMININE),
   ],
 
-  // All talking animations specifically for speech synthesis
+  
   TALKING_ANIMATIONS: [
     ...Object.values(EXPRESSION_ANIMATIONS.MASCULINE).filter((path) => path.includes("Talking")),
     ...Object.values(EXPRESSION_ANIMATIONS.FEMININE).filter((path) => path.includes("Talking")),
   ],
 
-  // Get all animations by category
+  
   ALL_EXPRESSION_ANIMATIONS: [
     ...Object.values(EXPRESSION_ANIMATIONS.FEMININE),
     ...Object.values(EXPRESSION_ANIMATIONS.MASCULINE),
@@ -166,7 +166,7 @@ export const getAnimationArrays = () => ({
   ],
 });
 
-// Utility functions to filter animations by category
+
 export const getAnimationsByCategory = (category) => {
   const animations = getAnimationArrays();
 
@@ -192,53 +192,53 @@ export const getAnimationsByCategory = (category) => {
   }
 };
 
-// Helper function to get animation name from path
+
 export const getAnimationNameFromPath = (path) => {
   return path.split("/").pop().replace(".glb", "");
 };
 
-// Helper function to check if path is a GLB file
+
 export const isGlbFile = (path) => {
   return typeof path === "string" && path.endsWith(".glb");
 };
 
-// Helper function to ensure GLB extension
+
 export const ensureGlbExtension = (path) => {
   return isGlbFile(path) ? path : `${path}.glb`;
 };
 
-// Commonly used animation names (for easy access in code)
+
 export const ANIMATION_NAMES = {
-  // Default idle animations
+  
   DEFAULT_FEMININE_IDLE: "F_Standing_Idle_Variations_002",
   DEFAULT_MASCULINE_IDLE: "M_Standing_Idle_Variations_001",
 
-  // Popular animations
+  
   MASCULINE_IDLE_002: "M_Standing_Idle_Variations_002",
   MASCULINE_IDLE_003: "M_Standing_Idle_Variations_003",
 
-  // Generic idle animations (fallback)
+  
   IDLE_VARIATIONS_001: "Idle_Variations_001",
   IDLE_VARIATIONS_002: "Idle_Variations_002",
   IDLE_VARIATIONS_003: "Idle_Variations_003",
 
-  // Talking animations
+  
   MASCULINE_TALKING_005: "M_Talking_Variations_005",
   MASCULINE_TALKING_006: "M_Talking_Variations_006",
   MASCULINE_TALKING_007: "M_Talking_Variations_007",
 
-  // Expression animations
+  
   MASCULINE_EXPRESSION_001: "M_Standing_Expressions_001",
   MASCULINE_EXPRESSION_002: "M_Standing_Expressions_002",
 
-  // Dance animations
+  
   MASCULINE_DANCE_001: "M_Dances_001",
   MASCULINE_DANCE_002: "M_Dances_002",
 };
 
-// Helper function to get path from animation name
+
 export const getPathFromAnimationName = (animationName) => {
-  // Search through all animation categories to find the path
+  
   const allAnimations = {
     ...IDLE_ANIMATIONS.FEMININE,
     ...IDLE_ANIMATIONS.MASCULINE,
@@ -248,14 +248,14 @@ export const getPathFromAnimationName = (animationName) => {
     ...DANCE_ANIMATIONS.MASCULINE,
   };
 
-  // Find by exact key match first
+  
   for (const [key, path] of Object.entries(allAnimations)) {
     if (key === animationName) {
       return path;
     }
   }
 
-  // Find by animation name in path
+  
   for (const [key, path] of Object.entries(allAnimations)) {
     if (path.includes(animationName)) {
       return path;
@@ -265,7 +265,7 @@ export const getPathFromAnimationName = (animationName) => {
   return null;
 };
 
-// Export all as default for convenience
+
 export default {
   MODELS,
   T_POSE,

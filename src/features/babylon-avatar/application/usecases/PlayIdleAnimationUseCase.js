@@ -7,7 +7,7 @@ export class PlayIdleAnimationUseCase {
   constructor({ animationController, morphTargetController }) {
     this.animationController = animationController;
     this.morphTargetController = morphTargetController;
-    this.activeIdleSystems = new Map(); 
+    this.activeIdleSystems = new Map();
   }
 
   /**
@@ -20,7 +20,6 @@ export class PlayIdleAnimationUseCase {
       throw new Error("Character cannot play idle animations");
     }
 
-    
     const existingSystem = this.activeIdleSystems.get(character.id);
     if (existingSystem) {
       console.log(
@@ -33,7 +32,6 @@ export class PlayIdleAnimationUseCase {
       };
     }
 
-    
     const availableAnimations = this._getAvailableIdleAnimations(character);
 
     if (availableAnimations.length === 0) {
@@ -48,7 +46,6 @@ export class PlayIdleAnimationUseCase {
       );
       console.log(`[Idle Animation] Initial animation: ${initialAnimation}`);
 
-      
       await this.animationController.playAnimationWithBlending(character, initialAnimation, {
         isLooping: true,
         speedRatio: 1.0,
@@ -56,19 +53,15 @@ export class PlayIdleAnimationUseCase {
         maxWeight: 1.0,
       });
 
-      
       this.morphTargetController.startAutomaticFacialAnimations(character);
 
-      
       this._setupIdleVariationCycling(character, availableAnimations);
 
-      
       this.activeIdleSystems.set(character.id, {
         animations: availableAnimations,
         startTime: Date.now(),
       });
 
-      
       this.recentAnimations = [];
 
       return {
@@ -91,11 +84,9 @@ export class PlayIdleAnimationUseCase {
    * @returns {Array} List of available animation names
    */
   _getAvailableIdleAnimations(character) {
-    
     const allIdleAnimations = getAnimationsByCategory("idle");
     const availableAnimations = [];
 
-    
     allIdleAnimations.forEach((animPath) => {
       const animName = animPath.split("/").pop().replace(".glb", "");
       if (character.hasAnimation(animName)) {
@@ -116,7 +107,6 @@ export class PlayIdleAnimationUseCase {
    * @param {Array} availableAnimations - List of available animation names
    */
   _setupIdleVariationCycling(character, availableAnimations) {
-    
     if (availableAnimations.length <= 1) {
       console.log("[Idle Cycling] Single animation mode - no cycling needed");
       return;
@@ -129,7 +119,6 @@ export class PlayIdleAnimationUseCase {
      * Cycles to the next random idle animation
      */
     const cycleToNextAnimation = () => {
-      
       if (isTransitioning) {
         console.log("[Idle Cycling] Transition in progress - skipping cycle");
         return;
@@ -137,7 +126,6 @@ export class PlayIdleAnimationUseCase {
 
       isTransitioning = true;
 
-      
       const nextIndex = this._selectNextAnimationIndex(
         currentAnimationIndex,
         availableAnimations.length,
@@ -149,7 +137,6 @@ export class PlayIdleAnimationUseCase {
         `[Idle Cycling] Transitioning to: ${nextAnimation} (${nextIndex + 1}/${availableAnimations.length})`,
       );
 
-      
       this.animationController
         .playAnimationWithBlending(character, nextAnimation, {
           isLooping: true,
@@ -161,7 +148,6 @@ export class PlayIdleAnimationUseCase {
           console.log(`[Idle Cycling] Successfully transitioned to ${nextAnimation}`);
           isTransitioning = false;
 
-          
           setTimeout(() => {
             this.animationController.setupIdleObservers(character, cycleToNextAnimation);
           }, 200);
@@ -170,7 +156,6 @@ export class PlayIdleAnimationUseCase {
           console.warn(`[Idle Cycling] Transition failed for ${nextAnimation}:`, error);
           isTransitioning = false;
 
-          
           setTimeout(() => {
             this.animationController.setupIdleObservers(character, cycleToNextAnimation);
           }, 1000);
@@ -181,7 +166,6 @@ export class PlayIdleAnimationUseCase {
       `[Idle Cycling] Initializing cycling system with ${availableAnimations.length} animations`,
     );
 
-    
     setTimeout(() => {
       this.animationController.setupIdleObservers(character, cycleToNextAnimation);
     }, 300);
@@ -196,26 +180,20 @@ export class PlayIdleAnimationUseCase {
   _selectNextAnimationIndex(currentIndex, totalAnimations) {
     if (totalAnimations <= 1) return 0;
 
-    
     const recentlyUsed = this.recentAnimations || [];
     const availableIndices = [];
 
-    
     for (let i = 0; i < totalAnimations; i++) {
-      if (i === currentIndex) continue; 
+      if (i === currentIndex) continue;
 
       const recentIndex = recentlyUsed.indexOf(i);
       if (recentIndex === -1) {
-        
         availableIndices.push(i, i, i);
       } else if (recentIndex > 1) {
-        
         availableIndices.push(i);
       }
-      
     }
 
-    
     if (availableIndices.length === 0) {
       let nextIndex;
       do {
@@ -224,14 +202,11 @@ export class PlayIdleAnimationUseCase {
       return nextIndex;
     }
 
-    
     const selectedIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
 
-    
     if (!this.recentAnimations) this.recentAnimations = [];
     this.recentAnimations.unshift(selectedIndex);
 
-    
     if (this.recentAnimations.length > 3) {
       this.recentAnimations = this.recentAnimations.slice(0, 3);
     }
@@ -248,15 +223,12 @@ export class PlayIdleAnimationUseCase {
     try {
       console.log("[Idle Animation] Stopping idle animation system");
 
-      
       this.animationController.removeObservers(character);
       this.animationController.stopAnimation(character);
       this.morphTargetController.stopAutomaticFacialAnimations(character);
 
-      
       this.activeIdleSystems.delete(character.id);
 
-      
       this.recentAnimations = [];
 
       return {
@@ -296,12 +268,10 @@ export class PlayIdleAnimationUseCase {
     try {
       console.log("[Idle Animation] Resuming idle animation cycling");
 
-      
       const availableAnimations = existingSystem.animations;
       const randomAnimation =
         availableAnimations[Math.floor(Math.random() * availableAnimations.length)];
 
-      
       await this.animationController.playAnimationWithBlending(character, randomAnimation, {
         isLooping: true,
         speedRatio: 1.0,
@@ -309,10 +279,8 @@ export class PlayIdleAnimationUseCase {
         maxWeight: 1.0,
       });
 
-      
       this.morphTargetController.startAutomaticFacialAnimations(character);
 
-      
       this._setupIdleVariationCycling(character, availableAnimations);
 
       return {

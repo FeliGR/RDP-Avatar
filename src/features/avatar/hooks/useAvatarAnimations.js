@@ -77,7 +77,6 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
           `[Avatar Animations] Starting idle animation: ${animationName} with transition duration: ${transitionDuration}`,
         );
 
-        
         if (animationState === "idle" && !options.force) {
           console.log(
             `[Avatar Animations] Already in idle state, skipping duplicate idle animation: ${animationName}`,
@@ -130,7 +129,6 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
           setAnimations(animationPaths);
           setTimeout(async () => {
             try {
-              
               const idleResult = await animationServiceRef.current.startIdleAnimations();
               if (idleResult.success) {
                 setAnimationState("idle");
@@ -251,42 +249,38 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
     setError(null);
   }, []);
 
-  const playMessageResponseAnimation = useCallback(
-    async (options = {}) => {
-      if (!animationServiceRef.current) {
-        console.warn("[Avatar Animations] Animation service not available for message response");
-        return { success: false, error: "Animation service not available" };
-      }
+  const playMessageResponseAnimation = useCallback(async (options = {}) => {
+    if (!animationServiceRef.current) {
+      console.warn("[Avatar Animations] Animation service not available for message response");
+      return { success: false, error: "Animation service not available" };
+    }
 
-      
-      if (!animationServiceRef.current.isReady()) {
-        console.warn("[Avatar Animations] Animation service not ready for message response");
-        return { success: false, error: "Animation service not ready" };
-      }
+    if (!animationServiceRef.current.isReady()) {
+      console.warn("[Avatar Animations] Animation service not ready for message response");
+      return { success: false, error: "Animation service not ready" };
+    }
 
-      try {
-        console.log("[Avatar Animations] Playing message response animation");
-        const result = await animationServiceRef.current.playMessageResponseAnimation(options);
-        if (result.success) {
-          setAnimationState("talking");
-          console.log(
-            `[Avatar Animations] Successfully played message response animation: ${result.animation}`,
-          );
-        } else {
-          console.error(
-            "[Avatar Animations] Failed to play message response animation:",
-            result.error,
-          );
-        }
-        return result;
-      } catch (error) {
-        console.error("[Avatar Animations] Error playing message response animation:", error);
-        setError(error.message);
-        return { success: false, error: error.message };
+    try {
+      console.log("[Avatar Animations] Playing message response animation");
+      const result = await animationServiceRef.current.playMessageResponseAnimation(options);
+      if (result.success) {
+        setAnimationState("talking");
+        console.log(
+          `[Avatar Animations] Successfully played message response animation: ${result.animation}`,
+        );
+      } else {
+        console.error(
+          "[Avatar Animations] Failed to play message response animation:",
+          result.error,
+        );
       }
-    },
-    [], 
-  );
+      return result;
+    } catch (error) {
+      console.error("[Avatar Animations] Error playing message response animation:", error);
+      setError(error.message);
+      return { success: false, error: error.message };
+    }
+  }, []);
 
   return {
     isInitialized,

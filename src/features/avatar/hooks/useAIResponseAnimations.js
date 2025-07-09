@@ -4,7 +4,6 @@ import {
   getAnimationNameFromPath,
 } from "../../../shared/config/glbAssets";
 
-
 export const useAIResponseAnimations = (
   animationService,
   startSpecificIdleAnimation,
@@ -53,7 +52,6 @@ export const useAIResponseAnimations = (
 
         console.log(`[AI Response Animation] Playing ${animationName} for category: ${category}`);
 
-        
         const result = playMessageResponseAnimation
           ? await playMessageResponseAnimation({
               category,
@@ -87,11 +85,9 @@ export const useAIResponseAnimations = (
 
           setTimeout(async () => {
             try {
-              
               const character = animationService?.getCurrentCharacter();
 
               if (character && character.currentAnimation) {
-                
                 const currentAnimName = character.currentAnimation.name;
                 if (currentAnimName && currentAnimName.includes("_Idle_")) {
                   console.log(
@@ -101,14 +97,12 @@ export const useAIResponseAnimations = (
                 }
               }
 
-              
               const playIdleUseCase =
                 animationService.compositionRoot?.getPlayIdleAnimationUseCase();
 
               if (playIdleUseCase && playIdleUseCase.isIdleSystemActive(character)) {
                 console.log("[AI Response Animation] Idle cycling system already active, resuming");
 
-                
                 const resumeResult = await playIdleUseCase.resume(character);
 
                 if (resumeResult.success) {
@@ -123,7 +117,6 @@ export const useAIResponseAnimations = (
                 return;
               }
 
-              
               if (startSpecificIdleAnimation) {
                 await startSpecificIdleAnimation();
               } else {

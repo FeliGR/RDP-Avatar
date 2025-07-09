@@ -4,7 +4,6 @@
  * to avoid hardcoded paths scattered across the codebase.
  */
 
-
 const BASE_PATHS = {
   ANIMATIONS: "/animations",
   MODELS: "/assets/models",
@@ -12,17 +11,14 @@ const BASE_PATHS = {
   MASCULINE: "/animations/masculine",
 };
 
-
 export const MODELS = {
   BASE: "/assets/models/base.glb",
 };
-
 
 export const T_POSE = {
   FEMININE: "/animations/feminine/Feminine_TPose.glb",
   MASCULINE: "/animations/masculine/Masculine_TPose.glb",
 };
-
 
 export const IDLE_ANIMATIONS = {
   FEMININE: {
@@ -52,7 +48,6 @@ export const IDLE_ANIMATIONS = {
     M_STANDING_IDLE_VARIATIONS_010: "/animations/masculine/idle/M_Standing_Idle_Variations_010.glb",
   },
 };
-
 
 export const EXPRESSION_ANIMATIONS = {
   FEMININE: {
@@ -94,7 +89,6 @@ export const EXPRESSION_ANIMATIONS = {
   },
 };
 
-
 export const DANCE_ANIMATIONS = {
   FEMININE: {
     F_DANCES_001: "/animations/feminine/dance/F_Dances_001.glb",
@@ -117,39 +111,32 @@ export const DANCE_ANIMATIONS = {
   },
 };
 
-
 export const getAnimationArrays = () => ({
-  
   DEFAULT_ANIMATIONS: [
-    
     ...Object.values(IDLE_ANIMATIONS.MASCULINE),
     ...Object.values(IDLE_ANIMATIONS.FEMININE),
-    
+
     ...Object.values(EXPRESSION_ANIMATIONS.MASCULINE),
     ...Object.values(EXPRESSION_ANIMATIONS.FEMININE),
-    
+
     ...Object.values(DANCE_ANIMATIONS.MASCULINE),
     ...Object.values(DANCE_ANIMATIONS.FEMININE),
   ],
 
-  
   AI_RESPONSE_ANIMATIONS: [
-    
     ...Object.values(EXPRESSION_ANIMATIONS.MASCULINE),
-    
+
     ...Object.values(EXPRESSION_ANIMATIONS.FEMININE),
-    
+
     ...Object.values(DANCE_ANIMATIONS.MASCULINE),
     ...Object.values(DANCE_ANIMATIONS.FEMININE),
   ],
 
-  
   TALKING_ANIMATIONS: [
     ...Object.values(EXPRESSION_ANIMATIONS.MASCULINE).filter((path) => path.includes("Talking")),
     ...Object.values(EXPRESSION_ANIMATIONS.FEMININE).filter((path) => path.includes("Talking")),
   ],
 
-  
   ALL_EXPRESSION_ANIMATIONS: [
     ...Object.values(EXPRESSION_ANIMATIONS.FEMININE),
     ...Object.values(EXPRESSION_ANIMATIONS.MASCULINE),
@@ -165,7 +152,6 @@ export const getAnimationArrays = () => ({
     ...Object.values(IDLE_ANIMATIONS.MASCULINE),
   ],
 });
-
 
 export const getAnimationsByCategory = (category) => {
   const animations = getAnimationArrays();
@@ -192,53 +178,41 @@ export const getAnimationsByCategory = (category) => {
   }
 };
 
-
 export const getAnimationNameFromPath = (path) => {
   return path.split("/").pop().replace(".glb", "");
 };
-
 
 export const isGlbFile = (path) => {
   return typeof path === "string" && path.endsWith(".glb");
 };
 
-
 export const ensureGlbExtension = (path) => {
   return isGlbFile(path) ? path : `${path}.glb`;
 };
 
-
 export const ANIMATION_NAMES = {
-  
   DEFAULT_FEMININE_IDLE: "F_Standing_Idle_Variations_002",
   DEFAULT_MASCULINE_IDLE: "M_Standing_Idle_Variations_001",
 
-  
   MASCULINE_IDLE_002: "M_Standing_Idle_Variations_002",
   MASCULINE_IDLE_003: "M_Standing_Idle_Variations_003",
 
-  
   IDLE_VARIATIONS_001: "Idle_Variations_001",
   IDLE_VARIATIONS_002: "Idle_Variations_002",
   IDLE_VARIATIONS_003: "Idle_Variations_003",
 
-  
   MASCULINE_TALKING_005: "M_Talking_Variations_005",
   MASCULINE_TALKING_006: "M_Talking_Variations_006",
   MASCULINE_TALKING_007: "M_Talking_Variations_007",
 
-  
   MASCULINE_EXPRESSION_001: "M_Standing_Expressions_001",
   MASCULINE_EXPRESSION_002: "M_Standing_Expressions_002",
 
-  
   MASCULINE_DANCE_001: "M_Dances_001",
   MASCULINE_DANCE_002: "M_Dances_002",
 };
 
-
 export const getPathFromAnimationName = (animationName) => {
-  
   const allAnimations = {
     ...IDLE_ANIMATIONS.FEMININE,
     ...IDLE_ANIMATIONS.MASCULINE,
@@ -248,14 +222,12 @@ export const getPathFromAnimationName = (animationName) => {
     ...DANCE_ANIMATIONS.MASCULINE,
   };
 
-  
   for (const [key, path] of Object.entries(allAnimations)) {
     if (key === animationName) {
       return path;
     }
   }
 
-  
   for (const [key, path] of Object.entries(allAnimations)) {
     if (path.includes(animationName)) {
       return path;
@@ -264,7 +236,6 @@ export const getPathFromAnimationName = (animationName) => {
 
   return null;
 };
-
 
 export default {
   MODELS,

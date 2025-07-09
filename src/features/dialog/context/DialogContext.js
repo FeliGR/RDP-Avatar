@@ -78,11 +78,9 @@ export const DialogProvider = ({ children }) => {
         const botMessage = createMessage(responseText, "bot", !dialogApiAvailable);
         setMessages((prevMessages) => [...prevMessages, botMessage]);
 
-        
         if (ttsAvailable && dialogApiAvailable && responseText) {
           console.log("Speaking AI response:", responseText.substring(0, 50) + "...");
           try {
-            
             if (triggerAIResponseAnimation) {
               triggerAIResponseAnimation("all");
             }

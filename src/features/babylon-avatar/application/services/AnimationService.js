@@ -115,7 +115,6 @@ export class AnimationService {
     try {
       const animationController = this.compositionRoot.getAnimationController();
 
-      
       const blendingOptions = {
         transitionSpeed: options.transitionDuration
           ? 1.0 / (options.transitionDuration * 60)
@@ -243,11 +242,9 @@ export class AnimationService {
     try {
       const animationController = this.compositionRoot.getAnimationController();
 
-      
       const allResponseAnimations = getAnimationsByCategory("ai_response");
       const availableAnimations = [];
 
-      
       const character = this.currentCharacter;
       if (character && character.animationGroups) {
         allResponseAnimations.forEach((animPath) => {
@@ -262,7 +259,7 @@ export class AnimationService {
         console.warn(
           "[Animation Service] No response animations available from config, checking character animations",
         );
-        
+
         if (character && character.animationGroups && character.animationGroups.length > 0) {
           character.animationGroups.forEach((animGroup) => {
             availableAnimations.push(animGroup.name);
@@ -272,7 +269,6 @@ export class AnimationService {
         }
       }
 
-      
       const selectedAnimation =
         availableAnimations[Math.floor(Math.random() * availableAnimations.length)];
 
@@ -283,9 +279,9 @@ export class AnimationService {
       const blendingOptions = {
         isLooping: false,
         speedRatio: 1.0,
-        transitionSpeed: 0.015, 
+        transitionSpeed: 0.015,
         maxWeight: 0.8,
-        animationOffset: 0, 
+        animationOffset: 0,
         ...options,
       };
 

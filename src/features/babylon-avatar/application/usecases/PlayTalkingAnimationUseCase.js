@@ -16,7 +16,6 @@ export class PlayTalkingAnimationUseCase {
 
     this.isTalking = true;
 
-    
     const allTalkingAnimations = getAnimationsByCategory("talking");
     const talkingAnimations = allTalkingAnimations
       .map((path) => path.split("/").pop().replace(".glb", ""))
@@ -77,8 +76,8 @@ export class PlayTalkingAnimationUseCase {
       isLooping: false,
       speedRatio: 1.0,
       transitionSpeed: 0.02,
-      maxWeight: 0.75, 
-      animationOffset: 50, 
+      maxWeight: 0.75,
+      animationOffset: 50,
     });
   }
 
@@ -99,10 +98,8 @@ export class PlayTalkingAnimationUseCase {
       if (this.isTalking) {
         console.log(`[Talking Loop] Current animation ended, playing next talking animation`);
 
-        
         setTimeout(() => {
           if (this.isTalking) {
-            
             this._playRandomTalkingAnimation(character, talkingAnimations).catch((error) => {
               console.warn(`[Talking Loop] Error playing talking animation:`, error);
             });

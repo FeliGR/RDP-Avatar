@@ -45,6 +45,14 @@ class TTSService {
 
       const result = await response.json();
 
+      console.log("🔊 TTS API Response:", {
+        ok: response.ok,
+        status: response.status,
+        success: result.success,
+        hasAudioContent: !!result.data?.audioContent,
+        audioLength: result.data?.audioContent?.length || 0
+      });
+
       if (!response.ok) {
         throw new Error(result.message || `HTTP error! status: ${response.status}`);
       }
@@ -79,6 +87,12 @@ class TTSService {
       // Create audio blob from base64 data
       const audioBlob = this.base64ToBlob(base64Audio, "audio/mp3");
       const audioUrl = URL.createObjectURL(audioBlob);
+
+      console.log("🔊 Audio Blob created:", {
+        size: audioBlob.size,
+        type: audioBlob.type,
+        url: audioUrl.substring(0, 50) + "..."
+      });
 
       const audio = new Audio(audioUrl);
 

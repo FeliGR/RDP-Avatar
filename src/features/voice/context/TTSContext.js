@@ -107,8 +107,27 @@ export const TTSProvider = ({ children }) => {
         const audio = ttsServiceRef.current.createAudioElement(base64Audio);
         currentAudioRef.current = audio;
 
+        // 🔊 Debug audio element
+        console.log("🔊 TTS: Audio element created:", {
+          duration: audio.duration,
+          volume: audio.volume,
+          muted: audio.muted,
+          src: audio.src?.substring(0, 50) + "...",
+          readyState: audio.readyState
+        });
+
+        // Test audio volume and unmute
+        audio.volume = 1.0;
+        audio.muted = false;
+
         const handlePlay = async () => {
-          console.log("TTS: Starting speech playback");
+          console.log("🔊 TTS: Starting speech playback");
+          console.log("🔊 Audio playing state:", {
+            paused: audio.paused,
+            currentTime: audio.currentTime,
+            volume: audio.volume,
+            muted: audio.muted
+          });
 
           await startTalkingAnimations(audio);
         };
@@ -134,7 +153,27 @@ export const TTSProvider = ({ children }) => {
         audio.addEventListener("ended", handleEnded);
         audio.addEventListener("error", handleError);
 
-        await audio.play();
+        // Add more audio event listeners for debugging
+        audio.addEventListener("loadstart", () => console.log("🔊 Audio: loadstart"));
+        audio.addEventListener("loadeddata", () => console.log("🔊 Audio: loadeddata"));
+        audio.addEventListener("canplay", () => console.log("🔊 Audio: canplay"));
+        audio.addEventListener("playing", () => console.log("🔊 Audio: playing"));
+
+        console.log("🔊 TTS: Attempting to play audio...");
+        
+        try {
+          await audio.play();
+          console.log("🔊 TTS: Audio play() succeeded");
+        } catch (playError) {
+          console.error("🔊 TTS: Audio play() failed:", playError);
+          
+          // Try to handle autoplay restrictions
+          if (playError.name === 'NotAllowedError') {
+            console.warn("🔊 TTS: Autoplay blocked - user interaction required");
+            setError("Audio blocked - please click to enable sound");
+          }
+          throw playError;
+        }
 
         return true;
       } catch (error) {

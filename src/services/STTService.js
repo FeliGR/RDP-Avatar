@@ -20,6 +20,8 @@ class STTService {
       onError: null,
       onEnd: null,
       onStart: null,
+      onStreamRestart: null,
+      onAudioBridging: null,
     };
     
     this.defaultConfig = {
@@ -92,14 +94,29 @@ class STTService {
         });
 
         this.socket.on('interim_result', (data) => {
+          console.log('📊 Interim result:', data.transcript || data.text || '', 'Confidence:', data.confidence);
           if (this.callbacks.onInterimResult) {
-            this.callbacks.onInterimResult(data.transcript || data.text || '');
+            this.callbacks.onInterimResult(data.transcript || data.text || '', data.confidence);
           }
         });
 
         this.socket.on('final_result', (data) => {
+          console.log('📋 Final result:', {
+            transcript: data.transcript || data.text || '',
+            confidence: data.confidence,
+            restartCount: data.restart_count,
+            correctedTime: data.corrected_time
+          });
           if (this.callbacks.onFinalResult) {
-            this.callbacks.onFinalResult(data.transcript || data.text || '', data.confidence);
+            this.callbacks.onFinalResult(
+              data.transcript || data.text || '', 
+              data.confidence,
+              {
+                restartCount: data.restart_count,
+                correctedTime: data.corrected_time,
+                wordTimestamps: data.wordTimestamps
+              }
+            );
           }
         });
 
@@ -120,6 +137,24 @@ class STTService {
         this.socket.on('stopped', (data) => {
           console.log('⏹️ Streaming stopped:', data.message);
           this.isStreaming = false;
+        });
+
+        // Handle endless streaming events
+        this.socket.on('stream_restart', (data) => {
+          console.log('🔄 Stream restarted:', data.message, 'Restart count:', data.restart_count);
+          if (this.callbacks.onStreamRestart) {
+            this.callbacks.onStreamRestart(data.restart_count);
+          }
+          // Don't treat stream restarts as errors - they're normal behavior
+          // Continue streaming seamlessly
+        });
+
+        this.socket.on('audio_bridging', (data) => {
+          console.log('🌉 Audio bridging active:', data.message);
+          if (this.callbacks.onAudioBridging) {
+            this.callbacks.onAudioBridging();
+          }
+          // Audio bridging is happening to maintain context during restart
         });
 
       } catch (error) {
@@ -275,12 +310,10 @@ class STTService {
 
       // Handle audio data chunks
       this.mediaRecorder.ondataavailable = (event) => {
-        console.log('📊 Audio data available:', event.data.size, 'bytes');
         if (event.data.size > 0 && this.isStreaming && this.isConnected) {
           // Convert blob to array buffer and send to server
           event.data.arrayBuffer().then(arrayBuffer => {
             const audioArray = Array.from(new Uint8Array(arrayBuffer));
-            console.log('📡 Sending audio chunk:', audioArray.length, 'bytes');
             this.socket.emit('audio', { data: audioArray });
           }).catch(error => {
             console.error('Error converting audio data:', error);

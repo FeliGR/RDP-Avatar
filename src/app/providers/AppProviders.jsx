@@ -10,9 +10,7 @@ export const AppProviders = ({ children }) => {
       <AvatarAnimationProvider>
         <TTSProvider>
           <DialogProvider>
-            <RealTimeConversationProvider>
-              {children}
-            </RealTimeConversationProvider>
+            <RealTimeConversationProvider>{children}</RealTimeConversationProvider>
           </DialogProvider>
         </TTSProvider>
       </AvatarAnimationProvider>

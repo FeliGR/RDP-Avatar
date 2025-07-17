@@ -50,7 +50,7 @@ class TTSService {
         status: response.status,
         success: result.success,
         hasAudioContent: !!result.data?.audioContent,
-        audioLength: result.data?.audioContent?.length || 0
+        audioLength: result.data?.audioContent?.length || 0,
       });
 
       if (!response.ok) {
@@ -91,7 +91,7 @@ class TTSService {
       console.log("🔊 Audio Blob created:", {
         size: audioBlob.size,
         type: audioBlob.type,
-        url: audioUrl.substring(0, 50) + "..."
+        url: audioUrl.substring(0, 50) + "...",
       });
 
       const audio = new Audio(audioUrl);

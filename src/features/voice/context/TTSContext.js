@@ -113,7 +113,7 @@ export const TTSProvider = ({ children }) => {
           volume: audio.volume,
           muted: audio.muted,
           src: audio.src?.substring(0, 50) + "...",
-          readyState: audio.readyState
+          readyState: audio.readyState,
         });
 
         // Test audio volume and unmute
@@ -126,7 +126,7 @@ export const TTSProvider = ({ children }) => {
             paused: audio.paused,
             currentTime: audio.currentTime,
             volume: audio.volume,
-            muted: audio.muted
+            muted: audio.muted,
           });
 
           await startTalkingAnimations(audio);
@@ -160,15 +160,15 @@ export const TTSProvider = ({ children }) => {
         audio.addEventListener("playing", () => console.log("🔊 Audio: playing"));
 
         console.log("🔊 TTS: Attempting to play audio...");
-        
+
         try {
           await audio.play();
           console.log("🔊 TTS: Audio play() succeeded");
         } catch (playError) {
           console.error("🔊 TTS: Audio play() failed:", playError);
-          
+
           // Try to handle autoplay restrictions
-          if (playError.name === 'NotAllowedError') {
+          if (playError.name === "NotAllowedError") {
             console.warn("🔊 TTS: Autoplay blocked - user interaction required");
             setError("Audio blocked - please click to enable sound");
           }

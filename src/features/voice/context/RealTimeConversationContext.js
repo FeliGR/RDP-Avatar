@@ -1,11 +1,4 @@
-import React, { 
-  createContext, 
-  useContext, 
-  useCallback, 
-  useState, 
-  useRef, 
-  useEffect 
-} from "react";
+import React, { createContext, useContext, useCallback, useState, useRef, useEffect } from "react";
 import STTService from "../../../services/STTService";
 import { useDialog } from "../../dialog/context/DialogContext";
 import { useTTS } from "../../voice/context/TTSContext";
@@ -29,14 +22,16 @@ export const RealTimeConversationProvider = ({ children }) => {
   const [conversationState, setConversationState] = useState("idle"); // idle, listening, processing, responding
   const [streamRestartCount, setStreamRestartCount] = useState(0);
   const [lastRestartTime, setLastRestartTime] = useState(null);
-  
+  const [isContinuousMode, setIsContinuousMode] = useState(false);
+
   const sttServiceRef = useRef(null);
   const finalTranscriptRef = useRef("");
   const silenceTimerRef = useRef(null);
   const processingTimeoutRef = useRef(null);
   const isProcessingRef = useRef(false);
   const conversationStateRef = useRef("idle");
-  
+  const isContinuousModeRef = useRef(false);
+
   const { sendUserMessage } = useDialog();
   const { speak, stopSpeaking, isPlaying } = useTTS();
 
@@ -46,6 +41,7 @@ export const RealTimeConversationProvider = ({ children }) => {
     maxSpeechDuration: 30000, // 30 seconds max per utterance
     interimResultsEnabled: true,
     autoProcessing: true,
+    restartDelay: 1000, // Delay before restarting listening after response
   };
 
   // Initialize STT service
@@ -55,7 +51,7 @@ export const RealTimeConversationProvider = ({ children }) => {
         sttServiceRef.current = new STTService();
         const available = await sttServiceRef.current.checkAvailability();
         setIsAvailable(available);
-        
+
         if (!available) {
           console.warn("STT service is not available");
           setError("Speech-to-Text service is not available");
@@ -79,6 +75,10 @@ export const RealTimeConversationProvider = ({ children }) => {
     conversationStateRef.current = conversationState;
   }, [conversationState]);
 
+  useEffect(() => {
+    isContinuousModeRef.current = isContinuousMode;
+  }, [isContinuousMode]);
+
   // Setup STT callbacks
   const setupSTTCallbacks = useCallback(() => {
     if (!sttServiceRef.current) return;
@@ -94,12 +94,12 @@ export const RealTimeConversationProvider = ({ children }) => {
 
       onInterimResult: (transcript, confidence) => {
         setInterimText(transcript);
-        
+
         // Reset silence timer when we get new speech
         if (silenceTimerRef.current) {
           clearTimeout(silenceTimerRef.current);
         }
-        
+
         // Set silence timer for auto-processing
         if (conversationConfig.autoProcessing) {
           silenceTimerRef.current = setTimeout(() => {
@@ -117,12 +117,12 @@ export const RealTimeConversationProvider = ({ children }) => {
         }
         finalTranscriptRef.current = transcript;
         setInterimText("");
-        
+
         // Clear silence timer since we have a final result
         if (silenceTimerRef.current) {
           clearTimeout(silenceTimerRef.current);
         }
-        
+
         // Auto-process if confidence is reasonable (lowered threshold for better responsiveness)
         if (conversationConfig.autoProcessing && confidence > 0.15) {
           console.log("🎯 Auto-processing transcript with confidence:", confidence);
@@ -152,22 +152,28 @@ export const RealTimeConversationProvider = ({ children }) => {
         console.log("🔄 STT stream restarted, count:", restartCount);
         console.log("🔄 Current conversation state during restart:", conversationState);
         console.log("🔄 Is processing during restart:", isProcessing);
+        console.log("🔄 Continuous mode active:", isContinuousMode);
         setStreamRestartCount(restartCount);
         setLastRestartTime(Date.now());
-        
+
         // Check if restart happened during critical processing
         if (conversationState === "processing" || isProcessing) {
-          console.warn("⚠️ Stream restart occurred during conversation processing - resetting processing state");
-          
+          console.warn(
+            "⚠️ Stream restart occurred during conversation processing - resetting processing state",
+          );
+
           // Reset processing state if stream restarts during processing
-          // This prevents the processing state from getting stuck
           setIsProcessing(false);
-          isProcessingRef.current = false; // Also update the ref immediately
-          
-          // Only reset conversation state if we're not actively responding (TTS playing)
-          if (!isPlaying && conversationState !== "responding") {
+          isProcessingRef.current = false;
+
+          // In continuous mode, go back to listening; otherwise go to idle
+          if (isContinuousMode && !isPlaying) {
+            console.log("🔄 Continuous mode: Returning to listening state after restart");
+            setConversationState("listening");
+            conversationStateRef.current = "listening";
+          } else if (!isPlaying) {
             setConversationState("idle");
-            conversationStateRef.current = "idle"; // Also update the ref immediately
+            conversationStateRef.current = "idle";
             console.log("🔄 Reset conversation state to idle after stream restart");
           }
         }
@@ -176,57 +182,81 @@ export const RealTimeConversationProvider = ({ children }) => {
       onAudioBridging: () => {
         console.log("🌉 Audio bridging active during stream restart");
         // Audio bridging is happening - this is normal for endless streaming
-      }
+      },
     });
   }, [conversationState, conversationConfig.autoProcessing, conversationConfig.silenceThreshold]);
+
+  // Restart listening for continuous conversation
+  const restartListening = useCallback(async () => {
+    if (!isContinuousModeRef.current || isProcessingRef.current) {
+      console.log("🚫 Not restarting listening:", {
+        continuousMode: isContinuousModeRef.current,
+        isProcessing: isProcessingRef.current,
+      });
+      return false;
+    }
+
+    console.log("🎤 Restarting listening for continuous conversation");
+
+    try {
+      if (!sttServiceRef.current) {
+        console.warn("⚠️ STT service not available for restart");
+        return false;
+      }
+
+      // Check service availability before restarting
+      const available = await sttServiceRef.current.checkAvailability();
+      if (!available) {
+        console.warn("⚠️ STT service availability check failed");
+        setIsAvailable(false);
+        return false;
+      }
+
+      // Update availability state
+      setIsAvailable(true);
+
+      // Ensure we're in listening state
+      setConversationState("listening");
+      conversationStateRef.current = "listening";
+
+      setupSTTCallbacks();
+
+      const success = await sttServiceRef.current.startStreaming({
+        interimResults: conversationConfig.interimResultsEnabled,
+        singleUtterance: false,
+      });
+
+      if (success) {
+        console.log("✅ Successfully restarted listening");
+      } else {
+        console.warn("⚠️ Failed to restart listening, going to idle");
+        setConversationState("idle");
+        conversationStateRef.current = "idle";
+      }
+
+      return success;
+    } catch (error) {
+      console.error("❌ Error restarting listening:", error);
+      setConversationState("idle");
+      conversationStateRef.current = "idle";
+      setIsAvailable(false);
+      return false;
+    }
+  }, [setupSTTCallbacks, conversationConfig.interimResultsEnabled]);
 
   // Process the final transcript and send to dialog orchestrator
   const handleProcessTranscript = useCallback(async () => {
     const transcript = finalTranscriptRef.current.trim();
-    
+
     console.log("🔄 Processing transcript:", transcript);
-    
+
     if (!transcript) {
       console.warn("No transcript to process");
       return;
     }
 
     if (isProcessing) {
-      console.warn("Already processing a transcript, queuing new transcript:", transcript);
-      // Queue the new transcript with improved retry logic using refs for current values
-      setTimeout(() => {
-        const currentIsProcessing = isProcessingRef.current;
-        const currentConversationState = conversationStateRef.current;
-        
-        console.log("🔄 Checking if ready to process queued transcript:", transcript);
-        console.log("🔄 Current processing state (from ref):", currentIsProcessing);
-        console.log("🔄 Current conversation state (from ref):", currentConversationState);
-        
-        if (!currentIsProcessing && (currentConversationState === "idle" || currentConversationState === "listening")) {
-          console.log("✅ Processing queued transcript:", transcript);
-          finalTranscriptRef.current = transcript;
-          handleProcessTranscript();
-        } else {
-          console.warn("⏳ Still not ready, retrying queued transcript in 2 seconds");
-          // Retry once more after 2 seconds
-          setTimeout(() => {
-            const retryIsProcessing = isProcessingRef.current;
-            const retryConversationState = conversationStateRef.current;
-            
-            console.log("🔄 Retry attempt - processing state:", retryIsProcessing);
-            console.log("🔄 Retry attempt - conversation state:", retryConversationState);
-            
-            if (!retryIsProcessing && (retryConversationState === "idle" || retryConversationState === "listening")) {
-              console.log("✅ Processing queued transcript (retry):", transcript);
-              finalTranscriptRef.current = transcript;
-              handleProcessTranscript();
-            } else {
-              console.error("❌ Failed to process queued transcript after retries:", transcript);
-              console.error("❌ Final state - processing:", retryIsProcessing, "conversation:", retryConversationState);
-            }
-          }, 2000);
-        }
-      }, 1000);
+      console.warn("Already processing a transcript, ignoring duplicate:", transcript);
       return;
     }
 
@@ -241,13 +271,15 @@ export const RealTimeConversationProvider = ({ children }) => {
         isProcessing: true,
         conversationState: "processing",
         streamRestartCount,
-        timeSinceLastRestart: lastRestartTime ? Date.now() - lastRestartTime : null
+        timeSinceLastRestart: lastRestartTime ? Date.now() - lastRestartTime : null,
       });
 
       // Check if we're too close to a stream restart
-      if (lastRestartTime && (Date.now() - lastRestartTime) < 1000) {
-        console.warn("⚠️ Processing started shortly after stream restart, adding delay for stability");
-        await new Promise(resolve => setTimeout(resolve, 500));
+      if (lastRestartTime && Date.now() - lastRestartTime < 1000) {
+        console.warn(
+          "⚠️ Processing started shortly after stream restart, adding delay for stability",
+        );
+        await new Promise((resolve) => setTimeout(resolve, 500));
       }
 
       // Stop any current listening
@@ -274,9 +306,9 @@ export const RealTimeConversationProvider = ({ children }) => {
       setConversationState("responding");
       console.log("📤 Sending to dialog orchestrator:", transcript);
       console.log("🕐 About to call sendUserMessage...");
-      
+
       const botResponse = await sendUserMessage(transcript);
-      
+
       console.log("✅ sendUserMessage completed");
       console.log("📨 Bot response received:", botResponse?.text?.substring(0, 50) + "...");
 
@@ -291,57 +323,77 @@ export const RealTimeConversationProvider = ({ children }) => {
 
       // The TTS and avatar animation will be handled by the DialogContext
       console.log("Conversation turn completed");
-      
     } catch (error) {
       console.error("❌ Error processing transcript:", error);
       console.error("❌ Error details:", {
         message: error.message,
         stack: error.stack,
-        transcript: transcript
+        transcript: transcript,
       });
       setError("Failed to process your message. Please try again.");
     } finally {
       console.log("🔧 Finalizing processing, setting isProcessing to false");
       setIsProcessing(false);
       isProcessingRef.current = false; // Keep ref in sync
-      
+
       // Wait for TTS to finish before allowing new input with timeout protection
       let ttsCheckCount = 0;
-      const maxTtsChecks = 20; // 10 seconds max (20 * 500ms)
-      
+      const maxTtsChecks = 30; // 15 seconds max (30 * 500ms)
+
       const checkTTSComplete = () => {
         ttsCheckCount++;
-        console.log(`🔍 Checking TTS state (${ttsCheckCount}/${maxTtsChecks}):`, { 
-          isPlaying, 
+        console.log(`🔍 Checking TTS state (${ttsCheckCount}/${maxTtsChecks}):`, {
+          isPlaying,
           conversationState,
-          ttsCheckCount 
+          ttsCheckCount,
+          isContinuousMode: isContinuousModeRef.current,
         });
-        
+
         if (!isPlaying || ttsCheckCount >= maxTtsChecks) {
           if (ttsCheckCount >= maxTtsChecks) {
-            console.warn("⚠️ TTS check timeout reached, forcing conversation state to idle");
+            console.warn("⚠️ TTS check timeout reached, forcing conversation continuation");
           } else {
-            console.log("✅ TTS completed, setting conversation state to idle");
+            console.log("✅ TTS completed, checking continuous mode");
           }
-          setConversationState("idle");
-          conversationStateRef.current = "idle"; // Keep ref in sync
+
+          // If in continuous mode, restart listening; otherwise go to idle
+          if (isContinuousModeRef.current) {
+            console.log("🔄 Continuous mode: Scheduling restart of listening after TTS");
+
+            // Longer delay to ensure audio system and STT service are ready
+            setTimeout(async () => {
+              console.log("🔄 Attempting to restart listening...");
+              const restartSuccess = await restartListening();
+              if (!restartSuccess) {
+                console.warn("⚠️ Failed to restart listening, disabling continuous mode");
+                setIsContinuousMode(false);
+                setConversationState("idle");
+                conversationStateRef.current = "idle";
+              }
+            }, conversationConfig.restartDelay + 1000); // Extra delay for stability
+          } else {
+            console.log("✅ Setting conversation state to idle (continuous mode disabled)");
+            setConversationState("idle");
+            conversationStateRef.current = "idle";
+          }
         } else {
           console.log("⏳ TTS still playing, checking again in 500ms");
           setTimeout(checkTTSComplete, 500);
         }
       };
       checkTTSComplete();
-      
+
       // Backup timeout: Always reset to idle after 15 seconds regardless of TTS state
       setTimeout(() => {
         console.log("🚨 Backup timeout: Forcing conversation state to idle after 15 seconds");
         setConversationState("idle");
         conversationStateRef.current = "idle";
       }, 15000);
-      
+
       // Additional safety: Reset processing state after timeout
       setTimeout(() => {
-        if (isProcessingRef.current) { // Use ref for current value
+        if (isProcessingRef.current) {
+          // Use ref for current value
           console.warn("🔧 Force resetting processing state after timeout");
           setIsProcessing(false);
           isProcessingRef.current = false;
@@ -352,34 +404,49 @@ export const RealTimeConversationProvider = ({ children }) => {
     }
   }, [sendUserMessage, stopSpeaking, isPlaying, isProcessing]);
 
-  // Start real-time conversation
-  const startRealTimeConversation = useCallback(async () => {
-    if (!sttServiceRef.current || !isAvailable) {
-      setError("Speech-to-Text service is not available");
-      return false;
-    }
+  // Start real-time conversation with optional continuous mode
+  const startRealTimeConversation = useCallback(
+    async (enableContinuous = false) => {
+      if (!sttServiceRef.current || !isAvailable) {
+        setError("Speech-to-Text service is not available");
+        return false;
+      }
 
-    if (isListening) {
-      console.warn("Already listening");
-      return false;
-    }
+      if (isListening) {
+        console.warn("Already listening");
+        return false;
+      }
 
-    // Stop any current TTS playback
-    await stopSpeaking();
+      console.log("🎤 Starting real-time conversation, continuous mode:", enableContinuous);
 
-    setupSTTCallbacks();
+      // Set continuous mode
+      setIsContinuousMode(enableContinuous);
 
-    const success = await sttServiceRef.current.startStreaming({
-      interimResults: conversationConfig.interimResultsEnabled,
-      singleUtterance: false,
-    });
+      // Stop any current TTS playback
+      await stopSpeaking();
 
-    if (!success) {
-      setError("Failed to start real-time conversation");
-    }
+      setupSTTCallbacks();
 
-    return success;
-  }, [isAvailable, isListening, setupSTTCallbacks, stopSpeaking, conversationConfig.interimResultsEnabled]);
+      const success = await sttServiceRef.current.startStreaming({
+        interimResults: conversationConfig.interimResultsEnabled,
+        singleUtterance: false,
+      });
+
+      if (!success) {
+        setError("Failed to start real-time conversation");
+        setIsContinuousMode(false);
+      }
+
+      return success;
+    },
+    [
+      isAvailable,
+      isListening,
+      setupSTTCallbacks,
+      stopSpeaking,
+      conversationConfig.interimResultsEnabled,
+    ],
+  );
 
   // Stop listening
   const stopListening = useCallback(async () => {
@@ -410,29 +477,49 @@ export const RealTimeConversationProvider = ({ children }) => {
 
   // Debug: Force reset processing state
   const forceResetProcessing = useCallback(() => {
-    console.log('🔧 Force resetting all processing states');
+    console.log("🔧 Force resetting all processing states");
     setIsProcessing(false);
     setConversationState("idle");
     setError(null);
     finalTranscriptRef.current = "";
     cleanupTimers();
-    
+
     // Also reset stream restart tracking to avoid interference
     setStreamRestartCount(0);
     setLastRestartTime(null);
-    
-    console.log('✅ All processing states reset');
+
+    console.log("✅ All processing states reset");
   }, [cleanupTimers]);
 
   // Stop real-time conversation
   const stopRealTimeConversation = useCallback(async () => {
+    console.log("🛑 Manually stopping real-time conversation");
+
+    // Disable continuous mode
+    setIsContinuousMode(false);
+
     await stopListening();
     await stopSpeaking();
     setConversationState("idle");
+    conversationStateRef.current = "idle";
     setInterimText("");
     finalTranscriptRef.current = "";
     setError(null);
+
+    console.log("✅ Real-time conversation stopped");
   }, [stopListening, stopSpeaking]);
+
+  // Toggle continuous mode
+  const toggleContinuousMode = useCallback(() => {
+    const newMode = !isContinuousMode;
+    console.log("🔄 Toggling continuous mode:", newMode);
+    setIsContinuousMode(newMode);
+
+    if (!newMode && conversationState === "listening") {
+      // If disabling continuous mode while listening, stop the conversation
+      stopRealTimeConversation();
+    }
+  }, [isContinuousMode, conversationState, stopRealTimeConversation]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -455,16 +542,18 @@ export const RealTimeConversationProvider = ({ children }) => {
     conversationState,
     streamRestartCount,
     lastRestartTime,
-    
+    isContinuousMode,
+
     // Actions
     startRealTimeConversation,
     stopRealTimeConversation,
     stopListening,
     processCurrentTranscript,
-    
+    toggleContinuousMode,
+
     // Debug functions
     forceResetProcessing,
-    
+
     // Status
     isRealTimeActive: conversationState !== "idle",
     canStartConversation: isAvailable && conversationState === "idle",

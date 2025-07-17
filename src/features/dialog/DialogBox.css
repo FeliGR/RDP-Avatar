@@ -147,6 +147,28 @@
     opacity: 0.4;
   }
 }
+
+/* Continuous mode styles */
+.real-time-indicator.continuous {
+  border: 2px solid #4caf50;
+  background: rgba(76, 175, 80, 0.1);
+}
+
+.real-time-indicator.continuous .streaming-icon {
+  animation: continuousPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes continuousPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
 .messages-container {
   flex: 1;
   overflow-y: auto;
@@ -881,14 +903,18 @@
     min-height: 36px;
   }
 
-  .send-button, .voice-input-button, .voice-mode-btn {
+  .send-button,
+  .voice-input-button,
+  .voice-mode-btn {
     width: 36px;
     height: 36px;
     min-width: 36px;
     min-height: 36px;
   }
 
-  .send-button svg, .voice-input-button svg, .voice-mode-btn svg {
+  .send-button svg,
+  .voice-input-button svg,
+  .voice-mode-btn svg {
     width: 16px;
     height: 16px;
   }

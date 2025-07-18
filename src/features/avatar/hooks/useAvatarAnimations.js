@@ -73,14 +73,8 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
       }
       try {
         const transitionDuration = options.transitionDuration || 0.8;
-        console.log(
-          `[Avatar Animations] Starting idle animation: ${animationName} with transition duration: ${transitionDuration}`,
-        );
 
         if (animationState === "idle" && !options.force) {
-          console.log(
-            `[Avatar Animations] Already in idle state, skipping duplicate idle animation: ${animationName}`,
-          );
           return { success: true, message: "Already in idle state" };
         }
 
@@ -96,9 +90,6 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
         );
         if (result.success) {
           setAnimationState("idle");
-          console.log(`[Avatar Animations] Successfully started idle animation: ${animationName}`);
-        } else {
-          console.error(`[Avatar Animations] Failed to start idle animation: ${result.error}`);
         }
         return result;
       } catch (error) {
@@ -107,7 +98,7 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
         return { success: false, error: error.message };
       }
     },
-    [],
+    [animationState],
   );
 
   const loadAvatarAnimations = useCallback(
@@ -170,14 +161,9 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
         return { success: false, error: "Service or character not available" };
       }
       try {
-        console.log(
-          "[Avatar Animations] Starting talking animations",
-          audioSource ? "with audio source" : "without audio source",
-        );
         const result = await animationServiceRef.current.startTalkingAnimations(audioSource);
         if (result.success) {
           setAnimationState("talking");
-          console.log("[Avatar Animations] Successfully started talking animations");
         } else {
           console.error("[Avatar Animations] Failed to start talking animations:", result.error);
         }
@@ -261,13 +247,9 @@ export const useAvatarAnimations = (scene, shadowGenerator = null) => {
     }
 
     try {
-      console.log("[Avatar Animations] Playing message response animation");
       const result = await animationServiceRef.current.playMessageResponseAnimation(options);
       if (result.success) {
         setAnimationState("talking");
-        console.log(
-          `[Avatar Animations] Successfully played message response animation: ${result.animation}`,
-        );
       } else {
         console.error(
           "[Avatar Animations] Failed to play message response animation:",

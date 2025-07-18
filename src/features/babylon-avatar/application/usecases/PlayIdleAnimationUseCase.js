@@ -22,9 +22,6 @@ export class PlayIdleAnimationUseCase {
 
     const existingSystem = this.activeIdleSystems.get(character.id);
     if (existingSystem) {
-      console.log(
-        `[Idle Animation] Idle system already running for character ${character.id}, not restarting`,
-      );
       return {
         success: true,
         message: "Idle system already active",
@@ -41,11 +38,6 @@ export class PlayIdleAnimationUseCase {
     const initialAnimation = availableAnimations[0];
 
     try {
-      console.log(
-        `[Idle Animation] Starting idle system with ${availableAnimations.length} animations`,
-      );
-      console.log(`[Idle Animation] Initial animation: ${initialAnimation}`);
-
       await this.animationController.playAnimationWithBlending(character, initialAnimation, {
         isLooping: true,
         speedRatio: 1.0,
@@ -93,11 +85,6 @@ export class PlayIdleAnimationUseCase {
         availableAnimations.push(animName);
       }
     });
-
-    console.log(
-      `[Idle Animation] Found ${availableAnimations.length} available idle animations:`,
-      availableAnimations,
-    );
     return availableAnimations;
   }
 
@@ -108,7 +95,6 @@ export class PlayIdleAnimationUseCase {
    */
   _setupIdleVariationCycling(character, availableAnimations) {
     if (availableAnimations.length <= 1) {
-      console.log("[Idle Cycling] Single animation mode - no cycling needed");
       return;
     }
 
@@ -120,7 +106,6 @@ export class PlayIdleAnimationUseCase {
      */
     const cycleToNextAnimation = () => {
       if (isTransitioning) {
-        console.log("[Idle Cycling] Transition in progress - skipping cycle");
         return;
       }
 
@@ -133,10 +118,6 @@ export class PlayIdleAnimationUseCase {
       currentAnimationIndex = nextIndex;
       const nextAnimation = availableAnimations[nextIndex];
 
-      console.log(
-        `[Idle Cycling] Transitioning to: ${nextAnimation} (${nextIndex + 1}/${availableAnimations.length})`,
-      );
-
       this.animationController
         .playAnimationWithBlending(character, nextAnimation, {
           isLooping: true,
@@ -145,7 +126,6 @@ export class PlayIdleAnimationUseCase {
           maxWeight: 1.0,
         })
         .then(() => {
-          console.log(`[Idle Cycling] Successfully transitioned to ${nextAnimation}`);
           isTransitioning = false;
 
           setTimeout(() => {
@@ -161,10 +141,6 @@ export class PlayIdleAnimationUseCase {
           }, 1000);
         });
     };
-
-    console.log(
-      `[Idle Cycling] Initializing cycling system with ${availableAnimations.length} animations`,
-    );
 
     setTimeout(() => {
       this.animationController.setupIdleObservers(character, cycleToNextAnimation);
@@ -221,8 +197,6 @@ export class PlayIdleAnimationUseCase {
    */
   stop(character) {
     try {
-      console.log("[Idle Animation] Stopping idle animation system");
-
       this.animationController.removeObservers(character);
       this.animationController.stopAnimation(character);
       this.morphTargetController.stopAutomaticFacialAnimations(character);
@@ -261,13 +235,10 @@ export class PlayIdleAnimationUseCase {
   async resume(character) {
     const existingSystem = this.activeIdleSystems.get(character.id);
     if (!existingSystem) {
-      console.log("[Idle Animation] No idle system to resume, starting new one");
       return this.execute(character);
     }
 
     try {
-      console.log("[Idle Animation] Resuming idle animation cycling");
-
       const availableAnimations = existingSystem.animations;
       const randomAnimation =
         availableAnimations[Math.floor(Math.random() * availableAnimations.length)];

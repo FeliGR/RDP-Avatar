@@ -1,4 +1,4 @@
-import { useCallback, useRef, useMemo } from "react";
+import { useCallback, useRef } from "react";
 import {
   getAnimationsByCategory,
   getAnimationNameFromPath,
@@ -10,8 +10,6 @@ export const useAIResponseAnimations = (
   playMessageResponseAnimation,
 ) => {
   const isProcessingRef = useRef(false);
-
-  const defaultAnimations = useMemo(() => getAnimationsByCategory("all"), []);
 
   const isCharacterReady = useCallback(() => {
     if (!animationService || !animationService.isReady()) {
@@ -50,8 +48,6 @@ export const useAIResponseAnimations = (
 
         const animationName = getAnimationNameFromPath(selectedAnimationPath);
 
-        console.log(`[AI Response Animation] Playing ${animationName} for category: ${category}`);
-
         const result = playMessageResponseAnimation
           ? await playMessageResponseAnimation({
               category,
@@ -68,7 +64,6 @@ export const useAIResponseAnimations = (
             });
 
         if (result.success) {
-          console.log(`[AI Response Animation] Successfully played ${animationName}`);
           const character = animationService.getCurrentCharacter();
           const animationGroup = character?.getAnimationGroup(animationName);
 
@@ -90,9 +85,6 @@ export const useAIResponseAnimations = (
               if (character && character.currentAnimation) {
                 const currentAnimName = character.currentAnimation.name;
                 if (currentAnimName && currentAnimName.includes("_Idle_")) {
-                  console.log(
-                    `[AI Response Animation] Idle animation already playing (${currentAnimName}), not interfering`,
-                  );
                   return;
                 }
               }
@@ -101,19 +93,6 @@ export const useAIResponseAnimations = (
                 animationService.compositionRoot?.getPlayIdleAnimationUseCase();
 
               if (playIdleUseCase && playIdleUseCase.isIdleSystemActive(character)) {
-                console.log("[AI Response Animation] Idle cycling system already active, resuming");
-
-                const resumeResult = await playIdleUseCase.resume(character);
-
-                if (resumeResult.success) {
-                  console.log("[AI Response Animation] Successfully resumed idle cycling");
-                } else {
-                  console.warn(
-                    "[AI Response Animation] Failed to resume idle cycling:",
-                    resumeResult.error,
-                  );
-                }
-
                 return;
               }
 
@@ -138,7 +117,6 @@ export const useAIResponseAnimations = (
     [
       animationService,
       isCharacterReady,
-      defaultAnimations,
       startSpecificIdleAnimation,
       playMessageResponseAnimation,
     ],

@@ -129,7 +129,6 @@ const ReadyPlayerMeAvatar = ({
   useEffect(() => {
     if (triggerZoomEffect && BABYLON && cameraRef.current && sceneRef.current) {
       const camera = cameraRef.current;
-      const scene = sceneRef.current.scene;
 
       const startRadius = camera.radius;
       const targetRadius = 6;

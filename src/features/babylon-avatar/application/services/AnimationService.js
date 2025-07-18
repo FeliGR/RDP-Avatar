@@ -124,8 +124,6 @@ export class AnimationService {
         ...options,
       };
 
-      console.log(`[Animation Service] Playing animation with blending: ${animationName}`);
-
       await animationController.playAnimationWithBlending(
         this.currentCharacter,
         animationName,
@@ -271,10 +269,6 @@ export class AnimationService {
 
       const selectedAnimation =
         availableAnimations[Math.floor(Math.random() * availableAnimations.length)];
-
-      console.log(
-        `[Animation Service] Playing message response animation: ${selectedAnimation} from ${availableAnimations.length} available animations`,
-      );
 
       const blendingOptions = {
         isLooping: false,

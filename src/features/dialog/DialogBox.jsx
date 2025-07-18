@@ -30,7 +30,6 @@ const DialogBox = () => {
     if (isRealTimeActive) {
       await stopRealTimeConversation();
     } else {
-      // Start with continuous mode enabled for real-time conversation
       await startRealTimeConversation(true);
     }
   };

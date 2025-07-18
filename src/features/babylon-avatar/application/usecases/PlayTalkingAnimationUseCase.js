@@ -25,10 +25,6 @@ export class PlayTalkingAnimationUseCase {
       throw new Error("No talking animations available");
     }
 
-    console.log(
-      `[Talking Animation] Found ${talkingAnimations.length} talking animations for variety`,
-    );
-
     this.animationController.removeObservers(character);
 
     await this._playRandomTalkingAnimation(character, talkingAnimations);
@@ -70,8 +66,6 @@ export class PlayTalkingAnimationUseCase {
   async _playRandomTalkingAnimation(character, talkingAnimations) {
     const randomAnimation = talkingAnimations[Math.floor(Math.random() * talkingAnimations.length)];
 
-    console.log(`[Talking Animation] Starting talking animation: ${randomAnimation}`);
-
     return this.animationController.playAnimationWithBlending(character, randomAnimation, {
       isLooping: false,
       speedRatio: 1.0,
@@ -96,8 +90,6 @@ export class PlayTalkingAnimationUseCase {
   _setupTalkingLoop(character, talkingAnimations) {
     this.animationController.setupIdleObservers(character, () => {
       if (this.isTalking) {
-        console.log(`[Talking Loop] Current animation ended, playing next talking animation`);
-
         setTimeout(() => {
           if (this.isTalking) {
             this._playRandomTalkingAnimation(character, talkingAnimations).catch((error) => {

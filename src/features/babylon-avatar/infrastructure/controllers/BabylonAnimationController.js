@@ -195,17 +195,12 @@ export class BabylonAnimationController extends IAnimationController {
     maxWeight,
     character,
   ) {
-    console.log(
-      `[Animation Blending] Starting transition from ${fromAnim?.name || "none"} to ${toAnim?.name} with speed: ${speed}`,
-    );
-
     if (!toAnimFrameIn) toAnimFrameIn = 0;
     if (!toAnimFrameOut) toAnimFrameOut = toAnim.to || toAnim.duration;
     if (!maxWeight) maxWeight = 1;
 
     let currentWeight = fromAnim ? 1 : 0;
     let newWeight = 0;
-    let blendSteps = 0;
 
     try {
       if (fromAnim) {
@@ -226,7 +221,6 @@ export class BabylonAnimationController extends IAnimationController {
         if (fromAnim) {
           currentWeight -= speed;
         }
-        blendSteps++;
 
         newWeight = Math.min(newWeight, maxWeight);
         currentWeight = Math.max(currentWeight, 0);
@@ -236,12 +230,6 @@ export class BabylonAnimationController extends IAnimationController {
           if (fromAnim) {
             fromAnim.setWeightForAllAnimatables(currentWeight);
           }
-
-          if (blendSteps % 20 === 0) {
-            console.log(
-              `[Animation Blending] Step ${blendSteps}: new weight: ${newWeight.toFixed(3)}${fromAnim ? `, old weight: ${currentWeight.toFixed(3)}` : ""}`,
-            );
-          }
         } catch (error) {
           console.warn("[Animation Blending] Error setting animation weights:", error);
           break;
@@ -249,8 +237,6 @@ export class BabylonAnimationController extends IAnimationController {
 
         yield;
       }
-
-      console.log(`[Animation Blending] Completed in ${blendSteps} steps`);
 
       try {
         toAnim.setWeightForAllAnimatables(maxWeight);
@@ -264,8 +250,6 @@ export class BabylonAnimationController extends IAnimationController {
       if (character) {
         character.setCurrentAnimation(toAnim);
       }
-
-      console.log(`[Animation Blending] Transition complete to ${toAnim?.name}`);
     } catch (error) {
       console.error("[Animation Blending] Critical error during blending:", error);
 
@@ -291,7 +275,6 @@ export class BabylonAnimationController extends IAnimationController {
     }
 
     if (this.isBlendingToAnimation(animationName)) {
-      console.log(`[Animation] Already blending to ${animationName}, skipping duplicate request`);
       return Promise.resolve();
     }
 
@@ -310,12 +293,7 @@ export class BabylonAnimationController extends IAnimationController {
     const adjustedFrameStart = frameStart + animationOffset;
     const adjustedFrameEnd = endFrame - animationOffset;
 
-    console.log(
-      `[Animation] Blending to ${animationName} from ${currentAnimation?.name || "none"}`,
-    );
-
     if (currentAnimation === targetAnimationGroup) {
-      console.log(`[Animation] Animation ${animationName} is already playing`);
       return Promise.resolve();
     }
 
@@ -371,34 +349,20 @@ export class BabylonAnimationController extends IAnimationController {
 
     setTimeout(() => {
       if (character.currentAnimation !== currentAnimation) {
-        console.log(
-          `[Idle Observer] Animation changed before observer setup (${currentAnimation.name} -> ${character.currentAnimation?.name}), skipping`,
-        );
         return;
       }
 
       try {
         const observer = currentAnimation.onAnimationEndObservable.add(() => {
           if (character.currentAnimation === currentAnimation) {
-            console.log(
-              `[Idle Observer] Current animation ${currentAnimation.name} ended, triggering callback`,
-            );
-
             currentAnimation.onAnimationEndObservable.remove(observer);
             onIdleEnd(currentAnimation);
           } else {
-            console.log(
-              `[Idle Observer] Old animation ${currentAnimation.name} ended, but it's no longer current (${character.currentAnimation?.name}) - ignoring`,
-            );
-
             currentAnimation.onAnimationEndObservable.remove(observer);
           }
         });
 
         this.observers.set(character.id, [{ animGroup: currentAnimation, observer }]);
-        console.log(
-          `[Idle Observer] Set up observer for current animation: ${currentAnimation.name}`,
-        );
       } catch (error) {
         console.warn("[Idle Observer] Error setting up observer:", error);
       }
@@ -408,14 +372,10 @@ export class BabylonAnimationController extends IAnimationController {
   removeObservers(character) {
     const characterObservers = this.observers.get(character.id);
     if (characterObservers) {
-      console.log(
-        `[Idle Observer] Removing ${characterObservers.length} observers for character ${character.id}`,
-      );
       characterObservers.forEach(({ animGroup, observer }) => {
         try {
           if (animGroup && observer) {
             animGroup.onAnimationEndObservable.remove(observer);
-            console.log(`[Idle Observer] Removed observer for ${animGroup.name}`);
           }
         } catch (error) {
           console.warn(`[Idle Observer] Error removing observer:`, error);

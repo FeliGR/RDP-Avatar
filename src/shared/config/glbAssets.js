@@ -4,13 +4,6 @@
  * to avoid hardcoded paths scattered across the codebase.
  */
 
-const BASE_PATHS = {
-  ANIMATIONS: "/animations",
-  MODELS: "/assets/models",
-  FEMININE: "/animations/feminine",
-  MASCULINE: "/animations/masculine",
-};
-
 export const MODELS = {
   BASE: "/assets/models/base.glb",
 };
@@ -228,7 +221,7 @@ export const getPathFromAnimationName = (animationName) => {
     }
   }
 
-  for (const [key, path] of Object.entries(allAnimations)) {
+  for (const [, path] of Object.entries(allAnimations)) {
     if (path.includes(animationName)) {
       return path;
     }
@@ -237,7 +230,7 @@ export const getPathFromAnimationName = (animationName) => {
   return null;
 };
 
-export default {
+const glbAssets = {
   MODELS,
   T_POSE,
   IDLE_ANIMATIONS,
@@ -251,3 +244,5 @@ export default {
   isGlbFile,
   ensureGlbExtension,
 };
+
+export default glbAssets;

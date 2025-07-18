@@ -34,10 +34,9 @@ export const TTSProvider = ({ children }) => {
         setIsAvailable(available);
 
         if (!available) {
-          console.warn("TTS service is not available");
+          setError("TTS service is not available");
         }
       } catch (error) {
-        console.error("Failed to initialize TTS service:", error);
         setError(error.message);
         setIsAvailable(false);
       }
@@ -54,7 +53,6 @@ export const TTSProvider = ({ children }) => {
       try {
         return await animationServiceRef.current.startTalkingAnimations(audioSource);
       } catch (error) {
-        console.error("Error starting talking animations:", error);
         return { success: false, error: error.message };
       }
     }
@@ -69,7 +67,6 @@ export const TTSProvider = ({ children }) => {
       try {
         return await animationServiceRef.current.stopTalkingAnimations();
       } catch (error) {
-        console.error("Error stopping talking animations:", error);
         return { success: false, error: error.message };
       }
     }
@@ -85,64 +82,49 @@ export const TTSProvider = ({ children }) => {
   const speak = useCallback(
     async (text, voiceConfig = null) => {
       if (!ttsServiceRef.current || !isAvailable) {
-        console.warn("TTS service not available");
         return false;
       }
 
       if (!text || typeof text !== "string") {
-        console.warn("Invalid text provided to TTS");
         return false;
       }
 
-      await stopSpeaking();
+      // Stop current audio if playing
+      if (currentAudioRef.current) {
+        try {
+          currentAudioRef.current.pause();
+          currentAudioRef.current.currentTime = 0;
+          currentAudioRef.current = null;
+        } catch (error) {
+          // Silently handle audio stop errors
+        }
+      }
+      setIsPlaying(false);
+      await stopTalkingAnimations();
 
       try {
         setIsPlaying(true);
         setError(null);
 
-        console.log("TTS: Synthesizing text:", text.substring(0, 50) + "...");
-
         const base64Audio = await ttsServiceRef.current.synthesizeText(text, voiceConfig);
-
         const audio = ttsServiceRef.current.createAudioElement(base64Audio);
         currentAudioRef.current = audio;
 
-        // 🔊 Debug audio element
-        console.log("🔊 TTS: Audio element created:", {
-          duration: audio.duration,
-          volume: audio.volume,
-          muted: audio.muted,
-          src: audio.src?.substring(0, 50) + "...",
-          readyState: audio.readyState,
-        });
-
-        // Test audio volume and unmute
+        // Configure audio settings
         audio.volume = 1.0;
         audio.muted = false;
 
         const handlePlay = async () => {
-          console.log("🔊 TTS: Starting speech playback");
-          console.log("🔊 Audio playing state:", {
-            paused: audio.paused,
-            currentTime: audio.currentTime,
-            volume: audio.volume,
-            muted: audio.muted,
-          });
-
           await startTalkingAnimations(audio);
         };
 
         const handleEnded = async () => {
-          console.log("TTS: Speech playback ended");
           setIsPlaying(false);
-
           await stopTalkingAnimations();
-
           currentAudioRef.current = null;
         };
 
         const handleError = (audioError) => {
-          console.error("TTS Audio playback error:", audioError);
           setError("Audio playback failed");
           setIsPlaying(false);
           stopTalkingAnimations();
@@ -153,23 +135,11 @@ export const TTSProvider = ({ children }) => {
         audio.addEventListener("ended", handleEnded);
         audio.addEventListener("error", handleError);
 
-        // Add more audio event listeners for debugging
-        audio.addEventListener("loadstart", () => console.log("🔊 Audio: loadstart"));
-        audio.addEventListener("loadeddata", () => console.log("🔊 Audio: loadeddata"));
-        audio.addEventListener("canplay", () => console.log("🔊 Audio: canplay"));
-        audio.addEventListener("playing", () => console.log("🔊 Audio: playing"));
-
-        console.log("🔊 TTS: Attempting to play audio...");
-
         try {
           await audio.play();
-          console.log("🔊 TTS: Audio play() succeeded");
         } catch (playError) {
-          console.error("🔊 TTS: Audio play() failed:", playError);
-
-          // Try to handle autoplay restrictions
+          // Handle autoplay restrictions
           if (playError.name === "NotAllowedError") {
-            console.warn("🔊 TTS: Autoplay blocked - user interaction required");
             setError("Audio blocked - please click to enable sound");
           }
           throw playError;
@@ -177,8 +147,6 @@ export const TTSProvider = ({ children }) => {
 
         return true;
       } catch (error) {
-        console.error("TTS Error:", error);
-
         let errorMessage = "Speech synthesis failed";
         if (error.message.includes("No audio content")) {
           errorMessage =
@@ -210,7 +178,7 @@ export const TTSProvider = ({ children }) => {
         currentAudioRef.current.currentTime = 0;
         currentAudioRef.current = null;
       } catch (error) {
-        console.warn("Error stopping audio:", error);
+        // Silently handle audio stop errors
       }
     }
 

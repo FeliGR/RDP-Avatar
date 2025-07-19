@@ -20,17 +20,15 @@ export const DialogProvider = ({ children }) => {
   const { personalityTraits, apiAvailable: personalityApiAvailable } = usePersonality();
   const { triggerAIResponseAnimation } = useAvatarAnimation();
   const { speak, isAvailable: ttsAvailable } = useTTS();
-  
-  // Use refs to get current values in callbacks
+
   const ttsAvailableRef = useRef(ttsAvailable);
   const speakRef = useRef(speak);
-  
-  // Update refs when values change
+
   useEffect(() => {
     ttsAvailableRef.current = ttsAvailable;
     speakRef.current = speak;
   }, [ttsAvailable, speak]);
-  
+
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -89,7 +87,6 @@ export const DialogProvider = ({ children }) => {
         const botMessage = createMessage(responseText, "bot", !dialogApiAvailable);
         setMessages((prevMessages) => [...prevMessages, botMessage]);
 
-        // Use refs to get current values instead of stale closure values
         const currentTtsAvailable = ttsAvailableRef.current;
         const currentSpeak = speakRef.current;
 
@@ -118,7 +115,7 @@ export const DialogProvider = ({ children }) => {
       fetchBotResponse,
       createMessage,
       triggerAIResponseAnimation,
-      ttsAvailable, // Make sure this is included to get fresh values
+      ttsAvailable,
       speak,
     ],
   );

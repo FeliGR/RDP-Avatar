@@ -98,31 +98,23 @@ export const RealTimeConversationProvider = ({ children }) => {
       },
 
       onInterimResult: (transcript, confidence) => {
-        console.log("🎤 Interim result:", transcript, "confidence:", confidence);
         setInterimText(transcript);
 
-        // Clear existing timer
         if (silenceTimerRef.current) {
           clearTimeout(silenceTimerRef.current);
         }
 
-        // Only set silence timer if we have meaningful interim text
         if (conversationConfig.autoProcessing && transcript && transcript.trim().length > 2) {
-          console.log("⏲️ Setting silence timer for interim result");
           silenceTimerRef.current = setTimeout(() => {
             const finalText = finalTranscriptRef.current.trim();
             if (finalText && finalText.length > 2) {
-              console.log("⏰ Silence timer triggered, processing:", finalText);
               handleProcessTranscript();
-            } else {
-              console.log("⏰ Silence timer triggered but no final text");
             }
           }, conversationConfig.silenceThreshold);
         }
       },
 
       onFinalResult: (transcript, confidence, metadata = {}) => {
-        console.log("✅ Final result:", transcript, "confidence:", confidence);
         finalTranscriptRef.current = transcript;
         setInterimText("");
 
@@ -130,12 +122,13 @@ export const RealTimeConversationProvider = ({ children }) => {
           clearTimeout(silenceTimerRef.current);
         }
 
-        // Only process if we have meaningful text and good confidence
-        if (conversationConfig.autoProcessing && transcript && transcript.trim().length > 2 && confidence > 0.15) {
-          console.log("🚀 Auto-processing final result");
+        if (
+          conversationConfig.autoProcessing &&
+          transcript &&
+          transcript.trim().length > 2 &&
+          confidence > 0.15
+        ) {
           handleProcessTranscript();
-        } else {
-          console.log("⏭️ Skipping auto-processing - length:", transcript?.length, "confidence:", confidence);
         }
       },
 
@@ -183,32 +176,24 @@ export const RealTimeConversationProvider = ({ children }) => {
     isPlaying,
     isProcessing,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // handleProcessTranscript creates circular dependency, using refs instead
   ]);
 
   const handleProcessTranscript = useCallback(async () => {
     const transcript = finalTranscriptRef.current.trim();
 
-    // Strict validation - only process meaningful speech
     if (!transcript || transcript.length < 3) {
-      console.log("🔍 Skipping processing - transcript too short or empty:", transcript);
       return;
     }
 
     if (isProcessing) {
-      console.log("🔄 Already processing, ignoring new transcript");
       return;
     }
 
-    // Additional check for meaningless transcripts (just noise, filler words, etc.)
     const meaninglessPatterns = /^(um|uh|hmm|ah|er|the|a|and|but|so|well)$/i;
     if (meaninglessPatterns.test(transcript)) {
-      console.log("🚫 Skipping processing - meaningless transcript:", transcript);
-      finalTranscriptRef.current = ""; // Clear it so we don't process it again
+      finalTranscriptRef.current = "";
       return;
     }
-
-    console.log("🎯 Processing transcript:", transcript);
 
     let hadTTSResponse = false;
 
@@ -241,13 +226,11 @@ export const RealTimeConversationProvider = ({ children }) => {
         processingTimeoutRef.current = null;
       }
 
-      // Check if we got a response that will trigger TTS
-      hadTTSResponse = response && (
-        typeof response === 'string' || 
-        (typeof response === 'object' && (response.message || response.text || response.content))
-      );
-
-      console.log("📧 Got response:", hadTTSResponse ? "Yes" : "No", response);
+      hadTTSResponse =
+        response &&
+        (typeof response === "string" ||
+          (typeof response === "object" &&
+            (response.message || response.text || response.content)));
 
       finalTranscriptRef.current = "";
     } catch (error) {
@@ -257,46 +240,35 @@ export const RealTimeConversationProvider = ({ children }) => {
       setIsProcessing(false);
       isProcessingRef.current = false;
 
-      // Only restart listening in continuous mode if we actually processed something meaningful
-      // and got a response (which means TTS will play)
       if (isContinuousModeRef.current && hadTTSResponse) {
-        console.log("🔄 Waiting for TTS to complete before restarting listening");
-        
-        // Wait for TTS to finish, then restart
         let ttsCheckCount = 0;
-        const maxTtsChecks = 40; // Increased to handle longer responses
+        const maxTtsChecks = 40;
 
         const checkTTSComplete = () => {
           ttsCheckCount++;
 
           if (!isPlaying || ttsCheckCount >= maxTtsChecks) {
-            console.log("✅ TTS completed, restarting listening immediately");
-            // Small delay to ensure TTS has fully stopped, but keep it minimal for responsiveness
             setTimeout(async () => {
-              if (isContinuousModeRef.current) { // Double-check continuous mode is still active
+              if (isContinuousModeRef.current) {
                 const restartSuccess = await restartListening();
                 if (!restartSuccess) {
-                  console.log("❌ Failed to restart listening, disabling continuous mode");
                   setIsContinuousMode(false);
                   setConversationState("idle");
                   conversationStateRef.current = "idle";
                 }
               }
-            }, 500); // Much shorter delay for better responsiveness
+            }, 500);
           } else {
             setTimeout(checkTTSComplete, 500);
           }
         };
-        
-        // Start checking after a brief delay
+
         setTimeout(checkTTSComplete, 1000);
       } else {
-        // Either not in continuous mode, or no valid response (no TTS will play)
         setConversationState("idle");
         conversationStateRef.current = "idle";
       }
 
-      // Safety timeout to prevent hanging in processing state
       setTimeout(() => {
         if (isProcessingRef.current) {
           setIsProcessing(false);
@@ -314,7 +286,6 @@ export const RealTimeConversationProvider = ({ children }) => {
     lastRestartTime,
     conversationConfig.restartDelay,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // stopListening and restartListening create circular dependencies, using refs instead
   ]);
 
   const restartListening = useCallback(async () => {

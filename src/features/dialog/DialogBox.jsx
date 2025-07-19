@@ -26,33 +26,26 @@ const DialogBox = ({ isVisible = true }) => {
   } = useRealTimeConversation();
   useTTS();
 
-  // Use refs to track current values for cleanup
   const isRealTimeActiveRef = useRef(isRealTimeActive);
   const stopRealTimeConversationRef = useRef(stopRealTimeConversation);
 
-  // Update refs whenever values change
   useEffect(() => {
     isRealTimeActiveRef.current = isRealTimeActive;
     stopRealTimeConversationRef.current = stopRealTimeConversation;
   }, [isRealTimeActive, stopRealTimeConversation]);
 
-  // Stop real-time conversation when panel becomes hidden
   useEffect(() => {
     if (!isVisible && isRealTimeActive) {
       stopRealTimeConversation();
     }
   }, [isVisible, isRealTimeActive, stopRealTimeConversation]);
 
-  // Cleanup effect to stop real-time conversation when component unmounts
   useEffect(() => {
     return () => {
-      // Use ref to get current value without causing effect re-runs
       if (isRealTimeActiveRef.current) {
         stopRealTimeConversationRef.current();
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    // Empty dependency array - cleanup only runs on actual component unmount
   }, []);
 
   const toggleRealTimeMode = async () => {

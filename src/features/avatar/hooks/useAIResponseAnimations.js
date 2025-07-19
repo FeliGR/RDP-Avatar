@@ -114,12 +114,7 @@ export const useAIResponseAnimations = (
         isProcessingRef.current = false;
       }
     },
-    [
-      animationService,
-      isCharacterReady,
-      startSpecificIdleAnimation,
-      playMessageResponseAnimation,
-    ],
+    [animationService, isCharacterReady, startSpecificIdleAnimation, playMessageResponseAnimation],
   );
 
   return {

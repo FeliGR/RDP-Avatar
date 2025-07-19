@@ -13,7 +13,6 @@ const useScrollToBottom = (ref, dependencies = []) => {
       }, 50);
     }
   }, [ref, ...dependencies]); // eslint-disable-line react-hooks/exhaustive-deps
-  // Dependencies are spread from function parameters, which is acceptable for this use case
 };
 
 export default useScrollToBottom;

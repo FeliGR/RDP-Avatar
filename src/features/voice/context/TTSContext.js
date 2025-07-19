@@ -89,15 +89,12 @@ export const TTSProvider = ({ children }) => {
         return false;
       }
 
-      // Stop current audio if playing
       if (currentAudioRef.current) {
         try {
           currentAudioRef.current.pause();
           currentAudioRef.current.currentTime = 0;
           currentAudioRef.current = null;
-        } catch (error) {
-          // Silently handle audio stop errors
-        }
+        } catch (error) {}
       }
       setIsPlaying(false);
       await stopTalkingAnimations();
@@ -110,7 +107,6 @@ export const TTSProvider = ({ children }) => {
         const audio = ttsServiceRef.current.createAudioElement(base64Audio);
         currentAudioRef.current = audio;
 
-        // Configure audio settings
         audio.volume = 1.0;
         audio.muted = false;
 
@@ -138,7 +134,6 @@ export const TTSProvider = ({ children }) => {
         try {
           await audio.play();
         } catch (playError) {
-          // Handle autoplay restrictions
           if (playError.name === "NotAllowedError") {
             setError("Audio blocked - please click to enable sound");
           }
@@ -177,9 +172,7 @@ export const TTSProvider = ({ children }) => {
         currentAudioRef.current.pause();
         currentAudioRef.current.currentTime = 0;
         currentAudioRef.current = null;
-      } catch (error) {
-        // Silently handle audio stop errors
-      }
+      } catch (error) {}
     }
 
     setIsPlaying(false);

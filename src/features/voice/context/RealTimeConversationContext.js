@@ -259,8 +259,6 @@ export const RealTimeConversationProvider = ({ children }) => {
 
       // Only restart listening in continuous mode if we actually processed something meaningful
       // and got a response (which means TTS will play)
-      console.log("🔍 Checking restart conditions - continuous mode:", isContinuousModeRef.current, "had TTS response:", hadTTSResponse);
-      
       if (isContinuousModeRef.current && hadTTSResponse) {
         console.log("🔄 Waiting for TTS to complete before restarting listening");
         
@@ -270,7 +268,6 @@ export const RealTimeConversationProvider = ({ children }) => {
 
         const checkTTSComplete = () => {
           ttsCheckCount++;
-          console.log(`🎵 TTS Check ${ttsCheckCount}/${maxTtsChecks}, isPlaying:`, isPlaying);
 
           if (!isPlaying || ttsCheckCount >= maxTtsChecks) {
             console.log("✅ TTS completed, restarting listening immediately");
@@ -295,7 +292,6 @@ export const RealTimeConversationProvider = ({ children }) => {
         setTimeout(checkTTSComplete, 1000);
       } else {
         // Either not in continuous mode, or no valid response (no TTS will play)
-        console.log("🛑 Not restarting listening - continuous mode:", isContinuousModeRef.current, "had valid response:", hadTTSResponse);
         setConversationState("idle");
         conversationStateRef.current = "idle";
       }
@@ -303,7 +299,6 @@ export const RealTimeConversationProvider = ({ children }) => {
       // Safety timeout to prevent hanging in processing state
       setTimeout(() => {
         if (isProcessingRef.current) {
-          console.log("⏰ Safety timeout - clearing processing state");
           setIsProcessing(false);
           isProcessingRef.current = false;
           setConversationState("idle");
@@ -323,24 +318,17 @@ export const RealTimeConversationProvider = ({ children }) => {
   ]);
 
   const restartListening = useCallback(async () => {
-    console.log("🔄 Attempting to restart listening - continuous mode:", isContinuousModeRef.current, "processing:", isProcessingRef.current);
-    
     if (!isContinuousModeRef.current || isProcessingRef.current) {
-      console.log("❌ Cannot restart - continuous mode disabled or still processing");
       return false;
     }
 
     try {
       if (!sttServiceRef.current) {
-        console.log("❌ STT Service not available");
         return false;
       }
 
       const available = await sttServiceRef.current.checkAvailability();
-      console.log("🔍 STT Service availability check:", available);
-      
       if (!available) {
-        console.log("❌ STT Service not available after check");
         setIsAvailable(false);
         return false;
       }
@@ -351,26 +339,19 @@ export const RealTimeConversationProvider = ({ children }) => {
       conversationStateRef.current = "listening";
 
       setupSTTCallbacks();
-      console.log("⚙️ STT Callbacks setup complete");
 
       const success = await sttServiceRef.current.startStreaming({
         interimResults: conversationConfig.interimResultsEnabled,
         singleUtterance: false,
       });
 
-      console.log("🎤 STT Streaming start result:", success);
-
       if (!success) {
-        console.log("❌ Failed to start STT streaming");
         setConversationState("idle");
         conversationStateRef.current = "idle";
-      } else {
-        console.log("✅ Successfully restarted listening");
       }
 
       return success;
     } catch (error) {
-      console.error("❌ Error in restartListening:", error);
       setConversationState("idle");
       conversationStateRef.current = "idle";
       setIsAvailable(false);

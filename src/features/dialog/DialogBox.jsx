@@ -39,7 +39,6 @@ const DialogBox = ({ isVisible = true }) => {
   // Stop real-time conversation when panel becomes hidden
   useEffect(() => {
     if (!isVisible && isRealTimeActive) {
-      console.log("🙈 Chat panel hidden - stopping real-time conversation");
       stopRealTimeConversation();
     }
   }, [isVisible, isRealTimeActive, stopRealTimeConversation]);
@@ -47,10 +46,8 @@ const DialogBox = ({ isVisible = true }) => {
   // Cleanup effect to stop real-time conversation when component unmounts
   useEffect(() => {
     return () => {
-      console.log("🧹 DialogBox unmounting - checking if real-time conversation is active");
       // Use ref to get current value without causing effect re-runs
       if (isRealTimeActiveRef.current) {
-        console.log("🧹 DialogBox unmounting - stopping real-time conversation");
         stopRealTimeConversationRef.current();
       }
     };

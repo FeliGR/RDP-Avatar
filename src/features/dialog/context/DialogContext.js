@@ -31,11 +31,6 @@ export const DialogProvider = ({ children }) => {
     speakRef.current = speak;
   }, [ttsAvailable, speak]);
   
-  // Add logging to track TTS availability in DialogContext
-  useEffect(() => {
-    console.log("🔊 DialogContext: TTS availability changed to:", ttsAvailable);
-  }, [ttsAvailable]);
-  
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -100,21 +95,13 @@ export const DialogProvider = ({ children }) => {
 
         if (currentTtsAvailable && dialogApiAvailable && responseText) {
           try {
-            console.log("🔊 Attempting to speak AI response:", responseText);
-            console.log("🔊 TTS Available:", currentTtsAvailable, "Dialog API Available:", dialogApiAvailable);
-            console.log("🔊 Current TTS values - Available:", currentTtsAvailable, "Speak function exists:", !!currentSpeak);
             if (triggerAIResponseAnimation) {
               triggerAIResponseAnimation("all");
             }
             await currentSpeak(responseText);
-            console.log("🔊 TTS speak completed successfully");
           } catch (ttsError) {
             console.warn("TTS failed for AI response:", ttsError);
-            console.error("🔊 TTS Error details:", ttsError);
           }
-        } else {
-          console.log("🔊 TTS not triggered - TTS Available:", currentTtsAvailable, "Dialog API Available:", dialogApiAvailable, "Response Text:", !!responseText);
-          console.log("🔊 Debug - speak function exists:", !!currentSpeak);
         }
 
         return botMessage;

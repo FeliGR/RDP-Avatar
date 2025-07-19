@@ -8,11 +8,6 @@ export const MODELS = {
   BASE: "/assets/models/base.glb",
 };
 
-export const T_POSE = {
-  FEMININE: "/animations/feminine/Feminine_TPose.glb",
-  MASCULINE: "/animations/masculine/Masculine_TPose.glb",
-};
-
 export const IDLE_ANIMATIONS = {
   FEMININE: {
     F_STANDING_IDLE_001: "/animations/feminine/idle/F_Standing_Idle_001.glb",
@@ -179,60 +174,12 @@ export const isGlbFile = (path) => {
   return typeof path === "string" && path.endsWith(".glb");
 };
 
-export const ensureGlbExtension = (path) => {
-  return isGlbFile(path) ? path : `${path}.glb`;
-};
-
 export const ANIMATION_NAMES = {
   DEFAULT_FEMININE_IDLE: "F_Standing_Idle_Variations_002",
-  DEFAULT_MASCULINE_IDLE: "M_Standing_Idle_Variations_001",
-
-  MASCULINE_IDLE_002: "M_Standing_Idle_Variations_002",
-  MASCULINE_IDLE_003: "M_Standing_Idle_Variations_003",
-
-  IDLE_VARIATIONS_001: "Idle_Variations_001",
-  IDLE_VARIATIONS_002: "Idle_Variations_002",
-  IDLE_VARIATIONS_003: "Idle_Variations_003",
-
-  MASCULINE_TALKING_005: "M_Talking_Variations_005",
-  MASCULINE_TALKING_006: "M_Talking_Variations_006",
-  MASCULINE_TALKING_007: "M_Talking_Variations_007",
-
-  MASCULINE_EXPRESSION_001: "M_Standing_Expressions_001",
-  MASCULINE_EXPRESSION_002: "M_Standing_Expressions_002",
-
-  MASCULINE_DANCE_001: "M_Dances_001",
-  MASCULINE_DANCE_002: "M_Dances_002",
-};
-
-export const getPathFromAnimationName = (animationName) => {
-  const allAnimations = {
-    ...IDLE_ANIMATIONS.FEMININE,
-    ...IDLE_ANIMATIONS.MASCULINE,
-    ...EXPRESSION_ANIMATIONS.FEMININE,
-    ...EXPRESSION_ANIMATIONS.MASCULINE,
-    ...DANCE_ANIMATIONS.FEMININE,
-    ...DANCE_ANIMATIONS.MASCULINE,
-  };
-
-  for (const [key, path] of Object.entries(allAnimations)) {
-    if (key === animationName) {
-      return path;
-    }
-  }
-
-  for (const [, path] of Object.entries(allAnimations)) {
-    if (path.includes(animationName)) {
-      return path;
-    }
-  }
-
-  return null;
 };
 
 const glbAssets = {
   MODELS,
-  T_POSE,
   IDLE_ANIMATIONS,
   EXPRESSION_ANIMATIONS,
   DANCE_ANIMATIONS,
@@ -240,9 +187,7 @@ const glbAssets = {
   getAnimationArrays,
   getAnimationsByCategory,
   getAnimationNameFromPath,
-  getPathFromAnimationName,
   isGlbFile,
-  ensureGlbExtension,
 };
 
 export default glbAssets;

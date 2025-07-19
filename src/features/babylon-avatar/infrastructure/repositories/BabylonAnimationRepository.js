@@ -7,7 +7,6 @@ export class BabylonAnimationRepository extends IAnimationRepository {
   constructor(scene) {
     super();
     this.scene = scene;
-    this.animationsGLB = [];
     this.animationMeshesToCleanup = [];
   }
 
@@ -122,10 +121,6 @@ export class BabylonAnimationRepository extends IAnimationRepository {
   }
 
   _storeAnimationMeshesForCleanup(meshes) {
-    meshes.forEach((mesh) => {
-      if (mesh._isOfficeEnvironment) {
-      }
-    });
     this.animationMeshesToCleanup.push(...meshes);
   }
 

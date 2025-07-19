@@ -16,48 +16,4 @@ export class Animation {
     this.isLooping = isLooping;
     this.frameRange = frameRange;
   }
-
-  static createIdle(name, duration) {
-    return new Animation({
-      name,
-      type: "idle",
-      duration,
-      isLooping: true,
-    });
-  }
-
-  static createTalking(name, duration) {
-    return new Animation({
-      name,
-      type: "talking",
-      duration,
-      isLooping: false,
-      weight: 0.75,
-    });
-  }
-
-  static createExpression(name, duration) {
-    return new Animation({
-      name,
-      type: "expression",
-      duration,
-      isLooping: false,
-    });
-  }
-}
-
-export class AnimationBlend {
-  constructor({
-    fromAnimation,
-    toAnimation,
-    blendSpeed = 0.02,
-    maxWeight = 1.0,
-    frameRange = null,
-  }) {
-    this.fromAnimation = fromAnimation;
-    this.toAnimation = toAnimation;
-    this.blendSpeed = blendSpeed;
-    this.maxWeight = maxWeight;
-    this.frameRange = frameRange;
-  }
 }

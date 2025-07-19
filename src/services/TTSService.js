@@ -115,6 +115,7 @@ class TTSService {
    */
   async checkAvailability() {
     try {
+      console.log("🔊 TTS Service: Checking availability at", `${this.baseUrl}/api/tts`);
       const response = await fetch(`${this.baseUrl}/api/tts`, {
         method: "POST",
         headers: {
@@ -123,9 +124,11 @@ class TTSService {
         body: JSON.stringify({ text: "test" }),
       });
 
+      console.log("🔊 TTS Service: Response status:", response.status, "OK:", response.ok);
       return response.ok;
     } catch (error) {
-      console.warn("TTS service unavailable:", error);
+      console.warn("🔊 TTS service unavailable:", error.message);
+      console.error("🔊 TTS connection error details:", error);
       return false;
     }
   }

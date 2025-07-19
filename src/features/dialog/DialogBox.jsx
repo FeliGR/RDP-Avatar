@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { usePersonality } from "../personality";
 import "./DialogBox.css";
 import { useDialog } from "./context/DialogContext";
@@ -8,7 +8,7 @@ import useVoiceCommands from "./hooks/useVoiceCommands";
 import { useTTS } from "../voice/context/TTSContext";
 import { useRealTimeConversation } from "../voice";
 
-const DialogBox = () => {
+const DialogBox = ({ isVisible = true }) => {
   const { messages, sendUserMessage, isLoading } = useDialog();
   const { updateTrait, personalityTraits } = usePersonality();
   const { isListening, statusMessage, toggleVoiceInput } = useVoiceCommands(
@@ -25,6 +25,38 @@ const DialogBox = () => {
     isContinuousMode,
   } = useRealTimeConversation();
   useTTS();
+
+  // Use refs to track current values for cleanup
+  const isRealTimeActiveRef = useRef(isRealTimeActive);
+  const stopRealTimeConversationRef = useRef(stopRealTimeConversation);
+
+  // Update refs whenever values change
+  useEffect(() => {
+    isRealTimeActiveRef.current = isRealTimeActive;
+    stopRealTimeConversationRef.current = stopRealTimeConversation;
+  }, [isRealTimeActive, stopRealTimeConversation]);
+
+  // Stop real-time conversation when panel becomes hidden
+  useEffect(() => {
+    if (!isVisible && isRealTimeActive) {
+      console.log("🙈 Chat panel hidden - stopping real-time conversation");
+      stopRealTimeConversation();
+    }
+  }, [isVisible, isRealTimeActive, stopRealTimeConversation]);
+
+  // Cleanup effect to stop real-time conversation when component unmounts
+  useEffect(() => {
+    return () => {
+      console.log("🧹 DialogBox unmounting - checking if real-time conversation is active");
+      // Use ref to get current value without causing effect re-runs
+      if (isRealTimeActiveRef.current) {
+        console.log("🧹 DialogBox unmounting - stopping real-time conversation");
+        stopRealTimeConversationRef.current();
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Empty dependency array - cleanup only runs on actual component unmount
+  }, []);
 
   const toggleRealTimeMode = async () => {
     if (isRealTimeActive) {

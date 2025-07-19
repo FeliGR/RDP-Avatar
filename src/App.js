@@ -264,7 +264,7 @@ const App = () => {
             <div className={`side-panel chat-panel ${activePanel === "chat" ? "active" : ""}`}>
               <ChatPanelHeader onClose={() => setActivePanel(null)} />
               <div className="panel-content">
-                <DialogBox />
+                <DialogBox isVisible={activePanel === "chat"} />
               </div>
             </div>
             <div

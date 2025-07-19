@@ -20,6 +20,11 @@ export const TTSProvider = ({ children }) => {
   const currentAudioRef = useRef(null);
   const animationServiceRef = useRef(null);
 
+  // Add logging to track availability changes
+  useEffect(() => {
+    console.log("🔊 TTS availability changed to:", isAvailable);
+  }, [isAvailable]);
+
   const { animationService } = useAvatarAnimation();
 
   useEffect(() => {
@@ -29,14 +34,21 @@ export const TTSProvider = ({ children }) => {
   useEffect(() => {
     const initTTS = async () => {
       try {
+        console.log("🔊 Initializing TTS service...");
         ttsServiceRef.current = new TTSService();
+        console.log("🔊 TTS service created, checking availability...");
         const available = await ttsServiceRef.current.checkAvailability();
+        console.log("🔊 TTS availability check result:", available);
         setIsAvailable(available);
 
         if (!available) {
+          console.log("🔊 TTS service is not available - server connection failed");
           setError("TTS service is not available");
+        } else {
+          console.log("🔊 TTS service is available and ready");
         }
       } catch (error) {
+        console.error("🔊 TTS initialization error:", error);
         setError(error.message);
         setIsAvailable(false);
       }
@@ -81,13 +93,20 @@ export const TTSProvider = ({ children }) => {
    */
   const speak = useCallback(
     async (text, voiceConfig = null) => {
+      console.log("🎙️ TTS speak called with text:", text);
+      console.log("🎙️ TTS service available:", !!ttsServiceRef.current, "isAvailable:", isAvailable);
+      
       if (!ttsServiceRef.current || !isAvailable) {
+        console.log("🎙️ TTS not available - service:", !!ttsServiceRef.current, "available:", isAvailable);
         return false;
       }
 
       if (!text || typeof text !== "string") {
+        console.log("🎙️ Invalid text provided:", text);
         return false;
       }
+
+      console.log("🎙️ Starting TTS synthesis for:", text.substring(0, 50) + "...");
 
       // Stop current audio if playing
       if (currentAudioRef.current) {

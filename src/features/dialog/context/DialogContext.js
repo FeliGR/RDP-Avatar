@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useState } from "react";
+import React, { createContext, useCallback, useContext, useState, useEffect, useRef } from "react";
 import { sendMessage } from "../../../services/api";
 import { usePersonality } from "../../personality";
 import { useAvatarAnimation } from "../../avatar/context/AvatarAnimationContext";
@@ -20,6 +20,22 @@ export const DialogProvider = ({ children }) => {
   const { personalityTraits, apiAvailable: personalityApiAvailable } = usePersonality();
   const { triggerAIResponseAnimation } = useAvatarAnimation();
   const { speak, isAvailable: ttsAvailable } = useTTS();
+  
+  // Use refs to get current values in callbacks
+  const ttsAvailableRef = useRef(ttsAvailable);
+  const speakRef = useRef(speak);
+  
+  // Update refs when values change
+  useEffect(() => {
+    ttsAvailableRef.current = ttsAvailable;
+    speakRef.current = speak;
+  }, [ttsAvailable, speak]);
+  
+  // Add logging to track TTS availability in DialogContext
+  useEffect(() => {
+    console.log("🔊 DialogContext: TTS availability changed to:", ttsAvailable);
+  }, [ttsAvailable]);
+  
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -78,15 +94,27 @@ export const DialogProvider = ({ children }) => {
         const botMessage = createMessage(responseText, "bot", !dialogApiAvailable);
         setMessages((prevMessages) => [...prevMessages, botMessage]);
 
-        if (ttsAvailable && dialogApiAvailable && responseText) {
+        // Use refs to get current values instead of stale closure values
+        const currentTtsAvailable = ttsAvailableRef.current;
+        const currentSpeak = speakRef.current;
+
+        if (currentTtsAvailable && dialogApiAvailable && responseText) {
           try {
+            console.log("🔊 Attempting to speak AI response:", responseText);
+            console.log("🔊 TTS Available:", currentTtsAvailable, "Dialog API Available:", dialogApiAvailable);
+            console.log("🔊 Current TTS values - Available:", currentTtsAvailable, "Speak function exists:", !!currentSpeak);
             if (triggerAIResponseAnimation) {
               triggerAIResponseAnimation("all");
             }
-            await speak(responseText);
+            await currentSpeak(responseText);
+            console.log("🔊 TTS speak completed successfully");
           } catch (ttsError) {
             console.warn("TTS failed for AI response:", ttsError);
+            console.error("🔊 TTS Error details:", ttsError);
           }
+        } else {
+          console.log("🔊 TTS not triggered - TTS Available:", currentTtsAvailable, "Dialog API Available:", dialogApiAvailable, "Response Text:", !!responseText);
+          console.log("🔊 Debug - speak function exists:", !!currentSpeak);
         }
 
         return botMessage;
@@ -103,7 +131,7 @@ export const DialogProvider = ({ children }) => {
       fetchBotResponse,
       createMessage,
       triggerAIResponseAnimation,
-      ttsAvailable,
+      ttsAvailable, // Make sure this is included to get fresh values
       speak,
     ],
   );

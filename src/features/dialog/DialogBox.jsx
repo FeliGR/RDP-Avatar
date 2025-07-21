@@ -50,14 +50,14 @@ const DialogBox = ({ isVisible = true }) => {
 
   const toggleUnifiedVoiceMode = async () => {
     if (isRealTimeActive) {
-      // Exit real-time mode
+      
       await stopRealTimeConversation();
     } else if (isListening) {
-      // Stop dictate mode and switch to real-time mode
-      toggleVoiceInput(); // Stop dictate
-      await startRealTimeConversation(true); // Start real-time
+      
+      toggleVoiceInput(); 
+      await startRealTimeConversation(true); 
     } else {
-      // Start real-time mode directly
+      
       await startRealTimeConversation(true);
     }
   };

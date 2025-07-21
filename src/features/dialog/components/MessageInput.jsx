@@ -62,9 +62,9 @@ const MessageInput = ({
   return (
     <div className="message-input-container">
       <form onSubmit={handleSubmit} className="message-input-form">
-        <VoiceInput 
-          isListening={isListening} 
-          disabled={isLoading} 
+        <VoiceInput
+          isListening={isListening}
+          disabled={isLoading}
           onClick={onToggleVoice}
           isRealTimeMode={isRealTimeMode}
         />

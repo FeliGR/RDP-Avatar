@@ -102,7 +102,7 @@ export const TTSProvider = ({ children }) => {
           currentAudioRef.current = null;
         } catch (error) {}
       }
-      
+
       setIsPlaying(false);
 
       try {
@@ -125,12 +125,12 @@ export const TTSProvider = ({ children }) => {
 
         const handleEnded = async () => {
           setIsPlaying(false);
-          
-          // Simple transition back to idle like reference code 
+
+          // Simple transition back to idle like reference code
           setTimeout(async () => {
             await stopTalkingAnimations();
           }, 1000);
-          
+
           currentAudioRef.current = null;
         };
 

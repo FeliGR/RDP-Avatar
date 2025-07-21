@@ -41,7 +41,7 @@ export class PlayIdleAnimationUseCase {
       await this.animationController.playAnimationWithBlending(character, initialAnimation, {
         isLooping: true,
         speedRatio: 0.8, // Start slower, more natural like reference code
-        transitionSpeed: 0.02, // Use reference code speed for consistency
+        transitionDuration: 0.4, // Time-based transition (400ms)
         maxWeight: 1.0,
       });
 
@@ -122,7 +122,7 @@ export class PlayIdleAnimationUseCase {
         .playAnimationWithBlending(character, nextAnimation, {
           isLooping: true,
           speedRatio: 0.8, // Consistent with other idle animations
-          transitionSpeed: 0.02, // Match reference code speed for all idle transitions
+          transitionDuration: 0.3, // Slightly faster cycling transitions
           maxWeight: 1.0,
         })
         .then(() => {
@@ -243,16 +243,36 @@ export class PlayIdleAnimationUseCase {
       const randomAnimation =
         availableAnimations[Math.floor(Math.random() * availableAnimations.length)];
 
-      // Simple direct transition like reference code - no complex weight progression
+      // Get the animation group to determine frame range
+      const animGroup = this.animationController.getAnimationGroup
+        ? this.animationController.getAnimationGroup(character, randomAnimation)
+        : null;
+      let frameStart = 0;
+      if (animGroup && animGroup.to && animGroup.from !== undefined) {
+        // Pick a random frame within the animation's range
+        frameStart = animGroup.from + Math.random() * (animGroup.to - animGroup.from);
+      }
+
+      console.log(
+        `[Idle Resume] Transitioning from talking back to idle: ${randomAnimation} (start frame: ${frameStart})`,
+      );
+
+      // Smooth transition to idle, starting at a random frame
       await this.animationController.playAnimationWithBlending(character, randomAnimation, {
         isLooping: true,
-        speedRatio: 0.8, 
-        transitionSpeed: 0.02, // Match reference code exactly
-        maxWeight: 0.8, // Use reference code's maxWeight for smooth blending back to idle
+        speedRatio: 0.8,
+        transitionDuration: 0.5, // Slightly longer for talking->idle transition
+        maxWeight: 0.8,
+        frameStart,
       });
 
       this.morphTargetController.startAutomaticFacialAnimations(character);
-      this._setupIdleVariationCycling(character, availableAnimations);
+
+      // Wait longer before setting up idle cycling to prevent immediate transitions
+      console.log("[Idle Resume] Delaying idle cycling setup to prevent immediate transitions...");
+      setTimeout(() => {
+        this._setupIdleVariationCycling(character, availableAnimations);
+      }, 3000); // 3 second delay before idle cycling resumes
 
       return {
         success: true,

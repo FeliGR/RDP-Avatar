@@ -105,7 +105,7 @@ src/
 Find avatar animations in the `public/animations/` directory:
 
 - `feminine/` & `masculine/` - Gender-specific animations
-  - `expression/` - Facial expressions and emotes  
+  - `expression/` - Facial expressions and emotes
   - `idle/` - Default standing and waiting animations
 
 ## License

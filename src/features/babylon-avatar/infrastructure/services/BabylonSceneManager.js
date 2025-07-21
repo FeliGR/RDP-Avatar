@@ -10,7 +10,7 @@ export class BabylonSceneManager extends ISceneManager {
     this.beforeRenderCallbacks = new Set();
     this.officeEnvironment = new OfficeEnvironmentService(scene, shadowGenerator);
     this.environmentInitialized = false;
-    
+
     // Initialize Babylon.js audio engine early
     this._initializeAudioEngine();
   }

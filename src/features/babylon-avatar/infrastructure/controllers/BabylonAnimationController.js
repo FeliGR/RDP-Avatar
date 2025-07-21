@@ -27,361 +27,117 @@ export class BabylonAnimationController extends IAnimationController {
   }
 
   async playAnimationWithTransition(character, animationName, options = {}) {
-    const targetAnimationGroup = character.getAnimationGroup(animationName);
-    if (!targetAnimationGroup) {
-      throw new Error(`Animation '${animationName}' not found`);
-    }
-    const {
-      isLooping = false,
-      speedRatio = 1.0,
-      frameStart = 0,
-      frameEnd = null,
-      transitionDuration = 0.3,
-    } = options;
-    targetAnimationGroup.speedRatio = speedRatio;
-    const endFrame = frameEnd || targetAnimationGroup.to || targetAnimationGroup.duration;
-    const currentAnimation = character.currentAnimation;
-    if (!currentAnimation || !currentAnimation.isPlaying) {
-      this._resetAllAnimationWeights(character);
-      targetAnimationGroup.start(isLooping, speedRatio, frameStart, endFrame, false);
-      character.setCurrentAnimation(targetAnimationGroup);
-      return Promise.resolve();
-    }
-    const blendSpeed = Math.max(0.008, Math.min(0.05, 1.0 / (transitionDuration * 60)));
-    return new Promise((resolve) => {
-      this.scene.onBeforeRenderObservable.runCoroutineAsync(
-        this._smoothAnimationBlending(
-          currentAnimation,
-          targetAnimationGroup,
-          blendSpeed,
-          isLooping,
-          speedRatio,
-          frameStart,
-          endFrame,
-          character,
-          resolve,
-        ),
-      );
-    });
-  }
-
-  _resetAllAnimationWeights(character) {
-    if (character.animationGroups) {
-      character.animationGroups.forEach((animGroup) => {
-        try {
-          if (!animGroup.isPlaying) {
-            animGroup.setWeightForAllAnimatables(1);
-          }
-        } catch (error) {
-          console.warn("Error resetting animation group:", error);
-        }
-      });
-    }
-  }
-
-  *_smoothAnimationBlending(
-    fromAnim,
-    toAnim,
-    speed,
-    isLooping,
-    speedRatio,
-    frameStart,
-    frameEnd,
-    character,
-    onComplete,
-  ) {
-    let currentWeight = 1;
-    let newWeight = 0;
-    try {
-      toAnim.start(isLooping, speedRatio, frameStart, frameEnd, false);
-      fromAnim.speedRatio = speedRatio;
-      toAnim.speedRatio = speedRatio;
-      fromAnim.setWeightForAllAnimatables(1);
-      toAnim.setWeightForAllAnimatables(0);
-    } catch (error) {
-      console.warn("Error setting up animation blending:", error);
-    }
-    while (newWeight < 1) {
-      newWeight += speed;
-      currentWeight -= speed;
-      newWeight = Math.min(newWeight, 1);
-      currentWeight = Math.max(currentWeight, 0);
-      try {
-        toAnim.setWeightForAllAnimatables(newWeight);
-        fromAnim.setWeightForAllAnimatables(currentWeight);
-      } catch (error) {
-        console.warn("Error during animation blending:", error);
-        break;
-      }
-      yield;
-    }
-    try {
-      toAnim.setWeightForAllAnimatables(1);
-      fromAnim.setWeightForAllAnimatables(0);
-      setTimeout(() => {
-        try {
-          fromAnim.stop();
-        } catch (error) {
-          console.warn("Error stopping previous animation:", error);
-        }
-      }, 50);
-    } catch (error) {
-      console.warn("Error in final animation cleanup:", error);
-    }
-    character.setCurrentAnimation(toAnim);
-    if (onComplete) {
-      onComplete();
-    }
+    // Redirect to new time-based method
+    return this.playAnimationWithBlending(character, animationName, options);
   }
 
   async blendAnimations(character, blendConfig) {
-    const { fromAnimation, toAnimation, blendSpeed, maxWeight, frameRange } = blendConfig;
-    return new Promise((resolve) => {
-      this.scene.onBeforeRenderObservable.runCoroutineAsync(
-        this._animationBlendingCoroutine(
-          fromAnimation,
-          toAnimation,
-          blendSpeed,
-          maxWeight,
-          frameRange,
-          character,
-          resolve,
-        ),
-      );
+    // Redirect to new time-based method
+    const { toAnimation, maxWeight } = blendConfig;
+    return this.playAnimationWithBlending(character, toAnimation, {
+      maxWeight,
+      transitionDuration: 0.4,
     });
   }
 
-  *_animationBlendingCoroutine(
-    fromAnim,
-    toAnim,
-    speed,
-    maxWeight = 1,
-    frameRange = null,
-    character = null,
-    onComplete = null,
-  ) {
-    const frameIn = frameRange?.start || 0;
-    const frameOut = frameRange?.end || toAnim.duration;
-    let currentWeight = 1;
-    let newWeight = 0;
-    fromAnim.stop();
-    toAnim.start(false, toAnim.speedRatio, frameIn, frameOut, false);
-    while (newWeight < maxWeight) {
-      newWeight += speed;
-      currentWeight -= speed;
-      toAnim.setWeightForAllAnimatables(newWeight);
-      fromAnim.setWeightForAllAnimatables(currentWeight);
-      yield;
-    }
-    if (character) {
-      character.setCurrentAnimation(toAnim);
-    }
-    if (onComplete) {
-      onComplete();
-    }
-  } /**
-   * EXACT animation blending like the reference JavaScript code
-   * Simple, clean, and smooth - just like the reference
-   */
-    /**
-   * UNIFIED animation blending - this is the ONLY method used for all transitions
-   * Matches the reference code behavior exactly
-   */
-  *animationBlending(
-    fromAnim,
-    fromAnimSpeedRatio,
-    toAnim,
-    toAnimSpeedRatio,
-    repeat,
-    speed,
-    toAnimFrameIn,
-    toAnimFrameOut,
-    maxWeight
-  ) {
-    if (!toAnimFrameIn) toAnimFrameIn = 0;
-    if (!toAnimFrameOut) toAnimFrameOut = toAnim.duration;
-    if (!maxWeight) maxWeight = 1;
-
-    console.log(`[Animation Blend] ${fromAnim?.name || 'none'} → ${toAnim.name} (speed: ${speed}, maxWeight: ${maxWeight})`);
-
-    let currentWeight = fromAnim ? 1 : 0; // Start with full weight on fromAnim
-    let newWeight = 0; // Start with zero weight on toAnim
-    
-    // Handle case where there's no previous animation
-    if (!fromAnim) {
-      toAnim.start(repeat, toAnimSpeedRatio, toAnimFrameIn, toAnimFrameOut, false);
-      toAnim.speedRatio = toAnimSpeedRatio;
-      toAnim.setWeightForAllAnimatables(maxWeight);
-      console.log(`[Animation Blend] No previous animation, starting ${toAnim.name} directly`);
-      return;
-    }
-    
-    // TRUE CROSS-FADE: Don't stop fromAnim - let both play during transition
-    // 1) Keep fromAnim playing at full weight, start toAnim at zero weight
-    if (!fromAnim.isPlaying) {
-      fromAnim.start(true, fromAnimSpeedRatio, 0, fromAnim.duration, false);
-    }
-    fromAnim.setWeightForAllAnimatables(1);
-    
-    toAnim.start(repeat, toAnimSpeedRatio, toAnimFrameIn, toAnimFrameOut, false);
-    toAnim.setWeightForAllAnimatables(0); // Start at zero weight
-    
-    // 2) Cross-fade: gradually shift weights while BOTH animations play
-    while (newWeight < maxWeight) {
-      newWeight = Math.min(maxWeight, newWeight + speed);
-      currentWeight = Math.max(0, currentWeight - speed);
-      
-      toAnim.setWeightForAllAnimatables(newWeight);
-      fromAnim.setWeightForAllAnimatables(currentWeight);
-      
-      yield; // Critical: yield control to render loop each frame
-    }
-    
-    // 3) Only NOW stop the old animation after blend is complete
-    toAnim.setWeightForAllAnimatables(maxWeight);
-    if (currentWeight <= 0) {
-      fromAnim.setWeightForAllAnimatables(0);
-      fromAnim.stop(); // Stop AFTER the blend is done
-    }
-    
-    console.log(`[Animation Blend] Completed transition to ${toAnim.name}`);
-  }
-
   /**
-   * UNIFIED method for ALL animation transitions
+   * Cross-fades two AnimationGroups over exactly transitionDuration seconds.
+   * Time-based cross-fade that's frame-rate independent.
    */
   async playAnimationWithBlending(character, animationName, options = {}) {
-    const targetAnimationGroup = character.getAnimationGroup(animationName);
-    if (!targetAnimationGroup) {
+    const target = character.getAnimationGroup(animationName);
+    if (!target) {
       throw new Error(`Animation '${animationName}' not found`);
     }
 
-    // Prevent duplicate transitions
-    if (this.isBlendingToAnimation(animationName)) {
+    // prevent double-blends
+    if (this.animationTransitions.has(animationName)) {
       return Promise.resolve();
     }
 
     const {
       isLooping = false,
       speedRatio = 1.0,
+      transitionDuration = 0.4, // seconds
+      maxWeight = 1.0,
       frameStart = 0,
       frameEnd = null,
-      transitionSpeed = 0.02, // Use reference code speed by default
-      maxWeight = 1.0,
-      animationOffset = 0,
     } = options;
 
-    const currentAnimation = character.currentAnimation;
-    const endFrame = frameEnd || targetAnimationGroup.to || targetAnimationGroup.duration;
-    const adjustedFrameStart = frameStart + animationOffset;
-    const adjustedFrameEnd = endFrame - animationOffset;
+    const from = character.currentAnimation;
+    const endFrame = frameEnd ?? target.to ?? target.duration;
+
+    // If there's no current, just start immediately
+    if (!from || !from.isPlaying) {
+      target.speedRatio = speedRatio;
+      target.start(isLooping, speedRatio, frameStart, endFrame, false);
+      target.setWeightForAllAnimatables(maxWeight);
+      character.setCurrentAnimation(target);
+      return Promise.resolve();
+    }
 
     // Skip if same animation
-    if (currentAnimation === targetAnimationGroup) {
+    if (from === target) {
       return Promise.resolve();
     }
 
-    // Track transition
-    this.animationTransitions.set(animationName, {
-      startTime: Date.now(),
-      fromAnimation: currentAnimation?.name,
-      toAnimation: animationName,
-    });
-
-    // Use our unified blending method
-    return new Promise((resolve) => {
-      this.scene.onBeforeRenderObservable
-        .runCoroutineAsync(
-          this.animationBlending(
-            currentAnimation,
-            speedRatio,
-            targetAnimationGroup,
-            speedRatio,
-            isLooping,
-            transitionSpeed,
-            adjustedFrameStart,
-            adjustedFrameEnd,
-            maxWeight,
-          ),
-        )
-        .then(() => {
-          // Set currentAnimation after blending completes
-          character.setCurrentAnimation(targetAnimationGroup);
-          this.animationTransitions.delete(animationName);
-          resolve();
-        })
-        .catch((error) => {
-          console.error("[Animation] Error in blending:", error);
-          this.animationTransitions.delete(animationName);
-          resolve();
-        });
-    });
-  }
-
-  /**
-   * Play animation with smooth blending transition
-   */
-  async playAnimationWithBlending(character, animationName, options = {}) {
-    const targetAnimationGroup = character.getAnimationGroup(animationName);
-    if (!targetAnimationGroup) {
-      throw new Error(`Animation '${animationName}' not found`);
-    }
-
-    if (this.isBlendingToAnimation(animationName)) {
-      return Promise.resolve();
-    }
-
-    const {
-      isLooping = false,
-      speedRatio = 1.0,
-      frameStart = 0,
-      frameEnd = null,
-      transitionSpeed = 0.02,
-      maxWeight = 1.0,
-      animationOffset = 0,
-    } = options;
-
-    const currentAnimation = character.currentAnimation;
-    const endFrame = frameEnd || targetAnimationGroup.to || targetAnimationGroup.duration;
-    const adjustedFrameStart = frameStart + animationOffset;
-    const adjustedFrameEnd = endFrame - animationOffset;
-
-    if (currentAnimation === targetAnimationGroup) {
-      return Promise.resolve();
-    }
-
-    this.animationTransitions.set(animationName, {
-      startTime: Date.now(),
-      fromAnimation: currentAnimation?.name,
-      toAnimation: animationName,
-    });
+    // 1) stop any idle observers so nothing re-fires midway
+    this.removeObservers(character);
 
     return new Promise((resolve) => {
-      this.scene.onBeforeRenderObservable
-        .runCoroutineAsync(
-          this.animationBlending(
-            currentAnimation,
-            speedRatio,
-            targetAnimationGroup,
-            speedRatio,
-            isLooping,
-            transitionSpeed,
-            adjustedFrameStart,
-            adjustedFrameEnd,
-            maxWeight,
-          ),
-        )
-        .then(() => {
-          // Set currentAnimation after blending completes (like reference code)
-          character.setCurrentAnimation(targetAnimationGroup);
+      this.animationTransitions.set(animationName, true);
+
+      const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+
+      const startTime = performance.now();
+      const durationMs = transitionDuration * 1000;
+
+      console.log(
+        `[Time-Based Blend] ${from?.name || "none"} → ${target.name} (${transitionDuration}s)`,
+      );
+
+      // prep both groups
+      from.setWeightForAllAnimatables(1);
+      target.speedRatio = speedRatio;
+      target.start(isLooping, speedRatio, frameStart, endFrame, false);
+      target.setWeightForAllAnimatables(0);
+
+      const onFrame = () => {
+        const now = performance.now();
+        const tRaw = Math.min(1, (now - startTime) / durationMs);
+        const tEased = easeInOutCubic(tRaw);
+
+        // apply weights
+        try {
+          target.setWeightForAllAnimatables(maxWeight * tEased);
+          from.setWeightForAllAnimatables(1 - tEased);
+        } catch (error) {
+          console.warn("[Time-Based Blend] Error setting weights:", error);
+          this.scene.onBeforeRenderObservable.removeCallback(onFrame);
           this.animationTransitions.delete(animationName);
           resolve();
-        })
-        .catch((error) => {
-          console.error("[Animation] Error in blending coroutine:", error);
+          return;
+        }
+
+        if (tRaw >= 1) {
+          // done
+          this.scene.onBeforeRenderObservable.removeCallback(onFrame);
+          try {
+            from.stop();
+            target.setWeightForAllAnimatables(maxWeight);
+            character.setCurrentAnimation(target);
+            console.log(`[Time-Based Blend] Completed transition to ${target.name}`);
+          } catch (error) {
+            console.warn("[Time-Based Blend] Error in cleanup:", error);
+          }
+
           this.animationTransitions.delete(animationName);
           resolve();
-        });
+        }
+      };
+
+      // hook in
+      this.scene.onBeforeRenderObservable.add(onFrame);
     });
   }
 
@@ -436,33 +192,6 @@ export class BabylonAnimationController extends IAnimationController {
         }
       });
       this.observers.delete(character.id);
-    }
-  }
-
-  /**
-   * Quick blend in for animations starting from 0 weight
-   */
-  *_quickBlendIn(targetAnimation, speed = 0.05) {
-    let weight = 0;
-
-    while (weight < 1) {
-      weight += speed;
-      weight = Math.min(weight, 1);
-
-      try {
-        targetAnimation.setWeightForAllAnimatables(weight);
-      } catch (error) {
-        console.warn("[Quick Blend] Error setting weight:", error);
-        break;
-      }
-
-      yield;
-    }
-
-    try {
-      targetAnimation.setWeightForAllAnimatables(1);
-    } catch (error) {
-      console.warn("[Quick Blend] Error setting final weight:", error);
     }
   }
 

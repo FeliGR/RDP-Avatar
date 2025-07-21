@@ -25,21 +25,42 @@ export class PlayTalkingAnimationUseCase {
       throw new Error("No talking animations available");
     }
 
-    // 1) FIRST: immediately stop idle cycling so nothing else fires
+    // 1) FIRST: Stop ALL existing animations and observers
+    console.log("[Talking] Stopping all existing animations and observers");
     this.animationController.removeObservers(character);
+    this.animationController.stopAnimation(character); // FORCE stop current animation
 
-    // 2) NOW: blend into talking with no interference
-    await this._playRandomTalkingAnimation(character, talkingAnimations);
+    // 2) Clear any pending animation transitions to prevent conflicts
+    if (this.animationController.clearPendingTransitions) {
+      this.animationController.clearPendingTransitions();
+    }
+
+    // 3) Wait longer to ensure complete cleanup
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    // 4) NOW: Select ONE talking animation and keep it running - NO switching
+    const selectedTalkingAnimation =
+      talkingAnimations[Math.floor(Math.random() * talkingAnimations.length)];
+    console.log(
+      `[Talking] Starting SINGLE talking animation: ${selectedTalkingAnimation} - NO looping, NO switching`,
+    );
+
+    await this.animationController.playAnimationWithBlending(character, selectedTalkingAnimation, {
+      isLooping: true, // Loop the SAME talking animation during AI response
+      speedRatio: 0.8, // Match reference code exactly
+      transitionDuration: 0.4, // Time-based transition
+      maxWeight: 0.8, // Higher weight for talking like reference code
+    });
 
     if (audioSource && this.audioAnalyzer) {
       this._setupAudioMorphTargets(character, audioSource);
     }
 
-    this._setupTalkingLoop(character, talkingAnimations);
+    // NO additional animation logic - just let the selected animation loop
 
     return {
       success: true,
-      message: `Started talking animations with ${talkingAnimations.length} variations`,
+      message: `Started talking animation: ${selectedTalkingAnimation}`,
     };
   }
 
@@ -65,18 +86,6 @@ export class PlayTalkingAnimationUseCase {
     };
   }
 
-  async _playRandomTalkingAnimation(character, talkingAnimations) {
-    const randomAnimation = talkingAnimations[Math.floor(Math.random() * talkingAnimations.length)];
-
-    return this.animationController.playAnimationWithBlending(character, randomAnimation, {
-      isLooping: false,
-      speedRatio: 0.8, // Match reference code exactly
-      transitionSpeed: 0.02, // Match reference code exactly
-      maxWeight: 0.75, // Match reference code talking weight
-      animationOffset: 50,
-    });
-  }
-
   _setupAudioMorphTargets(character, audioSource) {
     this.morphCallback = (frequencyData) => {
       if (!this.isTalking) return;
@@ -87,20 +96,6 @@ export class PlayTalkingAnimationUseCase {
     };
 
     this.audioAnalyzer.addCallback(this.morphCallback);
-  }
-
-  _setupTalkingLoop(character, talkingAnimations) {
-    this.animationController.setupIdleObservers(character, () => {
-      if (this.isTalking) {
-        setTimeout(() => {
-          if (this.isTalking) {
-            this._playRandomTalkingAnimation(character, talkingAnimations).catch((error) => {
-              console.warn(`[Talking Loop] Error playing talking animation:`, error);
-            });
-          }
-        }, 100);
-      }
-    });
   }
 
   _calculateVolume(frequencyData) {

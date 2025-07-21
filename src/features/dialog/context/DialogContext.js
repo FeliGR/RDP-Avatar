@@ -18,7 +18,6 @@ const FALLBACK_RESPONSES = [
 
 export const DialogProvider = ({ children }) => {
   const { personalityTraits, apiAvailable: personalityApiAvailable } = usePersonality();
-  const { triggerAIResponseAnimation } = useAvatarAnimation();
   const { speak, isAvailable: ttsAvailable } = useTTS();
 
   const ttsAvailableRef = useRef(ttsAvailable);
@@ -92,9 +91,7 @@ export const DialogProvider = ({ children }) => {
 
         if (currentTtsAvailable && dialogApiAvailable && responseText) {
           try {
-            if (triggerAIResponseAnimation) {
-              triggerAIResponseAnimation("all");
-            }
+            
             await currentSpeak(responseText);
           } catch (ttsError) {
             console.warn("TTS failed for AI response:", ttsError);
@@ -114,7 +111,6 @@ export const DialogProvider = ({ children }) => {
       dialogApiAvailable,
       fetchBotResponse,
       createMessage,
-      triggerAIResponseAnimation,
       ttsAvailable,
       speak,
     ],

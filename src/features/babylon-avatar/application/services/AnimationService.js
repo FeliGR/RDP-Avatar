@@ -29,14 +29,30 @@ export class AnimationService {
 
   async startIdleAnimations() {
     if (!this._checkInitialized()) {
+      console.warn("[Animation Service] Character not loaded for starting idle animations");
       return { success: false, error: "Character not loaded" };
     }
 
     try {
+      console.log("[Animation Service] Starting idle animations...");
       const playIdleUseCase = this.compositionRoot.getPlayIdleAnimationUseCase();
-      const result = await playIdleUseCase.execute(this.currentCharacter);
+      
+      // Check if idle system already exists, if so resume instead of execute
+      const existingSystem = playIdleUseCase.activeIdleSystems?.get(this.currentCharacter.id);
+      let result;
+      
+      if (existingSystem) {
+        console.log("[Animation Service] Resuming existing idle system...");
+        result = await playIdleUseCase.resume(this.currentCharacter);
+      } else {
+        console.log("[Animation Service] Creating new idle system...");
+        result = await playIdleUseCase.execute(this.currentCharacter);
+      }
+      
+      console.log("[Animation Service] Idle animations result:", result);
       return result;
     } catch (error) {
+      console.error("[Animation Service] Error starting idle animations:", error);
       return {
         success: false,
         error: error.message,
@@ -69,19 +85,25 @@ export class AnimationService {
 
   async stopTalkingAnimations() {
     if (!this._checkInitialized()) {
+      console.warn("[Animation Service] Character not loaded for stopping talking animations");
       return { success: false, error: "Character not loaded" };
     }
 
     try {
+      console.log("[Animation Service] Stopping talking animations...");
       const playTalkingUseCase = this.compositionRoot.getPlayTalkingAnimationUseCase();
       const result = await playTalkingUseCase.stop(this.currentCharacter);
+      console.log("[Animation Service] Talking animations stopped:", result);
 
       if (result.success) {
-        await this.startIdleAnimations();
+        console.log("[Animation Service] Starting idle animations...");
+        const idleResult = await this.startIdleAnimations();
+        console.log("[Animation Service] Idle animations started:", idleResult);
       }
 
       return result;
     } catch (error) {
+      console.error("[Animation Service] Error in stopTalkingAnimations:", error);
       return {
         success: false,
         error: error.message,

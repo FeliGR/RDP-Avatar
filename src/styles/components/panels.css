@@ -140,59 +140,55 @@
 }
 
 .speaking-status-icon {
-  width: 40px;
-  height: 40px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  color: rgba(255, 255, 255, 0.8);
-  opacity: 0;
-  visibility: hidden;
-  transform: scale(0.8);
-  transition: all 0.3s var(--chat-easing-smooth);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-  padding: 8px;
-  pointer-events: none;
+  width: 48px;
+  height: 48px;
+  margin-left: 16px;
+  opacity: 0.4;
+  transition: all 0.3s ease;
+  color: #666;
+  flex-shrink: 0;
 }
 
 .speaking-status-icon.active {
   opacity: 1;
-  visibility: visible;
-  transform: scale(1);
-  color: rgba(255, 255, 255, 0.9);
-  animation: speakingPulse 2s ease-in-out infinite;
-  pointer-events: auto;
+  animation: pulse 1.5s ease-in-out infinite;
 }
 
-.speaking-status-icon.active::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-  opacity: 1;
-  transition: opacity 0.3s ease;
-  z-index: -1;
+.speaking-status-icon.active.listening {
+  color: #4caf50;
+  animation: pulse 1s ease-in-out infinite;
 }
 
-.speaking-status-icon svg {
-  width: 18px;
-  height: 18px;
+.speaking-status-icon.active.processing {
+  color: #2196f3;
+  animation: processingDots 1.5s ease-in-out infinite;
 }
 
-@keyframes speakingPulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+.speaking-status-icon.active.speaking {
+  color: #ff9800;
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    transform: scale(1);
+    opacity: 1;
   }
-  50% {
-    box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.1);
+  50% { 
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+}
+
+@keyframes processingDots {
+  0%, 20% { 
+    opacity: 1;
+  }
+  50% { 
+    opacity: 0.5;
+    transform: scale(1.1);
+  }
+  100% { 
+    opacity: 1;
   }
 }
 

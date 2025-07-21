@@ -65,11 +65,16 @@ export const TTSProvider = ({ children }) => {
   const stopTalkingAnimations = useCallback(async () => {
     if (animationServiceRef.current) {
       try {
-        return await animationServiceRef.current.stopTalkingAnimations();
+        console.log("[TTS] Stopping talking animations...");
+        const result = await animationServiceRef.current.stopTalkingAnimations();
+        console.log("[TTS] Stop talking animations result:", result);
+        return result;
       } catch (error) {
+        console.error("[TTS] Error stopping talking animations:", error);
         return { success: false, error: error.message };
       }
     }
+    console.warn("[TTS] Animation service not available for stopping talking animations");
     return { success: false, error: "Animation service not available" };
   }, []);
 

@@ -59,21 +59,6 @@
   line-height: 1.2;
 }
 
-.speaking-status-icon {
-  width: 18px;
-  height: 18px;
-  color: #4caf50;
-  opacity: 0;
-  transform: scale(0.8);
-  transition: all 0.3s ease;
-  animation: speakingPulse 2s ease-in-out infinite;
-}
-
-.speaking-status-icon.active {
-  opacity: 1;
-  transform: scale(1);
-}
-
 .dialog-close-button {
   width: 28px;
   height: 28px;
@@ -148,27 +133,8 @@
   }
 }
 
-/* Continuous mode styles */
-.real-time-indicator.continuous {
-  border: 2px solid #4caf50;
-  background: rgba(76, 175, 80, 0.1);
-}
+/* Continuous mode styles - removed as no longer needed */
 
-.real-time-indicator.continuous .streaming-icon {
-  animation: continuousPulse 1.5s ease-in-out infinite;
-}
-
-@keyframes continuousPulse {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.1);
-    opacity: 0.8;
-  }
-}
 .messages-container {
   flex: 1;
   overflow-y: auto;
@@ -396,44 +362,44 @@
 }
 
 .voice-input-button.listening {
-  background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
-  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(76, 175, 80, 0.15);
+  color: #4caf50;
+  border-color: rgba(76, 175, 80, 0.3);
+  box-shadow: 0 0 15px rgba(76, 175, 80, 0.2);
+  animation: pulse 1s ease-in-out infinite;
 }
 
-.voice-input-button svg {
-  width: 18px;
-  height: 18px;
+.voice-input-button.processing {
+  background: rgba(33, 150, 243, 0.15);
+  color: #2196f3;
+  border-color: rgba(33, 150, 243, 0.3);
+  box-shadow: 0 0 15px rgba(33, 150, 243, 0.2);
+  animation: pulse 1.2s ease-in-out infinite;
 }
 
-.voice-mode-btn {
-  background: rgba(59, 130, 246, 0.1);
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  color: #3b82f6;
-  flex-shrink: 0;
+.voice-input-button.speaking {
+  background: rgba(255, 152, 0, 0.15);
+  color: #ff9800;
+  border-color: rgba(255, 152, 0, 0.3);
+  box-shadow: 0 0 15px rgba(255, 152, 0, 0.2);
+  animation: pulse 1.5s ease-in-out infinite;
 }
 
-.voice-mode-btn:hover {
-  background: rgba(59, 130, 246, 0.15);
-  border-color: rgba(59, 130, 246, 0.3);
+.voice-input-button.realtime-active {
+  background: rgba(76, 175, 80, 0.15);
+  color: #4caf50;
+  border-color: rgba(76, 175, 80, 0.3);
+  box-shadow: 0 0 15px rgba(76, 175, 80, 0.2);
+}
+
+.voice-input-button.realtime-active:hover:not(:disabled) {
+  background: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
+  border-color: rgba(76, 175, 80, 0.4);
   transform: scale(1.05);
 }
 
-.voice-mode-btn.active {
-  background: rgba(59, 130, 246, 0.2);
-  border-color: #3b82f6;
-  color: #ffffff;
-}
-
-.voice-mode-btn svg {
+.voice-input-button svg {
   width: 18px;
   height: 18px;
 }
@@ -703,153 +669,12 @@
     opacity: 1;
   }
 }
-/* ChatGPT-Style Voice Mode Toggle in Input Area */
+
+/* ChatGPT-Style Voice Mode Toggle - removed as no longer needed */
 .message-input-container {
   width: 100%;
 }
 
-.input-header {
-  display: flex;
-  justify-content: center;
-  padding: 0.75rem 0;
-  margin-bottom: 0.5rem;
-}
-
-.realtime-toggle-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--chat-text-secondary);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s var(--chat-easing-smooth);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-.realtime-toggle-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
-  color: var(--chat-text-primary);
-  transform: translateY(-1px);
-  border-color: rgba(255, 255, 255, 0.25);
-}
-
-.realtime-toggle-btn.active {
-  background: rgba(76, 175, 80, 0.15);
-  color: #4caf50;
-  border-color: rgba(76, 175, 80, 0.3);
-  box-shadow: 0 0 15px rgba(76, 175, 80, 0.2);
-}
-
-.realtime-toggle-btn svg {
-  width: 16px;
-  height: 16px;
-  transition: transform 0.3s ease;
-}
-
-.realtime-toggle-btn:hover svg {
-  transform: scale(1.1);
-}
-
-.realtime-toggle-btn.active svg {
-  filter: drop-shadow(0 0 4px rgba(76, 175, 80, 0.5));
-}
-
-/* Real-time streaming indicator */
-.real-time-indicator {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  background: var(--chat-glass-bg);
-  border: 1px solid var(--chat-glass-border);
-  border-radius: var(--chat-radius-md);
-  backdrop-filter: var(--chat-blur-soft);
-  -webkit-backdrop-filter: var(--chat-blur-soft);
-  margin-bottom: 1rem;
-  position: relative;
-  z-index: 5;
-  box-shadow: var(--chat-shadow-soft);
-}
-
-.streaming-icon {
-  width: 20px;
-  height: 20px;
-  color: #64c8ff;
-  animation: streamingPulse 2s ease-in-out infinite;
-}
-
-.streaming-icon.listening {
-  color: #64c8ff;
-  animation: listeningPulse 1.5s ease-in-out infinite;
-}
-
-.streaming-icon.processing {
-  color: #ff6b9d;
-  animation: processingRotate 1s linear infinite;
-}
-
-.streaming-icon.responding {
-  color: #67e86f;
-  animation: respondingGlow 1.2s ease-in-out infinite;
-}
-
-.streaming-status {
-  font-size: 0.875rem;
-  color: var(--chat-text-secondary);
-  font-weight: 500;
-}
-
-/* Animations for streaming states */
-@keyframes streamingPulse {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.05);
-  }
-}
-
-@keyframes listeningPulse {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scale(1.1);
-  }
-}
-
-@keyframes processingRotate {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes respondingGlow {
-  0%,
-  100% {
-    opacity: 1;
-    filter: brightness(1);
-  }
-  50% {
-    opacity: 0.8;
-    filter: brightness(1.3);
-  }
-}
 @media (min-width: 992px) {
   .message-content {
     padding: 14px 18px;
@@ -959,11 +784,6 @@
 
   .dialog-header {
     padding: 0.5rem 1rem;
-  }
-
-  .speaking-status-icon {
-    width: 18px;
-    height: 18px;
   }
 }
 .fullscreen-avatar-container .dialog-box {

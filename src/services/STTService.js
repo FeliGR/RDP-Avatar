@@ -267,12 +267,6 @@ class STTService {
             .catch((error) => {
               console.error("Error converting audio data:", error);
             });
-        } else {
-          console.warn("⚠️ Audio data not sent:", {
-            size: event.data.size,
-            isStreaming: this.isStreaming,
-            isConnected: this.isConnected,
-          });
         }
       };
 

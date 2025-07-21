@@ -14,7 +14,7 @@ function crossFadeAnimationGroups(
   onComplete = null,
   easing = null
 ) {
-  // 1) If there's no current animation, just start toGroup at full weight
+  
   if (!fromGroup || !fromGroup.isPlaying) {
     toGroup.speedRatio = speedRatio;
     toGroup.start(true, speedRatio);
@@ -25,42 +25,42 @@ function crossFadeAnimationGroups(
 
   console.log(`[Babylon Cross-Fade] ${fromGroup?.name || 'none'} → ${toGroup.name} (${duration}s)`);
 
-  // 2) Start toGroup and set initial weights
+  
   toGroup.speedRatio = speedRatio;
   toGroup.start(true, speedRatio);
   toGroup.setWeightForAllAnimatables(0);
   fromGroup.setWeightForAllAnimatables(1);
 
-  // 3) Use Babylon's built-in easing or default cubic easing
+  
   const easingFunction = easing || ((t) => 
     t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
   );
 
-  // 4) Create a simple animation using Babylon's timing
+  
   const startTime = performance.now();
   const durationMs = duration * 1000;
-  let observerRemoved = false; // Prevent double cleanup
+  let observerRemoved = false; 
   
   const onBeforeRenderObserver = scene.onBeforeRenderObservable.add(() => {
-    if (observerRemoved) return; // Safety check
+    if (observerRemoved) return; 
     
     const elapsed = performance.now() - startTime;
     const progress = Math.min(1, elapsed / durationMs);
     const easedProgress = easingFunction(progress);
 
     try {
-      // Update weights based on eased progress
+      
       fromGroup.setWeightForAllAnimatables(1 - easedProgress);
       toGroup.setWeightForAllAnimatables(easedProgress);
 
-      // Check if animation is complete
+      
       if (progress >= 1) {
-        // Mark as removed to prevent double cleanup
+        
         observerRemoved = true;
-        // Remove observer
+        
         scene.onBeforeRenderObservable.remove(onBeforeRenderObserver);
         
-        // Final cleanup
+        
         try {
           fromGroup.stop();
           toGroup.setWeightForAllAnimatables(1);
@@ -73,7 +73,7 @@ function crossFadeAnimationGroups(
       }
     } catch (error) {
       console.warn("[Babylon Cross-Fade] Error updating weights:", error);
-      // Remove observer on error
+      
       if (!observerRemoved) {
         observerRemoved = true;
         scene.onBeforeRenderObservable.remove(onBeforeRenderObserver);
@@ -82,7 +82,7 @@ function crossFadeAnimationGroups(
     }
   });
 
-  // 5) Fallback cleanup in case the observer doesn't trigger properly
+  
   setTimeout(() => {
     if (!observerRemoved) {
       try {
@@ -93,10 +93,10 @@ function crossFadeAnimationGroups(
         console.log(`[Babylon Cross-Fade] Fallback cleanup completed for ${toGroup.name}`);
         if (onComplete) onComplete();
       } catch (error) {
-        // Ignore cleanup errors in fallback
+        
       }
     }
-  }, durationMs + 100); // Small buffer
+  }, durationMs + 100); 
 }
 
 export class BabylonAnimationController extends IAnimationController {
@@ -147,7 +147,7 @@ export class BabylonAnimationController extends IAnimationController {
       throw new Error(`Animation '${animationName}' not found`);
     }
 
-    // Prevent duplicate transitions
+    
     if (this.animationTransitions.has(animationName)) {
       return Promise.resolve();
     }
@@ -155,23 +155,23 @@ export class BabylonAnimationController extends IAnimationController {
     const {
       speedRatio = 1.0,
       transitionDuration = 0.4,
-      easing = null, // Optional easing function
+      easing = null, 
     } = options;
 
     const fromGroup = character.currentAnimation;
 
-    // Skip if same animation
+    
     if (fromGroup === toGroup) {
       return Promise.resolve();
     }
 
-    // Remove any idle observers up front to prevent interference
+    
     this.removeObservers(character);
 
-    // Track this transition
+    
     this.animationTransitions.set(animationName, true);
 
-    // Default to cubic easing for smoother transitions
+    
     const easingFunction = easing || ((t) => 
       t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
     );
@@ -184,7 +184,7 @@ export class BabylonAnimationController extends IAnimationController {
         transitionDuration,
         speedRatio,
         () => {
-          // Clean up and set current animation
+          
           character.setCurrentAnimation(toGroup);
           this.animationTransitions.delete(animationName);
           resolve();

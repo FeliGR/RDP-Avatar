@@ -25,16 +25,16 @@ export class PlayTalkingAnimationUseCase {
       throw new Error("No talking animations available");
     }
 
-    // Remove observers but DON'T stop the current animation - let cross-fade handle it
+    
     console.log("[Talking] Removing observers but keeping current animation for smooth transition");
     this.animationController.removeObservers(character);
 
-    // Clear any pending transitions to prevent conflicts
+    
     if (this.animationController.clearPendingTransitions) {
       this.animationController.clearPendingTransitions();
     }
 
-    // Small delay to ensure cleanup
+    
     await new Promise((resolve) => setTimeout(resolve, 50));
 
     const selectedTalkingAnimation =

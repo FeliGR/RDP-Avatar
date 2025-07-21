@@ -12,9 +12,8 @@ function crossFadeAnimationGroups(
   duration,
   speedRatio = 1,
   onComplete = null,
-  easing = null
+  easing = null,
 ) {
-  
   if (!fromGroup || !fromGroup.isPlaying) {
     toGroup.speedRatio = speedRatio;
     toGroup.start(true, speedRatio);
@@ -23,57 +22,46 @@ function crossFadeAnimationGroups(
     return;
   }
 
-  console.log(`[Babylon Cross-Fade] ${fromGroup?.name || 'none'} → ${toGroup.name} (${duration}s)`);
-
-  
   toGroup.speedRatio = speedRatio;
   toGroup.start(true, speedRatio);
   toGroup.setWeightForAllAnimatables(0);
   fromGroup.setWeightForAllAnimatables(1);
 
-  
-  const easingFunction = easing || ((t) => 
-    t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
-  );
+  const easingFunction =
+    easing || ((t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2));
 
-  
   const startTime = performance.now();
   const durationMs = duration * 1000;
-  let observerRemoved = false; 
-  
+  let observerRemoved = false;
+
   const onBeforeRenderObserver = scene.onBeforeRenderObservable.add(() => {
-    if (observerRemoved) return; 
-    
+    if (observerRemoved) return;
+
     const elapsed = performance.now() - startTime;
     const progress = Math.min(1, elapsed / durationMs);
     const easedProgress = easingFunction(progress);
 
     try {
-      
       fromGroup.setWeightForAllAnimatables(1 - easedProgress);
       toGroup.setWeightForAllAnimatables(easedProgress);
 
-      
       if (progress >= 1) {
-        
         observerRemoved = true;
-        
+
         scene.onBeforeRenderObservable.remove(onBeforeRenderObserver);
-        
-        
+
         try {
           fromGroup.stop();
           toGroup.setWeightForAllAnimatables(1);
-          console.log(`[Babylon Cross-Fade] Completed transition to ${toGroup.name}`);
         } catch (error) {
           console.warn("[Babylon Cross-Fade] Error in final cleanup:", error);
         }
-        
+
         if (onComplete) onComplete();
       }
     } catch (error) {
       console.warn("[Babylon Cross-Fade] Error updating weights:", error);
-      
+
       if (!observerRemoved) {
         observerRemoved = true;
         scene.onBeforeRenderObservable.remove(onBeforeRenderObserver);
@@ -82,7 +70,6 @@ function crossFadeAnimationGroups(
     }
   });
 
-  
   setTimeout(() => {
     if (!observerRemoved) {
       try {
@@ -90,13 +77,12 @@ function crossFadeAnimationGroups(
         scene.onBeforeRenderObservable.remove(onBeforeRenderObserver);
         fromGroup.stop();
         toGroup.setWeightForAllAnimatables(1);
-        console.log(`[Babylon Cross-Fade] Fallback cleanup completed for ${toGroup.name}`);
         if (onComplete) onComplete();
       } catch (error) {
-        
+        console.warn("[Babylon Cross-Fade] Error in timeout cleanup:", error);
       }
     }
-  }, durationMs + 100); 
+  }, durationMs + 100);
 }
 
 export class BabylonAnimationController extends IAnimationController {
@@ -147,34 +133,24 @@ export class BabylonAnimationController extends IAnimationController {
       throw new Error(`Animation '${animationName}' not found`);
     }
 
-    
     if (this.animationTransitions.has(animationName)) {
       return Promise.resolve();
     }
 
-    const {
-      speedRatio = 1.0,
-      transitionDuration = 0.4,
-      easing = null, 
-    } = options;
+    const { speedRatio = 1.0, transitionDuration = 0.4, easing = null } = options;
 
     const fromGroup = character.currentAnimation;
 
-    
     if (fromGroup === toGroup) {
       return Promise.resolve();
     }
 
-    
     this.removeObservers(character);
 
-    
     this.animationTransitions.set(animationName, true);
 
-    
-    const easingFunction = easing || ((t) => 
-      t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
-    );
+    const easingFunction =
+      easing || ((t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2));
 
     return new Promise((resolve) => {
       crossFadeAnimationGroups(
@@ -184,12 +160,11 @@ export class BabylonAnimationController extends IAnimationController {
         transitionDuration,
         speedRatio,
         () => {
-          
           character.setCurrentAnimation(toGroup);
           this.animationTransitions.delete(animationName);
           resolve();
         },
-        easingFunction
+        easingFunction,
       );
     });
   }

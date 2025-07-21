@@ -25,23 +25,16 @@ export class PlayTalkingAnimationUseCase {
       throw new Error("No talking animations available");
     }
 
-    
-    console.log("[Talking] Removing observers but keeping current animation for smooth transition");
     this.animationController.removeObservers(character);
 
-    
     if (this.animationController.clearPendingTransitions) {
       this.animationController.clearPendingTransitions();
     }
 
-    
     await new Promise((resolve) => setTimeout(resolve, 50));
 
     const selectedTalkingAnimation =
       talkingAnimations[Math.floor(Math.random() * talkingAnimations.length)];
-    console.log(
-      `[Talking] Starting SINGLE talking animation: ${selectedTalkingAnimation} - Smooth transition from current animation`,
-    );
 
     await this.animationController.playAnimationWithBlending(character, selectedTalkingAnimation, {
       isLooping: true,

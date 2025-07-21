@@ -102,12 +102,9 @@ export class AnimationService {
 
     try {
       const playTalkingUseCase = this.compositionRoot.getPlayTalkingAnimationUseCase();
-
-      console.log("[Animation Service] Stopping talking animations...");
       const result = await playTalkingUseCase.stop(this.currentCharacter);
 
       if (result.success) {
-        console.log("[Animation Service] Restarting idle system...");
         await this.startIdleAnimations();
       }
 

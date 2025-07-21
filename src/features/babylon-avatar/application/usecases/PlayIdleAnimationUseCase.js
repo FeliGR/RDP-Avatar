@@ -251,10 +251,6 @@ export class PlayIdleAnimationUseCase {
         frameStart = animGroup.from + Math.random() * (animGroup.to - animGroup.from);
       }
 
-      console.log(
-        `[Idle Resume] Transitioning from talking back to idle: ${randomAnimation} (start frame: ${frameStart})`,
-      );
-
       await this.animationController.playAnimationWithBlending(character, randomAnimation, {
         isLooping: true,
         speedRatio: 0.8,
@@ -265,7 +261,6 @@ export class PlayIdleAnimationUseCase {
 
       this.morphTargetController.startAutomaticFacialAnimations(character);
 
-      console.log("[Idle Resume] Delaying idle cycling setup to prevent immediate transitions...");
       setTimeout(() => {
         this._setupIdleVariationCycling(character, availableAnimations);
       }, 3000);

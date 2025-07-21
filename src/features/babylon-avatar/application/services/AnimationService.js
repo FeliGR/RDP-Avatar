@@ -1,5 +1,6 @@
 import { AnimationCompositionRoot } from "../../infrastructure/composition/AnimationCompositionRoot.js";
 import { getAnimationsByCategory } from "../../../../shared/config/glbAssets.js";
+import * as BABYLON from "babylonjs";
 
 export class AnimationService {
   constructor(scene, shadowGenerator = null) {
@@ -29,12 +30,10 @@ export class AnimationService {
 
   async startIdleAnimations() {
     if (!this._checkInitialized()) {
-      console.warn("[Animation Service] Character not loaded for starting idle animations");
       return { success: false, error: "Character not loaded" };
     }
 
     try {
-      console.log("[Animation Service] Starting idle animations...");
       const playIdleUseCase = this.compositionRoot.getPlayIdleAnimationUseCase();
       
       // Check if idle system already exists, if so resume instead of execute
@@ -42,14 +41,11 @@ export class AnimationService {
       let result;
       
       if (existingSystem) {
-        console.log("[Animation Service] Resuming existing idle system...");
         result = await playIdleUseCase.resume(this.currentCharacter);
       } else {
-        console.log("[Animation Service] Creating new idle system...");
         result = await playIdleUseCase.execute(this.currentCharacter);
       }
       
-      console.log("[Animation Service] Idle animations result:", result);
       return result;
     } catch (error) {
       console.error("[Animation Service] Error starting idle animations:", error);
@@ -69,8 +65,26 @@ export class AnimationService {
       const playTalkingUseCase = this.compositionRoot.getPlayTalkingAnimationUseCase();
 
       if (audioSource) {
-        const audioAnalyzer = this.compositionRoot.getAudioAnalyzer();
-        audioAnalyzer.initialize(audioSource);
+        // Initialize Babylon.js audio engine first if not already initialized
+        if (!BABYLON.Engine.audioEngine) {
+          try {
+            BABYLON.Engine.audioEngine = new BABYLON.AudioEngine();
+          } catch (audioEngineError) {
+            console.warn("[Animation Service] Could not initialize audio engine:", audioEngineError);
+            // Continue without audio analysis if audio engine fails
+          }
+        }
+
+        // Only try to initialize audio analyzer if audio engine is available
+        if (BABYLON.Engine.audioEngine) {
+          try {
+            const audioAnalyzer = this.compositionRoot.getAudioAnalyzer();
+            audioAnalyzer.initialize(audioSource);
+          } catch (analyzerError) {
+            console.warn("[Animation Service] Could not initialize audio analyzer:", analyzerError);
+            // Continue without audio analysis if analyzer fails
+          }
+        }
       }
 
       const result = await playTalkingUseCase.execute(this.currentCharacter, audioSource);
@@ -85,20 +99,16 @@ export class AnimationService {
 
   async stopTalkingAnimations() {
     if (!this._checkInitialized()) {
-      console.warn("[Animation Service] Character not loaded for stopping talking animations");
       return { success: false, error: "Character not loaded" };
     }
 
     try {
-      console.log("[Animation Service] Stopping talking animations...");
       const playTalkingUseCase = this.compositionRoot.getPlayTalkingAnimationUseCase();
       const result = await playTalkingUseCase.stop(this.currentCharacter);
-      console.log("[Animation Service] Talking animations stopped:", result);
 
+      // Simple direct transition like reference code
       if (result.success) {
-        console.log("[Animation Service] Starting idle animations...");
         const idleResult = await this.startIdleAnimations();
-        console.log("[Animation Service] Idle animations started:", idleResult);
       }
 
       return result;
@@ -137,12 +147,12 @@ export class AnimationService {
     try {
       const animationController = this.compositionRoot.getAnimationController();
 
+      // Use reference code values consistently
       const blendingOptions = {
-        transitionSpeed: options.transitionDuration
-          ? 1.0 / (options.transitionDuration * 60)
-          : 0.02,
+        transitionSpeed: 0.02, // Always use reference code speed
         maxWeight: options.maxWeight || 1.0,
         animationOffset: options.animationOffset || 0,
+        speedRatio: options.speedRatio || 0.8, // Match reference code
         ...options,
       };
 

@@ -77,28 +77,6 @@ export const EXPRESSION_ANIMATIONS = {
   },
 };
 
-export const DANCE_ANIMATIONS = {
-  FEMININE: {
-    F_DANCES_001: "/animations/feminine/dance/F_Dances_001.glb",
-    F_DANCES_004: "/animations/feminine/dance/F_Dances_004.glb",
-    F_DANCES_005: "/animations/feminine/dance/F_Dances_005.glb",
-    F_DANCES_006: "/animations/feminine/dance/F_Dances_006.glb",
-    F_DANCES_007: "/animations/feminine/dance/F_Dances_007.glb",
-  },
-  MASCULINE: {
-    M_DANCES_001: "/animations/masculine/dance/M_Dances_001.glb",
-    M_DANCES_002: "/animations/masculine/dance/M_Dances_002.glb",
-    M_DANCES_003: "/animations/masculine/dance/M_Dances_003.glb",
-    M_DANCES_004: "/animations/masculine/dance/M_Dances_004.glb",
-    M_DANCES_005: "/animations/masculine/dance/M_Dances_005.glb",
-    M_DANCES_006: "/animations/masculine/dance/M_Dances_006.glb",
-    M_DANCES_007: "/animations/masculine/dance/M_Dances_007.glb",
-    M_DANCES_008: "/animations/masculine/dance/M_Dances_008.glb",
-    M_DANCES_009: "/animations/masculine/dance/M_Dances_009.glb",
-    M_DANCES_011: "/animations/masculine/dance/M_Dances_011.glb",
-  },
-};
-
 export const getAnimationArrays = () => ({
   DEFAULT_ANIMATIONS: [
     ...Object.values(IDLE_ANIMATIONS.MASCULINE),
@@ -106,18 +84,11 @@ export const getAnimationArrays = () => ({
 
     ...Object.values(EXPRESSION_ANIMATIONS.MASCULINE),
     ...Object.values(EXPRESSION_ANIMATIONS.FEMININE),
-
-    ...Object.values(DANCE_ANIMATIONS.MASCULINE),
-    ...Object.values(DANCE_ANIMATIONS.FEMININE),
   ],
 
   AI_RESPONSE_ANIMATIONS: [
     ...Object.values(EXPRESSION_ANIMATIONS.MASCULINE),
-
     ...Object.values(EXPRESSION_ANIMATIONS.FEMININE),
-
-    ...Object.values(DANCE_ANIMATIONS.MASCULINE),
-    ...Object.values(DANCE_ANIMATIONS.FEMININE),
   ],
 
   TALKING_ANIMATIONS: [
@@ -128,11 +99,6 @@ export const getAnimationArrays = () => ({
   ALL_EXPRESSION_ANIMATIONS: [
     ...Object.values(EXPRESSION_ANIMATIONS.FEMININE),
     ...Object.values(EXPRESSION_ANIMATIONS.MASCULINE),
-  ],
-
-  ALL_DANCE_ANIMATIONS: [
-    ...Object.values(DANCE_ANIMATIONS.FEMININE),
-    ...Object.values(DANCE_ANIMATIONS.MASCULINE),
   ],
 
   ALL_IDLE_ANIMATIONS: [
@@ -149,8 +115,6 @@ export const getAnimationsByCategory = (category) => {
       return animations.ALL_EXPRESSION_ANIMATIONS;
     case "talking":
       return animations.TALKING_ANIMATIONS;
-    case "dance":
-      return animations.ALL_DANCE_ANIMATIONS;
     case "idle":
       return animations.ALL_IDLE_ANIMATIONS;
     case "ai_response":
@@ -158,7 +122,6 @@ export const getAnimationsByCategory = (category) => {
     case "all":
       return [
         ...animations.ALL_EXPRESSION_ANIMATIONS,
-        ...animations.ALL_DANCE_ANIMATIONS,
         ...animations.ALL_IDLE_ANIMATIONS,
       ];
     default:
@@ -182,7 +145,6 @@ const glbAssets = {
   MODELS,
   IDLE_ANIMATIONS,
   EXPRESSION_ANIMATIONS,
-  DANCE_ANIMATIONS,
   ANIMATION_NAMES,
   getAnimationArrays,
   getAnimationsByCategory,

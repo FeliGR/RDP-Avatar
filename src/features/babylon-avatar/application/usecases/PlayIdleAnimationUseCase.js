@@ -40,8 +40,8 @@ export class PlayIdleAnimationUseCase {
     try {
       await this.animationController.playAnimationWithBlending(character, initialAnimation, {
         isLooping: true,
-        speedRatio: 1.0,
-        transitionSpeed: 0.015,
+        speedRatio: 0.8, // Start slower, more natural like reference code
+        transitionSpeed: 0.02, // Use reference code speed for consistency
         maxWeight: 1.0,
       });
 
@@ -121,8 +121,8 @@ export class PlayIdleAnimationUseCase {
       this.animationController
         .playAnimationWithBlending(character, nextAnimation, {
           isLooping: true,
-          speedRatio: 1.0,
-          transitionSpeed: 0.015,
+          speedRatio: 0.8, // Consistent with other idle animations
+          transitionSpeed: 0.02, // Match reference code speed for all idle transitions
           maxWeight: 1.0,
         })
         .then(() => {
@@ -243,15 +243,15 @@ export class PlayIdleAnimationUseCase {
       const randomAnimation =
         availableAnimations[Math.floor(Math.random() * availableAnimations.length)];
 
+      // Simple direct transition like reference code - no complex weight progression
       await this.animationController.playAnimationWithBlending(character, randomAnimation, {
         isLooping: true,
-        speedRatio: 1.0,
-        transitionSpeed: 0.015,
-        maxWeight: 1.0,
+        speedRatio: 0.8, 
+        transitionSpeed: 0.02, // Match reference code exactly
+        maxWeight: 0.8, // Use reference code's maxWeight for smooth blending back to idle
       });
 
       this.morphTargetController.startAutomaticFacialAnimations(character);
-
       this._setupIdleVariationCycling(character, availableAnimations);
 
       return {

@@ -25,8 +25,10 @@ export class PlayTalkingAnimationUseCase {
       throw new Error("No talking animations available");
     }
 
+    // 1) FIRST: immediately stop idle cycling so nothing else fires
     this.animationController.removeObservers(character);
 
+    // 2) NOW: blend into talking with no interference
     await this._playRandomTalkingAnimation(character, talkingAnimations);
 
     if (audioSource && this.audioAnalyzer) {
@@ -68,9 +70,9 @@ export class PlayTalkingAnimationUseCase {
 
     return this.animationController.playAnimationWithBlending(character, randomAnimation, {
       isLooping: false,
-      speedRatio: 1.0,
-      transitionSpeed: 0.02,
-      maxWeight: 0.75,
+      speedRatio: 0.8, // Match reference code exactly
+      transitionSpeed: 0.02, // Match reference code exactly
+      maxWeight: 0.75, // Match reference code talking weight
       animationOffset: 50,
     });
   }

@@ -1,5 +1,6 @@
 import { ISceneManager } from "../../domain/interfaces/index.js";
 import { OfficeEnvironmentService } from "./OfficeEnvironmentService.js";
+import * as BABYLON from "babylonjs";
 
 export class BabylonSceneManager extends ISceneManager {
   constructor(scene, shadowGenerator = null) {
@@ -9,6 +10,22 @@ export class BabylonSceneManager extends ISceneManager {
     this.beforeRenderCallbacks = new Set();
     this.officeEnvironment = new OfficeEnvironmentService(scene, shadowGenerator);
     this.environmentInitialized = false;
+    
+    // Initialize Babylon.js audio engine early
+    this._initializeAudioEngine();
+  }
+
+  _initializeAudioEngine() {
+    try {
+      if (!BABYLON.Engine.audioEngine) {
+        // Try to unlock and initialize the audio engine
+        BABYLON.Engine.audioEngine = new BABYLON.AudioEngine();
+        console.log("[Scene Manager] Audio engine initialized successfully");
+      }
+    } catch (error) {
+      console.warn("[Scene Manager] Could not initialize audio engine:", error);
+      // Audio features will be disabled but the app continues to work
+    }
   }
 
   getScene() {

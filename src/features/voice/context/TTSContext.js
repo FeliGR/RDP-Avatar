@@ -94,6 +94,7 @@ export const TTSProvider = ({ children }) => {
         return false;
       }
 
+      // Stop any current audio but don't immediately change animations
       if (currentAudioRef.current) {
         try {
           currentAudioRef.current.pause();
@@ -101,8 +102,8 @@ export const TTSProvider = ({ children }) => {
           currentAudioRef.current = null;
         } catch (error) {}
       }
+      
       setIsPlaying(false);
-      await stopTalkingAnimations();
 
       try {
         setIsPlaying(true);
@@ -116,12 +117,20 @@ export const TTSProvider = ({ children }) => {
         audio.muted = false;
 
         const handlePlay = async () => {
-          await startTalkingAnimations(audio);
+          // Add a small delay before starting talking animations for smoother transition
+          setTimeout(async () => {
+            await startTalkingAnimations(audio);
+          }, 150); // 150ms delay for natural flow
         };
 
         const handleEnded = async () => {
           setIsPlaying(false);
-          await stopTalkingAnimations();
+          
+          // Simple transition back to idle like reference code 
+          setTimeout(async () => {
+            await stopTalkingAnimations();
+          }, 1000);
+          
           currentAudioRef.current = null;
         };
 

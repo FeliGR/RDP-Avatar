@@ -65,6 +65,17 @@ const ReadyPlayerMeAvatar = ({
   useEffect(() => {
     if (!BABYLON || !canvasRef.current) return;
     const engine = new BABYLON.Engine(canvasRef.current, true);
+    
+    // Initialize audio engine immediately after Babylon engine creation
+    try {
+      if (!BABYLON.Engine.audioEngine) {
+        BABYLON.Engine.audioEngine = new BABYLON.AudioEngine();
+        console.log("[ReadyPlayerMe] Audio engine initialized successfully");
+      }
+    } catch (audioError) {
+      console.warn("[ReadyPlayerMe] Could not initialize audio engine:", audioError);
+    }
+    
     const scene = new BABYLON.Scene(engine);
     scene.clearColor = new BABYLON.Color4(0.55, 0.71, 1.0, 1.0);
     const camera = new BABYLON.ArcRotateCamera(

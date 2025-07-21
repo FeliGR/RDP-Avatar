@@ -24,7 +24,7 @@ AR Avatar is a cutting-edge 3D avatar creation and visualization platform that l
 ## Features
 
 - **Personalized Avatars** - Create your digital twin with extensive customization options
-- **Rich Animations** - Express yourself with dance, idle, and expression animations
+- **Rich Animations** - Express yourself with varied expression and idle animations
 - **Interactive Dialog** - Engage in conversations with AI-driven responses
 - **Personality Controls** - Adjust your avatar's personality traits and behaviors
 - **Voice Integration** - Give your avatar a voice with advanced speech capabilities
@@ -105,10 +105,8 @@ src/
 Find avatar animations in the `public/animations/` directory:
 
 - `feminine/` & `masculine/` - Gender-specific animations
-  - `dance/` - Dance movements and performances
-  - `expression/` - Facial expressions and emotes
+  - `expression/` - Facial expressions and emotes  
   - `idle/` - Default standing and waiting animations
-  - `locomotion/` - Walking, running and movement animations
 
 ## License
 

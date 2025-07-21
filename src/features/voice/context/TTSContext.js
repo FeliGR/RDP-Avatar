@@ -94,7 +94,6 @@ export const TTSProvider = ({ children }) => {
         return false;
       }
 
-      
       if (currentAudioRef.current) {
         try {
           currentAudioRef.current.pause();
@@ -102,7 +101,7 @@ export const TTSProvider = ({ children }) => {
           currentAudioRef.current = null;
         } catch (error) {}
       }
-      
+
       setIsPlaying(false);
 
       try {
@@ -117,20 +116,18 @@ export const TTSProvider = ({ children }) => {
         audio.muted = false;
 
         const handlePlay = async () => {
-          
           setTimeout(async () => {
             await startTalkingAnimations(audio);
-          }, 150); 
+          }, 150);
         };
 
         const handleEnded = async () => {
           setIsPlaying(false);
-          
-          
+
           setTimeout(async () => {
             await stopTalkingAnimations();
           }, 1000);
-          
+
           currentAudioRef.current = null;
         };
 

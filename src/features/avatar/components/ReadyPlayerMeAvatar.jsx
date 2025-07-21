@@ -65,9 +65,7 @@ const ReadyPlayerMeAvatar = ({
   useEffect(() => {
     if (!BABYLON || !canvasRef.current) return;
     const engine = new BABYLON.Engine(canvasRef.current, true);
-    
-    
-    
+
     const initAudioEngine = () => {
       try {
         if (!BABYLON.Engine.audioEngine) {
@@ -78,20 +76,18 @@ const ReadyPlayerMeAvatar = ({
         console.warn("[ReadyPlayerMe] Could not initialize audio engine:", audioError);
       }
     };
-    
-    
+
     initAudioEngine();
-    
-    
+
     const handleFirstUserInteraction = () => {
       initAudioEngine();
-      document.removeEventListener('click', handleFirstUserInteraction);
-      document.removeEventListener('keydown', handleFirstUserInteraction);
+      document.removeEventListener("click", handleFirstUserInteraction);
+      document.removeEventListener("keydown", handleFirstUserInteraction);
     };
-    
-    document.addEventListener('click', handleFirstUserInteraction);
-    document.addEventListener('keydown', handleFirstUserInteraction);
-    
+
+    document.addEventListener("click", handleFirstUserInteraction);
+    document.addEventListener("keydown", handleFirstUserInteraction);
+
     const scene = new BABYLON.Scene(engine);
     scene.clearColor = new BABYLON.Color4(0.55, 0.71, 1.0, 1.0);
     const camera = new BABYLON.ArcRotateCamera(

@@ -25,35 +25,32 @@ export class PlayTalkingAnimationUseCase {
       throw new Error("No talking animations available");
     }
 
-    
     console.log("[Talking] Stopping all existing animations and observers");
     this.animationController.removeObservers(character);
-    this.animationController.stopAnimation(character); 
-    
-    
+    this.animationController.stopAnimation(character);
+
     if (this.animationController.clearPendingTransitions) {
       this.animationController.clearPendingTransitions();
     }
-    
-    
-    await new Promise(resolve => setTimeout(resolve, 100));
 
-    
-    const selectedTalkingAnimation = talkingAnimations[Math.floor(Math.random() * talkingAnimations.length)];
-    console.log(`[Talking] Starting SINGLE talking animation: ${selectedTalkingAnimation} - NO looping, NO switching`);
-    
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    const selectedTalkingAnimation =
+      talkingAnimations[Math.floor(Math.random() * talkingAnimations.length)];
+    console.log(
+      `[Talking] Starting SINGLE talking animation: ${selectedTalkingAnimation} - NO looping, NO switching`,
+    );
+
     await this.animationController.playAnimationWithBlending(character, selectedTalkingAnimation, {
-      isLooping: true, 
-      speedRatio: 0.8, 
-      transitionDuration: 0.4, 
-      maxWeight: 0.8, 
+      isLooping: true,
+      speedRatio: 0.8,
+      transitionDuration: 0.4,
+      maxWeight: 0.8,
     });
 
     if (audioSource && this.audioAnalyzer) {
       this._setupAudioMorphTargets(character, audioSource);
     }
-
-    
 
     return {
       success: true,

@@ -7,25 +7,27 @@ const VoiceInput = ({ isListening, disabled, onClick, isRealTimeMode = false }) 
   const { conversationState, isRealTimeActive } = useRealTimeConversation();
   const [delayedTTSState, setDelayedTTSState] = useState(false);
 
-  
   useEffect(() => {
     if (isTTSSpeaking) {
       setDelayedTTSState(true);
     } else {
-      
       const timeout = setTimeout(() => {
         setDelayedTTSState(false);
-      }, 800); 
-      
+      }, 800);
+
       return () => clearTimeout(timeout);
     }
   }, [isTTSSpeaking]);
 
-  
-  const buttonState = delayedTTSState ? "speaking" :
-    isRealTimeActive && conversationState === "listening" ? "listening" :
-    isRealTimeActive && conversationState === "processing" ? "processing" :
-    isRealTimeMode ? "realtime-active" : "default";
+  const buttonState = delayedTTSState
+    ? "speaking"
+    : isRealTimeActive && conversationState === "listening"
+      ? "listening"
+      : isRealTimeActive && conversationState === "processing"
+        ? "processing"
+        : isRealTimeMode
+          ? "realtime-active"
+          : "default";
 
   return (
     <button
@@ -34,10 +36,15 @@ const VoiceInput = ({ isListening, disabled, onClick, isRealTimeMode = false }) 
       onClick={onClick}
       disabled={disabled}
       aria-label={
-        delayedTTSState ? "AI is speaking" :
-        isRealTimeActive && conversationState === "listening" ? "AI is listening" :
-        isRealTimeActive && conversationState === "processing" ? "AI is processing" :
-        isRealTimeMode ? "Exit Real-time Voice Mode" : "Enter Real-time Voice Mode"
+        delayedTTSState
+          ? "AI is speaking"
+          : isRealTimeActive && conversationState === "listening"
+            ? "AI is listening"
+            : isRealTimeActive && conversationState === "processing"
+              ? "AI is processing"
+              : isRealTimeMode
+                ? "Exit Real-time Voice Mode"
+                : "Enter Real-time Voice Mode"
       }
     >
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">

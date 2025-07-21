@@ -86,31 +86,26 @@ export const getAnimationArrays = () => ({
     ...Object.values(EXPRESSION_ANIMATIONS.FEMININE),
   ],
 
-  
   AI_RESPONSE_ANIMATIONS: [
     ...Object.values(EXPRESSION_ANIMATIONS.MASCULINE).filter((path) => path.includes("Talking")),
     ...Object.values(EXPRESSION_ANIMATIONS.FEMININE).filter((path) => path.includes("Talking")),
   ],
 
-  
   TALKING_ANIMATIONS: [
     ...Object.values(EXPRESSION_ANIMATIONS.MASCULINE).filter((path) => path.includes("Talking")),
     ...Object.values(EXPRESSION_ANIMATIONS.FEMININE).filter((path) => path.includes("Talking")),
   ],
 
-  
   PURE_EXPRESSION_ANIMATIONS: [
     ...Object.values(EXPRESSION_ANIMATIONS.FEMININE).filter((path) => !path.includes("Talking")),
     ...Object.values(EXPRESSION_ANIMATIONS.MASCULINE).filter((path) => !path.includes("Talking")),
   ],
 
-  
   ALL_EXPRESSION_ANIMATIONS: [
     ...Object.values(EXPRESSION_ANIMATIONS.FEMININE),
     ...Object.values(EXPRESSION_ANIMATIONS.MASCULINE),
   ],
 
-  
   ALL_IDLE_ANIMATIONS: [
     ...Object.values(IDLE_ANIMATIONS.FEMININE),
     ...Object.values(IDLE_ANIMATIONS.MASCULINE),
@@ -122,22 +117,15 @@ export const getAnimationsByCategory = (category) => {
 
   switch (category) {
     case "expression":
-      
       return animations.PURE_EXPRESSION_ANIMATIONS;
     case "talking":
-      
       return animations.TALKING_ANIMATIONS;
     case "idle":
-      
       return animations.ALL_IDLE_ANIMATIONS;
     case "ai_response":
-      
       return animations.AI_RESPONSE_ANIMATIONS;
     case "all":
-      return [
-        ...animations.ALL_IDLE_ANIMATIONS, 
-        ...animations.TALKING_ANIMATIONS, 
-      ];
+      return [...animations.ALL_IDLE_ANIMATIONS, ...animations.TALKING_ANIMATIONS];
     default:
       return animations.AI_RESPONSE_ANIMATIONS;
   }

@@ -91,7 +91,6 @@ export const DialogProvider = ({ children }) => {
 
         if (currentTtsAvailable && dialogApiAvailable && responseText) {
           try {
-            
             await currentSpeak(responseText);
           } catch (ttsError) {
             console.warn("TTS failed for AI response:", ttsError);

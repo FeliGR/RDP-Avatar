@@ -35,17 +35,16 @@ export class AnimationService {
 
     try {
       const playIdleUseCase = this.compositionRoot.getPlayIdleAnimationUseCase();
-      
-      
+
       const existingSystem = playIdleUseCase.activeIdleSystems?.get(this.currentCharacter.id);
       let result;
-      
+
       if (existingSystem) {
         result = await playIdleUseCase.resume(this.currentCharacter);
       } else {
         result = await playIdleUseCase.execute(this.currentCharacter);
       }
-      
+
       return result;
     } catch (error) {
       console.error("[Animation Service] Error starting idle animations:", error);
@@ -65,24 +64,23 @@ export class AnimationService {
       const playTalkingUseCase = this.compositionRoot.getPlayTalkingAnimationUseCase();
 
       if (audioSource) {
-        
         if (!BABYLON.Engine.audioEngine) {
           try {
             BABYLON.Engine.audioEngine = new BABYLON.AudioEngine();
           } catch (audioEngineError) {
-            console.warn("[Animation Service] Could not initialize audio engine:", audioEngineError);
-            
+            console.warn(
+              "[Animation Service] Could not initialize audio engine:",
+              audioEngineError,
+            );
           }
         }
 
-        
         if (BABYLON.Engine.audioEngine) {
           try {
             const audioAnalyzer = this.compositionRoot.getAudioAnalyzer();
             audioAnalyzer.initialize(audioSource);
           } catch (analyzerError) {
             console.warn("[Animation Service] Could not initialize audio analyzer:", analyzerError);
-            
           }
         }
       }
@@ -104,13 +102,11 @@ export class AnimationService {
 
     try {
       const playTalkingUseCase = this.compositionRoot.getPlayTalkingAnimationUseCase();
-      
-      
+
       console.log("[Animation Service] Stopping talking animations...");
       const result = await playTalkingUseCase.stop(this.currentCharacter);
 
       if (result.success) {
-        
         console.log("[Animation Service] Restarting idle system...");
         await this.startIdleAnimations();
       }
@@ -151,12 +147,11 @@ export class AnimationService {
     try {
       const animationController = this.compositionRoot.getAnimationController();
 
-      
       const blendingOptions = {
-        transitionSpeed: 0.02, 
+        transitionSpeed: 0.02,
         maxWeight: options.maxWeight || 1.0,
         animationOffset: options.animationOffset || 0,
-        speedRatio: options.speedRatio || 0.8, 
+        speedRatio: options.speedRatio || 0.8,
         ...options,
       };
 

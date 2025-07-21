@@ -10,21 +10,18 @@ export class BabylonSceneManager extends ISceneManager {
     this.beforeRenderCallbacks = new Set();
     this.officeEnvironment = new OfficeEnvironmentService(scene, shadowGenerator);
     this.environmentInitialized = false;
-    
-    
+
     this._initializeAudioEngine();
   }
 
   _initializeAudioEngine() {
     try {
       if (!BABYLON.Engine.audioEngine) {
-        
         BABYLON.Engine.audioEngine = new BABYLON.AudioEngine();
         console.log("[Scene Manager] Audio engine initialized successfully");
       }
     } catch (error) {
       console.warn("[Scene Manager] Could not initialize audio engine:", error);
-      
     }
   }
 

@@ -40,8 +40,8 @@ export class PlayIdleAnimationUseCase {
     try {
       await this.animationController.playAnimationWithBlending(character, initialAnimation, {
         isLooping: true,
-        speedRatio: 0.8, 
-        transitionDuration: 0.4, 
+        speedRatio: 0.8,
+        transitionDuration: 0.4,
         maxWeight: 1.0,
       });
 
@@ -121,8 +121,8 @@ export class PlayIdleAnimationUseCase {
       this.animationController
         .playAnimationWithBlending(character, nextAnimation, {
           isLooping: true,
-          speedRatio: 0.8, 
-          transitionDuration: 0.3, 
+          speedRatio: 0.8,
+          transitionDuration: 0.3,
           maxWeight: 1.0,
         })
         .then(() => {
@@ -243,34 +243,32 @@ export class PlayIdleAnimationUseCase {
       const randomAnimation =
         availableAnimations[Math.floor(Math.random() * availableAnimations.length)];
 
-      
       const animGroup = this.animationController.getAnimationGroup
         ? this.animationController.getAnimationGroup(character, randomAnimation)
         : null;
       let frameStart = 0;
       if (animGroup && animGroup.to && animGroup.from !== undefined) {
-        
         frameStart = animGroup.from + Math.random() * (animGroup.to - animGroup.from);
       }
 
-      console.log(`[Idle Resume] Transitioning from talking back to idle: ${randomAnimation} (start frame: ${frameStart})`);
+      console.log(
+        `[Idle Resume] Transitioning from talking back to idle: ${randomAnimation} (start frame: ${frameStart})`,
+      );
 
-      
       await this.animationController.playAnimationWithBlending(character, randomAnimation, {
         isLooping: true,
         speedRatio: 0.8,
-        transitionDuration: 0.5, 
+        transitionDuration: 0.5,
         maxWeight: 0.8,
         frameStart,
       });
 
       this.morphTargetController.startAutomaticFacialAnimations(character);
-      
-      
+
       console.log("[Idle Resume] Delaying idle cycling setup to prevent immediate transitions...");
       setTimeout(() => {
         this._setupIdleVariationCycling(character, availableAnimations);
-      }, 3000); 
+      }, 3000);
 
       return {
         success: true,

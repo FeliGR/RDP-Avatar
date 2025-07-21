@@ -70,7 +70,6 @@ const ReadyPlayerMeAvatar = ({
       try {
         if (!BABYLON.Engine.audioEngine) {
           BABYLON.Engine.audioEngine = new BABYLON.AudioEngine();
-          console.log("[ReadyPlayerMe] Audio engine initialized successfully");
         }
       } catch (audioError) {
         console.warn("[ReadyPlayerMe] Could not initialize audio engine:", audioError);

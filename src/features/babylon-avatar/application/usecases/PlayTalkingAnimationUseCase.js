@@ -25,20 +25,22 @@ export class PlayTalkingAnimationUseCase {
       throw new Error("No talking animations available");
     }
 
-    console.log("[Talking] Stopping all existing animations and observers");
+    // Remove observers but DON'T stop the current animation - let cross-fade handle it
+    console.log("[Talking] Removing observers but keeping current animation for smooth transition");
     this.animationController.removeObservers(character);
-    this.animationController.stopAnimation(character);
 
+    // Clear any pending transitions to prevent conflicts
     if (this.animationController.clearPendingTransitions) {
       this.animationController.clearPendingTransitions();
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    // Small delay to ensure cleanup
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
     const selectedTalkingAnimation =
       talkingAnimations[Math.floor(Math.random() * talkingAnimations.length)];
     console.log(
-      `[Talking] Starting SINGLE talking animation: ${selectedTalkingAnimation} - NO looping, NO switching`,
+      `[Talking] Starting SINGLE talking animation: ${selectedTalkingAnimation} - Smooth transition from current animation`,
     );
 
     await this.animationController.playAnimationWithBlending(character, selectedTalkingAnimation, {

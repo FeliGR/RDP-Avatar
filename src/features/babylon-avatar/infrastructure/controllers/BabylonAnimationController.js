@@ -1,4 +1,103 @@
+import * as BABYLON from "babylonjs";
 import { IAnimationController } from "../../domain/interfaces/index.js";
+
+/**
+ * Cross-fades two AnimationGroups using Babylon's timing system
+ * Frame-rate independent and smooth
+ */
+function crossFadeAnimationGroups(
+  scene,
+  fromGroup,
+  toGroup,
+  duration,
+  speedRatio = 1,
+  onComplete = null,
+  easing = null
+) {
+  // 1) If there's no current animation, just start toGroup at full weight
+  if (!fromGroup || !fromGroup.isPlaying) {
+    toGroup.speedRatio = speedRatio;
+    toGroup.start(true, speedRatio);
+    toGroup.setWeightForAllAnimatables(1);
+    if (onComplete) onComplete();
+    return;
+  }
+
+  console.log(`[Babylon Cross-Fade] ${fromGroup?.name || 'none'} → ${toGroup.name} (${duration}s)`);
+
+  // 2) Start toGroup and set initial weights
+  toGroup.speedRatio = speedRatio;
+  toGroup.start(true, speedRatio);
+  toGroup.setWeightForAllAnimatables(0);
+  fromGroup.setWeightForAllAnimatables(1);
+
+  // 3) Use Babylon's built-in easing or default cubic easing
+  const easingFunction = easing || ((t) => 
+    t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+  );
+
+  // 4) Create a simple animation using Babylon's timing
+  const startTime = performance.now();
+  const durationMs = duration * 1000;
+  let observerRemoved = false; // Prevent double cleanup
+  
+  const onBeforeRenderObserver = scene.onBeforeRenderObservable.add(() => {
+    if (observerRemoved) return; // Safety check
+    
+    const elapsed = performance.now() - startTime;
+    const progress = Math.min(1, elapsed / durationMs);
+    const easedProgress = easingFunction(progress);
+
+    try {
+      // Update weights based on eased progress
+      fromGroup.setWeightForAllAnimatables(1 - easedProgress);
+      toGroup.setWeightForAllAnimatables(easedProgress);
+
+      // Check if animation is complete
+      if (progress >= 1) {
+        // Mark as removed to prevent double cleanup
+        observerRemoved = true;
+        // Remove observer
+        scene.onBeforeRenderObservable.remove(onBeforeRenderObserver);
+        
+        // Final cleanup
+        try {
+          fromGroup.stop();
+          toGroup.setWeightForAllAnimatables(1);
+          console.log(`[Babylon Cross-Fade] Completed transition to ${toGroup.name}`);
+        } catch (error) {
+          console.warn("[Babylon Cross-Fade] Error in final cleanup:", error);
+        }
+        
+        if (onComplete) onComplete();
+      }
+    } catch (error) {
+      console.warn("[Babylon Cross-Fade] Error updating weights:", error);
+      // Remove observer on error
+      if (!observerRemoved) {
+        observerRemoved = true;
+        scene.onBeforeRenderObservable.remove(onBeforeRenderObserver);
+      }
+      if (onComplete) onComplete();
+    }
+  });
+
+  // 5) Fallback cleanup in case the observer doesn't trigger properly
+  setTimeout(() => {
+    if (!observerRemoved) {
+      try {
+        observerRemoved = true;
+        scene.onBeforeRenderObservable.remove(onBeforeRenderObserver);
+        fromGroup.stop();
+        toGroup.setWeightForAllAnimatables(1);
+        console.log(`[Babylon Cross-Fade] Fallback cleanup completed for ${toGroup.name}`);
+        if (onComplete) onComplete();
+      } catch (error) {
+        // Ignore cleanup errors in fallback
+      }
+    }
+  }, durationMs + 100); // Small buffer
+}
 
 export class BabylonAnimationController extends IAnimationController {
   constructor(scene) {
@@ -39,95 +138,59 @@ export class BabylonAnimationController extends IAnimationController {
   }
 
   /**
-   * Cross-fades two AnimationGroups over exactly transitionDuration seconds.
-   * Time-based cross-fade that's frame-rate independent.
+   * Cross-fades two AnimationGroups using Babylon's native animation system.
+   * Frame-rate independent and smooth.
    */
   async playAnimationWithBlending(character, animationName, options = {}) {
-    const target = character.getAnimationGroup(animationName);
-    if (!target) {
+    const toGroup = character.getAnimationGroup(animationName);
+    if (!toGroup) {
       throw new Error(`Animation '${animationName}' not found`);
     }
 
+    // Prevent duplicate transitions
     if (this.animationTransitions.has(animationName)) {
       return Promise.resolve();
     }
 
     const {
-      isLooping = false,
       speedRatio = 1.0,
       transitionDuration = 0.4,
-      maxWeight = 1.0,
-      frameStart = 0,
-      frameEnd = null,
+      easing = null, // Optional easing function
     } = options;
 
-    const from = character.currentAnimation;
-    const endFrame = frameEnd ?? target.to ?? target.duration;
+    const fromGroup = character.currentAnimation;
 
-    if (!from || !from.isPlaying) {
-      target.speedRatio = speedRatio;
-      target.start(isLooping, speedRatio, frameStart, endFrame, false);
-      target.setWeightForAllAnimatables(maxWeight);
-      character.setCurrentAnimation(target);
+    // Skip if same animation
+    if (fromGroup === toGroup) {
       return Promise.resolve();
     }
 
-    if (from === target) {
-      return Promise.resolve();
-    }
-
+    // Remove any idle observers up front to prevent interference
     this.removeObservers(character);
 
+    // Track this transition
+    this.animationTransitions.set(animationName, true);
+
+    // Default to cubic easing for smoother transitions
+    const easingFunction = easing || ((t) => 
+      t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+    );
+
     return new Promise((resolve) => {
-      this.animationTransitions.set(animationName, true);
-
-      const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-
-      const startTime = performance.now();
-      const durationMs = transitionDuration * 1000;
-
-      console.log(
-        `[Time-Based Blend] ${from?.name || "none"} → ${target.name} (${transitionDuration}s)`,
+      crossFadeAnimationGroups(
+        this.scene,
+        fromGroup,
+        toGroup,
+        transitionDuration,
+        speedRatio,
+        () => {
+          // Clean up and set current animation
+          character.setCurrentAnimation(toGroup);
+          this.animationTransitions.delete(animationName);
+          resolve();
+        },
+        easingFunction
       );
-
-      from.setWeightForAllAnimatables(1);
-      target.speedRatio = speedRatio;
-      target.start(isLooping, speedRatio, frameStart, endFrame, false);
-      target.setWeightForAllAnimatables(0);
-
-      const onFrame = () => {
-        const now = performance.now();
-        const tRaw = Math.min(1, (now - startTime) / durationMs);
-        const tEased = easeInOutCubic(tRaw);
-
-        try {
-          target.setWeightForAllAnimatables(maxWeight * tEased);
-          from.setWeightForAllAnimatables(1 - tEased);
-        } catch (error) {
-          console.warn("[Time-Based Blend] Error setting weights:", error);
-          this.scene.onBeforeRenderObservable.removeCallback(onFrame);
-          this.animationTransitions.delete(animationName);
-          resolve();
-          return;
-        }
-
-        if (tRaw >= 1) {
-          this.scene.onBeforeRenderObservable.removeCallback(onFrame);
-          try {
-            from.stop();
-            target.setWeightForAllAnimatables(maxWeight);
-            character.setCurrentAnimation(target);
-            console.log(`[Time-Based Blend] Completed transition to ${target.name}`);
-          } catch (error) {
-            console.warn("[Time-Based Blend] Error in cleanup:", error);
-          }
-
-          this.animationTransitions.delete(animationName);
-          resolve();
-        }
-      };
-
-      this.scene.onBeforeRenderObservable.add(onFrame);
     });
   }
 

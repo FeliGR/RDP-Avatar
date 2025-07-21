@@ -27,12 +27,12 @@ export class BabylonAnimationController extends IAnimationController {
   }
 
   async playAnimationWithTransition(character, animationName, options = {}) {
-    // Redirect to new time-based method
+    
     return this.playAnimationWithBlending(character, animationName, options);
   }
 
   async blendAnimations(character, blendConfig) {
-    // Redirect to new time-based method
+    
     const { toAnimation, maxWeight } = blendConfig;
     return this.playAnimationWithBlending(character, toAnimation, {
       maxWeight,
@@ -50,7 +50,7 @@ export class BabylonAnimationController extends IAnimationController {
       throw new Error(`Animation '${animationName}' not found`);
     }
 
-    // prevent double-blends
+    
     if (this.animationTransitions.has(animationName)) {
       return Promise.resolve();
     }
@@ -58,7 +58,7 @@ export class BabylonAnimationController extends IAnimationController {
     const {
       isLooping = false,
       speedRatio = 1.0,
-      transitionDuration = 0.4, // seconds
+      transitionDuration = 0.4, 
       maxWeight = 1.0,
       frameStart = 0,
       frameEnd = null,
@@ -67,7 +67,7 @@ export class BabylonAnimationController extends IAnimationController {
     const from = character.currentAnimation;
     const endFrame = frameEnd ?? target.to ?? target.duration;
 
-    // If there's no current, just start immediately
+    
     if (!from || !from.isPlaying) {
       target.speedRatio = speedRatio;
       target.start(isLooping, speedRatio, frameStart, endFrame, false);
@@ -76,27 +76,26 @@ export class BabylonAnimationController extends IAnimationController {
       return Promise.resolve();
     }
 
-    // Skip if same animation
+    
     if (from === target) {
       return Promise.resolve();
     }
 
-    // 1) stop any idle observers so nothing re-fires midway
+    
     this.removeObservers(character);
 
     return new Promise((resolve) => {
       this.animationTransitions.set(animationName, true);
 
-      const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+      const easeInOutCubic = t =>
+        t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
       const startTime = performance.now();
       const durationMs = transitionDuration * 1000;
 
-      console.log(
-        `[Time-Based Blend] ${from?.name || "none"} → ${target.name} (${transitionDuration}s)`,
-      );
+      console.log(`[Time-Based Blend] ${from?.name || 'none'} → ${target.name} (${transitionDuration}s)`);
 
-      // prep both groups
+      
       from.setWeightForAllAnimatables(1);
       target.speedRatio = speedRatio;
       target.start(isLooping, speedRatio, frameStart, endFrame, false);
@@ -107,7 +106,7 @@ export class BabylonAnimationController extends IAnimationController {
         const tRaw = Math.min(1, (now - startTime) / durationMs);
         const tEased = easeInOutCubic(tRaw);
 
-        // apply weights
+        
         try {
           target.setWeightForAllAnimatables(maxWeight * tEased);
           from.setWeightForAllAnimatables(1 - tEased);
@@ -120,7 +119,7 @@ export class BabylonAnimationController extends IAnimationController {
         }
 
         if (tRaw >= 1) {
-          // done
+          
           this.scene.onBeforeRenderObservable.removeCallback(onFrame);
           try {
             from.stop();
@@ -136,7 +135,7 @@ export class BabylonAnimationController extends IAnimationController {
         }
       };
 
-      // hook in
+      
       this.scene.onBeforeRenderObservable.add(onFrame);
     });
   }

@@ -25,38 +25,35 @@ export class PlayTalkingAnimationUseCase {
       throw new Error("No talking animations available");
     }
 
-    // 1) FIRST: Stop ALL existing animations and observers
+    
     console.log("[Talking] Stopping all existing animations and observers");
     this.animationController.removeObservers(character);
-    this.animationController.stopAnimation(character); // FORCE stop current animation
-
-    // 2) Clear any pending animation transitions to prevent conflicts
+    this.animationController.stopAnimation(character); 
+    
+    
     if (this.animationController.clearPendingTransitions) {
       this.animationController.clearPendingTransitions();
     }
+    
+    
+    await new Promise(resolve => setTimeout(resolve, 100));
 
-    // 3) Wait longer to ensure complete cleanup
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
-    // 4) NOW: Select ONE talking animation and keep it running - NO switching
-    const selectedTalkingAnimation =
-      talkingAnimations[Math.floor(Math.random() * talkingAnimations.length)];
-    console.log(
-      `[Talking] Starting SINGLE talking animation: ${selectedTalkingAnimation} - NO looping, NO switching`,
-    );
-
+    
+    const selectedTalkingAnimation = talkingAnimations[Math.floor(Math.random() * talkingAnimations.length)];
+    console.log(`[Talking] Starting SINGLE talking animation: ${selectedTalkingAnimation} - NO looping, NO switching`);
+    
     await this.animationController.playAnimationWithBlending(character, selectedTalkingAnimation, {
-      isLooping: true, // Loop the SAME talking animation during AI response
-      speedRatio: 0.8, // Match reference code exactly
-      transitionDuration: 0.4, // Time-based transition
-      maxWeight: 0.8, // Higher weight for talking like reference code
+      isLooping: true, 
+      speedRatio: 0.8, 
+      transitionDuration: 0.4, 
+      maxWeight: 0.8, 
     });
 
     if (audioSource && this.audioAnalyzer) {
       this._setupAudioMorphTargets(character, audioSource);
     }
 
-    // NO additional animation logic - just let the selected animation loop
+    
 
     return {
       success: true,

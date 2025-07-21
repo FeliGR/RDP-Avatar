@@ -35,17 +35,17 @@ export class AnimationService {
 
     try {
       const playIdleUseCase = this.compositionRoot.getPlayIdleAnimationUseCase();
-
-      // Check if idle system already exists, if so resume instead of execute
+      
+      
       const existingSystem = playIdleUseCase.activeIdleSystems?.get(this.currentCharacter.id);
       let result;
-
+      
       if (existingSystem) {
         result = await playIdleUseCase.resume(this.currentCharacter);
       } else {
         result = await playIdleUseCase.execute(this.currentCharacter);
       }
-
+      
       return result;
     } catch (error) {
       console.error("[Animation Service] Error starting idle animations:", error);
@@ -65,27 +65,24 @@ export class AnimationService {
       const playTalkingUseCase = this.compositionRoot.getPlayTalkingAnimationUseCase();
 
       if (audioSource) {
-        // Initialize Babylon.js audio engine first if not already initialized
+        
         if (!BABYLON.Engine.audioEngine) {
           try {
             BABYLON.Engine.audioEngine = new BABYLON.AudioEngine();
           } catch (audioEngineError) {
-            console.warn(
-              "[Animation Service] Could not initialize audio engine:",
-              audioEngineError,
-            );
-            // Continue without audio analysis if audio engine fails
+            console.warn("[Animation Service] Could not initialize audio engine:", audioEngineError);
+            
           }
         }
 
-        // Only try to initialize audio analyzer if audio engine is available
+        
         if (BABYLON.Engine.audioEngine) {
           try {
             const audioAnalyzer = this.compositionRoot.getAudioAnalyzer();
             audioAnalyzer.initialize(audioSource);
           } catch (analyzerError) {
             console.warn("[Animation Service] Could not initialize audio analyzer:", analyzerError);
-            // Continue without audio analysis if analyzer fails
+            
           }
         }
       }
@@ -107,13 +104,13 @@ export class AnimationService {
 
     try {
       const playTalkingUseCase = this.compositionRoot.getPlayTalkingAnimationUseCase();
-
-      // Stop talking animations and let PlayIdleAnimationUseCase handle the transition back to idle
+      
+      
       console.log("[Animation Service] Stopping talking animations...");
       const result = await playTalkingUseCase.stop(this.currentCharacter);
 
       if (result.success) {
-        // Simply restart the idle system - let it handle the transition smoothly
+        
         console.log("[Animation Service] Restarting idle system...");
         await this.startIdleAnimations();
       }
@@ -154,12 +151,12 @@ export class AnimationService {
     try {
       const animationController = this.compositionRoot.getAnimationController();
 
-      // Use reference code values consistently
+      
       const blendingOptions = {
-        transitionSpeed: 0.02, // Always use reference code speed
+        transitionSpeed: 0.02, 
         maxWeight: options.maxWeight || 1.0,
         animationOffset: options.animationOffset || 0,
-        speedRatio: options.speedRatio || 0.8, // Match reference code
+        speedRatio: options.speedRatio || 0.8, 
         ...options,
       };
 

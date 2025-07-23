@@ -1,0 +1,71 @@
+.language-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.language-selector__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--chat-text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.language-selector__wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--chat-radius-sm);
+  padding: 0.5rem 0.75rem;
+  transition: all 0.3s ease;
+}
+
+.language-selector__wrapper:focus-within {
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+}
+
+.language-selector__flag {
+  font-size: 1.125rem;
+  margin-right: 0.75rem;
+  line-height: 1;
+}
+
+.language-selector__select {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 0.875rem;
+  color: var(--chat-text-primary);
+  cursor: pointer;
+  appearance: none;
+  padding-right: 1rem;
+}
+
+.language-selector__select:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.language-selector__wrapper::after {
+  content: "▼";
+  position: absolute;
+  right: 0.75rem;
+  font-size: 0.75rem;
+  color: var(--chat-text-secondary);
+  pointer-events: none;
+  transition: transform 0.3s ease;
+}
+
+.language-selector__wrapper:focus-within::after {
+  transform: rotate(180deg);
+}
+
+/* Hover effect */
+.language-selector__wrapper:hover:not(:focus-within) {
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.08);
+}

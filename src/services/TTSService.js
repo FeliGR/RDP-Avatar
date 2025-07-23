@@ -6,10 +6,10 @@ class TTSService {
   constructor() {
     this.baseUrl = "http://localhost:5003";
     this.defaultVoiceConfig = {
-      language_code: "en-US",
+      languageCode: "en-US",
       name: "en-US-Wavenet-D",
-      ssml_gender: "NEUTRAL",
-      speaking_rate: 1.0,
+      ssmlGender: "NEUTRAL",
+      speakingRate: 1.0,
       pitch: 0.0,
     };
   }
@@ -30,9 +30,23 @@ class TTSService {
     }
 
     try {
+      // Use provided voiceConfig or fallback to default
+      const finalVoiceConfig = voiceConfig
+        ? { ...this.defaultVoiceConfig, ...voiceConfig }
+        : this.defaultVoiceConfig;
+
+      // Convert camelCase to snake_case for API compatibility
+      const apiVoiceConfig = {
+        language_code: finalVoiceConfig.languageCode,
+        name: finalVoiceConfig.name,
+        ssml_gender: finalVoiceConfig.ssmlGender,
+        speaking_rate: finalVoiceConfig.speakingRate,
+        pitch: finalVoiceConfig.pitch,
+      };
+
       const requestBody = {
         text: text.trim(),
-        ...(voiceConfig && { voiceConfig: { ...this.defaultVoiceConfig, ...voiceConfig } }),
+        voiceConfig: apiVoiceConfig,
       };
 
       const response = await fetch(`${this.baseUrl}/api/tts`, {

@@ -3,6 +3,7 @@ import { sendMessage } from "../../../services/api";
 import { usePersonality } from "../../personality";
 import { useAvatarAnimation } from "../../avatar/context/AvatarAnimationContext";
 import { useTTS } from "../../voice/context/TTSContext";
+import { useVoiceConfig } from "../../voice/context/VoiceConfigContext";
 
 export const DialogContext = createContext();
 
@@ -19,14 +20,17 @@ const FALLBACK_RESPONSES = [
 export const DialogProvider = ({ children }) => {
   const { personalityTraits, apiAvailable: personalityApiAvailable } = usePersonality();
   const { speak, isAvailable: ttsAvailable } = useTTS();
+  const { getTTSConfig } = useVoiceConfig();
 
   const ttsAvailableRef = useRef(ttsAvailable);
   const speakRef = useRef(speak);
+  const getTTSConfigRef = useRef(getTTSConfig);
 
   useEffect(() => {
     ttsAvailableRef.current = ttsAvailable;
     speakRef.current = speak;
-  }, [ttsAvailable, speak]);
+    getTTSConfigRef.current = getTTSConfig;
+  }, [ttsAvailable, speak, getTTSConfig]);
 
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -88,10 +92,12 @@ export const DialogProvider = ({ children }) => {
 
         const currentTtsAvailable = ttsAvailableRef.current;
         const currentSpeak = speakRef.current;
+        const currentGetTTSConfig = getTTSConfigRef.current;
 
         if (currentTtsAvailable && dialogApiAvailable && responseText) {
           try {
-            await currentSpeak(responseText);
+            const voiceConfig = currentGetTTSConfig();
+            await currentSpeak(responseText, voiceConfig);
           } catch (ttsError) {
             console.warn("TTS failed for AI response:", ttsError);
           }

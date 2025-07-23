@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { AvatarViewer } from "./features/avatar";
 import { DialogBox } from "./features/dialog";
 import { PersonalityControls } from "./features/personality";
+import { VoiceControls } from "./features/voice";
 import { AppProviders } from "./app/providers";
 import ChatPanelHeader from "./features/dialog/components/ChatPanelHeader";
 import "./styles/index.css";
@@ -248,6 +249,16 @@ const App = () => {
                 </svg>
               </button>
               <button
+                className={`control-btn ${activePanel === "voice" ? "active" : ""}`}
+                onClick={() => togglePanel("voice")}
+                title="Voice Configuration"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5z" />
+                  <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
+                </svg>
+              </button>
+              <button
                 className="control-btn"
                 onClick={handleCustomizeAvatar}
                 title="Customize Avatar"
@@ -259,6 +270,14 @@ const App = () => {
             </div>
             <div
               className={`modal-backdrop ${activePanel === "chat" ? "active" : ""}`}
+              onClick={() => setActivePanel(null)}
+            ></div>
+            <div
+              className={`modal-backdrop ${activePanel === "personality" ? "active" : ""}`}
+              onClick={() => setActivePanel(null)}
+            ></div>
+            <div
+              className={`modal-backdrop ${activePanel === "voice" ? "active" : ""}`}
               onClick={() => setActivePanel(null)}
             ></div>
             <div className={`side-panel chat-panel ${activePanel === "chat" ? "active" : ""}`}>
@@ -278,6 +297,17 @@ const App = () => {
               </div>
               <div className="panel-content">
                 <PersonalityControls />
+              </div>
+            </div>
+            <div className={`side-panel voice-panel ${activePanel === "voice" ? "active" : ""}`}>
+              <div className="panel-header">
+                <h3>Voice Configuration</h3>
+                <button className="close-panel-btn" onClick={() => setActivePanel(null)}>
+                  ×
+                </button>
+              </div>
+              <div className="panel-content">
+                <VoiceControls />
               </div>
             </div>
           </>

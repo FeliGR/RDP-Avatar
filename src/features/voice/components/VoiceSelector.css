@@ -1,0 +1,147 @@
+.voice-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.voice-selector__section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.voice-selector__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--chat-text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.voice-selector__wrapper {
+  position: relative;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--chat-radius-sm);
+  transition: all 0.3s ease;
+}
+
+.voice-selector__wrapper:focus-within {
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+}
+
+.voice-selector__select {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 0.875rem;
+  color: var(--chat-text-primary);
+  cursor: pointer;
+  padding: 0.75rem;
+  padding-right: 2rem;
+  appearance: none;
+}
+
+.voice-selector__select:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.voice-selector__wrapper::after {
+  content: "▼";
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.75rem;
+  color: var(--chat-text-secondary);
+  pointer-events: none;
+  transition: transform 0.3s ease;
+}
+
+.voice-selector__wrapper:focus-within::after {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.voice-selector__info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--chat-radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.voice-selector__info-icon {
+  font-size: 0.875rem;
+}
+
+.voice-selector__info-text {
+  font-size: 0.75rem;
+  color: var(--chat-text-secondary);
+}
+
+/* Gender Options */
+.voice-selector__gender-options {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.voice-selector__gender-btn {
+  flex: 1;
+  min-width: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--chat-text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--chat-radius-sm);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.75rem;
+}
+
+.voice-selector__gender-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--chat-text-primary);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+.voice-selector__gender-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.voice-selector__gender-btn.active {
+  background: var(--chat-accent-gradient);
+  color: white;
+  border-color: transparent;
+}
+
+.voice-selector__gender-btn.active:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--chat-shadow-soft);
+}
+
+.voice-selector__gender-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.voice-selector__gender-label {
+  font-weight: 500;
+  line-height: 1;
+}
+
+/* Hover effect for wrapper */
+.voice-selector__wrapper:hover:not(:focus-within) {
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.08);
+}

@@ -79,7 +79,7 @@ export const TTSProvider = ({ children }) => {
   /**
    * Speak text using TTS and trigger avatar animations
    * @param {string} text - Text to speak
-   * @param {object} voiceConfig - Optional voice configuration
+   * @param {object} voiceConfig - Optional voice configuration (will override context if provided)
    * @returns {Promise<boolean>} Success status
    */
   const speak = useCallback(

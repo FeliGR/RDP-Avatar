@@ -136,7 +136,7 @@ const App = () => {
   return (
     <AppProviders>
       <div ref={containerRef} className="app-container">
-        <LanguageSwitcher />
+        {!showCreator && <LanguageSwitcher />}
         <div className={`avatar-background ${avatarLoaded ? "loaded" : ""}`}>
           {avatarLoaded && (
             <AvatarViewer
@@ -231,7 +231,7 @@ const App = () => {
             </div>
           </div>
         )}
-        {showUI && (
+        {showUI && !showCreator && (
           <>
             <div className="control-buttons">
               <button

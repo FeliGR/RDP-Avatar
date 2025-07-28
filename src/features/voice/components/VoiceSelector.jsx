@@ -15,34 +15,31 @@ const VoiceSelector = ({ disabled = false }) => {
 
   return (
     <div className="voice-selector">
-      <div className="voice-selector__section">
-        <label className="voice-selector__label" htmlFor="voice-select">
-          Voice Model
-        </label>
-        <div className="voice-selector__wrapper">
-          <select
-            id="voice-select"
-            className="voice-selector__select"
-            value={voiceConfig.name}
-            onChange={handleVoiceChange}
-            disabled={disabled || availableVoices.length === 0}
-          >
-            {availableVoices.map((voice) => (
-              <option key={voice.name} value={voice.name}>
-                {voice.label} ({voice.gender})
-              </option>
-            ))}
-          </select>
-        </div>
-        {currentVoice && (
-          <div className="voice-selector__info">
-            <span className="voice-selector__info-icon">
-              {currentVoice.gender === "Male" ? "M" : "F"}
-            </span>
-            <span className="voice-selector__info-text">{currentVoice.gender} voice</span>
-          </div>
-        )}
+      <div className="voice-selector__wrapper">
+        <select
+          id="voice-select"
+          className="voice-selector__select"
+          value={voiceConfig.name}
+          onChange={handleVoiceChange}
+          disabled={disabled || availableVoices.length === 0}
+        >
+          {availableVoices.map((voice) => (
+            <option key={voice.name} value={voice.name}>
+              {voice.label} ({voice.gender})
+            </option>
+          ))}
+        </select>
       </div>
+      {currentVoice && (
+        <div className="voice-selector__info">
+          <span className="voice-selector__info-icon">
+            {currentVoice.gender === "Male" ? "♂" : "♀"}
+          </span>
+          <span className="voice-selector__info-text">
+            {currentVoice.gender} voice - {currentVoice.label}
+          </span>
+        </div>
+      )}
     </div>
   );
 };

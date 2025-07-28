@@ -14,9 +14,6 @@ const LanguageSelector = ({ disabled = false }) => {
 
   return (
     <div className="language-selector">
-      <label className="language-selector__label" htmlFor="language-select">
-        Language
-      </label>
       <div className="language-selector__wrapper">
         <span className="language-selector__flag">{currentLanguage?.flag || "🌐"}</span>
         <select
@@ -32,6 +29,11 @@ const LanguageSelector = ({ disabled = false }) => {
             </option>
           ))}
         </select>
+      </div>
+      <div className="language-selector__info">
+        <span className="language-selector__current">
+          {currentLanguage?.label || "Unknown Language"}
+        </span>
       </div>
     </div>
   );

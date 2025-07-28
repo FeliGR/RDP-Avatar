@@ -26,37 +26,63 @@ const VoiceControls = () => {
       {isLoading && <div className="loading-indicator" aria-label="Loading..." />}
 
       <div className="voice-controls__content">
-        <div className="voice-controls__section">
-          <div className="voice-controls__section-header">
-            <h4 className="voice-controls__section-title">Language & Voice</h4>
-            <button
-              className="voice-controls__reset-btn"
-              onClick={handleReset}
-              disabled={isLoading || isPlaying}
-              title="Reset to defaults"
-            >
-              ↻
-            </button>
+        {/* Language Selection Card */}
+        <div className="voice-control-card language-card">
+          <div className="voice-control-card__header">
+            <label className="voice-control-card__title">Language</label>
           </div>
           <LanguageSelector disabled={isLoading || isPlaying} />
+        </div>
+
+        {/* Voice Selection Card */}
+        <div className="voice-control-card voice-card">
+          <div className="voice-control-card__header">
+            <label className="voice-control-card__title">Voice Model</label>
+          </div>
           <VoiceSelector disabled={isLoading || isPlaying} />
+        </div>
+
+        {/* Gender Selection Card */}
+        <div className="voice-control-card gender-card">
+          <div className="voice-control-card__header">
+            <label className="voice-control-card__title">Voice Gender</label>
+          </div>
           <SsmlGenderSelector disabled={isLoading || isPlaying} />
         </div>
 
-        <div className="voice-controls__section">
-          <h4 className="voice-controls__section-title">Voice Parameters</h4>
+        {/* Speaking Rate Card */}
+        <div className="voice-control-card rate-card">
           <VoiceParameterSlider
             parameter="speakingRate"
             config={VOICE_PARAMETERS.speakingRate}
             value={voiceConfig.speakingRate}
             disabled={isLoading || isPlaying}
           />
+        </div>
+
+        {/* Pitch Card */}
+        <div className="voice-control-card pitch-card">
           <VoiceParameterSlider
             parameter="pitch"
             config={VOICE_PARAMETERS.pitch}
             value={voiceConfig.pitch}
             disabled={isLoading || isPlaying}
           />
+        </div>
+
+        {/* Reset Card */}
+        <div className="voice-control-card reset-card">
+          <div className="voice-control-card__content">
+            <button
+              className="voice-controls__reset-btn"
+              onClick={handleReset}
+              disabled={isLoading || isPlaying}
+              title="Reset all settings to defaults"
+            >
+              <span className="reset-icon">↻</span>
+              <span className="reset-text">Reset All Settings</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>

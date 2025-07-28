@@ -12,7 +12,6 @@ const SsmlGenderSelector = ({ disabled = false }) => {
 
   return (
     <div className="ssml-gender-selector">
-      <label className="ssml-gender-selector__label">SSML Gender</label>
       <div className="ssml-gender-selector__options">
         {SSML_GENDER_OPTIONS.map((option) => (
           <label

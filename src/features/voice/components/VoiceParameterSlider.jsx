@@ -57,16 +57,15 @@ const VoiceParameterSlider = ({ parameter, config, value, disabled = false }) =>
   return (
     <div className="voice-parameter-slider">
       <div className="voice-parameter-slider__header">
-        <label className="voice-parameter-slider__label" htmlFor={`${parameter}-slider`}>
+        <label className="voice-parameter-slider__title" htmlFor={`${parameter}-slider`}>
           {config.label}
         </label>
-        <div className="voice-parameter-slider__value-wrapper">
+        <div className="voice-parameter-slider__value-section">
           <span
-            className={`voice-parameter-slider__value ${isPulse ? "pulse" : ""}`}
+            className={`voice-parameter-value ${isPulse ? "pulse" : ""}`}
             title={config.description}
           >
-            {displayValue}
-            {config.unit}
+            {displayValue}{config.unit}
           </span>
           <button
             type="button"
@@ -81,40 +80,33 @@ const VoiceParameterSlider = ({ parameter, config, value, disabled = false }) =>
         </div>
       </div>
 
-      <div className="voice-parameter-slider__slider-wrapper">
-        <input
-          ref={rangeRef}
-          id={`${parameter}-slider`}
-          type="range"
-          className="voice-parameter-slider__slider"
-          min={config.min}
-          max={config.max}
-          step={config.step}
-          value={value}
-          onChange={handleChange}
-          disabled={disabled}
-          aria-describedby={`${parameter}-description`}
+      <div className="voice-parameter-description">{config.description}</div>
+
+      <div className="voice-parameter-progress">
+        <div 
+          className={`voice-parameter-progress-bar ${parameter}-bar`} 
+          style={{ width: `${percentage}%` }} 
         />
-        <div className="voice-parameter-slider__track-fill" style={{ width: `${percentage}%` }} />
       </div>
 
-      <div className="voice-parameter-slider__range-labels">
-        <span className="voice-parameter-slider__range-label">
-          {config.min}
-          {config.unit}
-        </span>
-        <span className="voice-parameter-slider__range-label">
-          {config.default}
-          {config.unit}
-        </span>
-        <span className="voice-parameter-slider__range-label">
-          {config.max}
-          {config.unit}
-        </span>
-      </div>
+      <input
+        ref={rangeRef}
+        id={`${parameter}-slider`}
+        type="range"
+        className={`voice-parameter-range ${isPulse ? "pulse" : ""}`}
+        min={config.min}
+        max={config.max}
+        step={config.step}
+        value={value}
+        onChange={handleChange}
+        disabled={disabled}
+        aria-describedby={`${parameter}-description`}
+      />
 
-      <div id={`${parameter}-description`} className="voice-parameter-slider__description">
-        {config.description}
+      <div className="voice-parameter-range-labels">
+        <span>{config.min}{config.unit}</span>
+        <span>{config.default}{config.unit}</span>
+        <span>{config.max}{config.unit}</span>
       </div>
     </div>
   );

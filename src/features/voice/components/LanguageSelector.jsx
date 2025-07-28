@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useVoiceConfig } from "../context/VoiceConfigContext";
-import { LANGUAGE_OPTIONS } from "../constants/voiceConstants";
+import { getLanguageOptions } from "../constants/voiceConstants";
 import "./LanguageSelector.css";
 
 const LanguageSelector = ({ disabled = false }) => {
@@ -12,7 +12,8 @@ const LanguageSelector = ({ disabled = false }) => {
     updateLanguage(event.target.value);
   };
 
-  const currentLanguage = LANGUAGE_OPTIONS.find((lang) => lang.code === voiceConfig.languageCode);
+  const languageOptions = getLanguageOptions(t);
+  const currentLanguage = languageOptions.find((lang) => lang.code === voiceConfig.languageCode);
 
   return (
     <div className="language-selector">
@@ -25,7 +26,7 @@ const LanguageSelector = ({ disabled = false }) => {
           onChange={handleLanguageChange}
           disabled={disabled}
         >
-          {LANGUAGE_OPTIONS.map((language) => (
+          {languageOptions.map((language) => (
             <option key={language.code} value={language.code}>
               {language.label}
             </option>

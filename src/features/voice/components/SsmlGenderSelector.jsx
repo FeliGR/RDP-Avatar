@@ -1,19 +1,23 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { useVoiceConfig } from "../context/VoiceConfigContext";
-import { SSML_GENDER_OPTIONS } from "../constants/voiceConstants";
+import { getSsmlGenderOptions } from "../constants/voiceConstants";
 import "./SsmlGenderSelector.css";
 
 const SsmlGenderSelector = ({ disabled = false }) => {
+  const { t } = useTranslation();
   const { voiceConfig, updateSsmlGender } = useVoiceConfig();
 
   const handleGenderChange = (e) => {
     updateSsmlGender(e.target.value);
   };
 
+  const genderOptions = getSsmlGenderOptions(t);
+
   return (
     <div className="ssml-gender-selector">
       <div className="ssml-gender-selector__options">
-        {SSML_GENDER_OPTIONS.map((option) => (
+        {genderOptions.map((option) => (
           <label
             key={option.value}
             className={`ssml-gender-selector__option ${

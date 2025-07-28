@@ -1,9 +1,11 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { useVoiceConfig } from "../context/VoiceConfigContext";
 import { VOICE_OPTIONS } from "../constants/voiceConstants";
 import "./VoiceSelector.css";
 
 const VoiceSelector = ({ disabled = false }) => {
+  const { t } = useTranslation();
   const { voiceConfig, updateVoiceName } = useVoiceConfig();
 
   const availableVoices = VOICE_OPTIONS[voiceConfig.languageCode] || [];
@@ -25,7 +27,7 @@ const VoiceSelector = ({ disabled = false }) => {
         >
           {availableVoices.map((voice) => (
             <option key={voice.name} value={voice.name}>
-              {voice.label} ({voice.gender})
+              {voice.label} ({t(`voice.voiceGenders.${voice.gender}`)})
             </option>
           ))}
         </select>
@@ -36,7 +38,7 @@ const VoiceSelector = ({ disabled = false }) => {
             {currentVoice.gender === "Male" ? "♂" : "♀"}
           </span>
           <span className="voice-selector__info-text">
-            {currentVoice.gender} voice - {currentVoice.label}
+            {t(`voice.voiceGenders.${currentVoice.gender}`)} {t('voice.voiceLabel')} - {currentVoice.label}
           </span>
         </div>
       )}

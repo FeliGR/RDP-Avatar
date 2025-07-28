@@ -6,9 +6,9 @@ export const DEFAULT_VOICE_CONFIG = {
   pitch: 0.0,
 };
 
-export const LANGUAGE_OPTIONS = [
-  { code: "en-US", label: "English (US)", flag: "🇺🇸" },
-  { code: "es-ES", label: "Spanish (Spain)", flag: "🇪🇸" },
+export const getLanguageOptions = (t) => [
+  { code: "en-US", label: t('voice.languages.englishUS'), flag: "🇺🇸" },
+  { code: "es-ES", label: t('voice.languages.spanishSpain'), flag: "🇪🇸" },
 ];
 
 export const VOICE_OPTIONS = {
@@ -31,6 +31,39 @@ export const VOICE_OPTIONS = {
     { name: "es-ES-Wavenet-D", label: "Wavenet D", gender: "Female" },
   ],
 };
+
+export const getSsmlGenderOptions = (t) => [
+  { value: "NEUTRAL", label: t('voice.genderOptions.neutral'), icon: "N" },
+  { value: "MALE", label: t('voice.genderOptions.male'), icon: "M" },
+  { value: "FEMALE", label: t('voice.genderOptions.female'), icon: "F" },
+];
+
+export const getVoiceParameters = (t) => ({
+  speakingRate: {
+    min: 0.25,
+    max: 4.0,
+    default: 1.0,
+    step: 0.1,
+    label: t('voice.parameterLabels.speakingRateLabel'),
+    description: t('voice.parameterDescriptions.speakingRateDesc'),
+    unit: "x",
+  },
+  pitch: {
+    min: -20.0,
+    max: 20.0,
+    default: 0.0,
+    step: 0.5,
+    label: t('voice.parameterLabels.pitchLabel'),
+    description: t('voice.parameterDescriptions.pitchDesc'),
+    unit: " semitones",
+  },
+});
+
+// Legacy constants for backward compatibility - these will be deprecated
+export const LANGUAGE_OPTIONS = [
+  { code: "en-US", label: "English (US)", flag: "🇺🇸" },
+  { code: "es-ES", label: "Spanish (Spain)", flag: "🇪🇸" },
+];
 
 export const SSML_GENDER_OPTIONS = [
   { value: "NEUTRAL", label: "Neutral", icon: "N" },

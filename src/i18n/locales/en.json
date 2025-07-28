@@ -110,7 +110,29 @@
     "confirmReset": "Reset all voice settings to defaults?",
     "loading": "Loading...",
     "unknownLanguage": "Unknown Language",
-    "currentLanguage": "Current Language"
+    "currentLanguage": "Current Language",
+    "languages": {
+      "englishUS": "English (US)",
+      "spanishSpain": "Spanish (Spain)"
+    },
+    "genderOptions": {
+      "neutral": "Neutral",
+      "male": "Male",
+      "female": "Female"
+    },
+    "voiceGenders": {
+      "Male": "Male",
+      "Female": "Female"
+    },
+    "voiceLabel": "voice",
+    "parameterDescriptions": {
+      "speakingRateDesc": "Controls the speed of speech",
+      "pitchDesc": "Controls the pitch of the voice"
+    },
+    "parameterLabels": {
+      "speakingRateLabel": "Speaking Rate",
+      "pitchLabel": "Pitch"
+    }
   },
   "avatar": {
     "loading3DEngine": "Loading 3D engine...",

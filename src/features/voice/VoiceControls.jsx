@@ -7,13 +7,15 @@ import LanguageSelector from "./components/LanguageSelector";
 import VoiceSelector from "./components/VoiceSelector";
 import SsmlGenderSelector from "./components/SsmlGenderSelector";
 import VoiceParameterSlider from "./components/VoiceParameterSlider";
-import { VOICE_PARAMETERS } from "./constants/voiceConstants";
+import { getVoiceParameters } from "./constants/voiceConstants";
 import "./VoiceControls.css";
 
 const VoiceControls = () => {
   const { t } = useTranslation();
   const { voiceConfig, resetToDefaults, isLoading, error } = useVoiceConfig();
   const { isPlaying } = useTTS();
+
+  const voiceParameters = getVoiceParameters(t);
 
   const handleReset = () => {
     if (window.confirm(t('voice.confirmReset') || "Reset all voice settings to defaults?")) {
@@ -62,7 +64,7 @@ const VoiceControls = () => {
         <div className="voice-control-card rate-card">
           <VoiceParameterSlider
             parameter="speakingRate"
-            config={VOICE_PARAMETERS.speakingRate}
+            config={voiceParameters.speakingRate}
             value={voiceConfig.speakingRate}
             disabled={isLoading || isPlaying}
           />
@@ -72,7 +74,7 @@ const VoiceControls = () => {
         <div className="voice-control-card pitch-card">
           <VoiceParameterSlider
             parameter="pitch"
-            config={VOICE_PARAMETERS.pitch}
+            config={voiceParameters.pitch}
             value={voiceConfig.pitch}
             disabled={isLoading || isPlaying}
           />

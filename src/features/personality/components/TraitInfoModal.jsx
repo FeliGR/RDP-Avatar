@@ -1,54 +1,53 @@
 import React, { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
+import { useTranslation } from "react-i18next";
 import { formatTrait } from "../../../shared/utils";
+import "./TraitInfoModal.css";
 
-const TraitInfoModal = ({ trait, traitInfo, isOpen, onClose }) => {
+const TraitInfoModal = ({ trait, detailedInfo, onClose }) => {
+  const { t } = useTranslation();
   const modalRef = useRef(null);
   const overlayRef = useRef(null);
 
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === "Escape") onClose();
-    };
-
-    if (isOpen) {
-      document.addEventListener("keydown", handleKeyDown);
-    }
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [isOpen, onClose]);
-
-  useEffect(() => {
-    const handleOutsideClick = (e) => {
-      if (modalRef.current && !modalRef.current.contains(e.target)) {
+    const handleEscape = (e) => {
+      if (e.key === "Escape") {
         onClose();
       }
     };
 
-    const currentOverlay = overlayRef.current;
-
-    if (isOpen) {
-      setTimeout(() => {
-        currentOverlay?.addEventListener("mousedown", handleOutsideClick);
-      }, 10);
-    }
-
-    return () => {
-      currentOverlay?.removeEventListener("mousedown", handleOutsideClick);
+    const handleClickOutside = (e) => {
+      if (overlayRef.current && e.target === overlayRef.current) {
+        onClose();
+      }
     };
-  }, [isOpen, onClose]);
 
-  useEffect(() => {
-    if (isOpen && modalRef.current) {
+    document.addEventListener("keydown", handleEscape);
+    document.addEventListener("click", handleClickOutside);
+
+    // Focus management
+    if (modalRef.current) {
       modalRef.current.focus();
     }
-  }, [isOpen]);
 
-  if (!isOpen) return null;
+    // Prevent body scroll
+    document.body.style.overflow = "hidden";
 
-  const detailedInfo = traitInfo || {};
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.removeEventListener("click", handleClickOutside);
+      document.body.style.overflow = "";
+    };
+  }, [onClose]);
+
+  const handleCloseClick = (e) => {
+    e.stopPropagation();
+    onClose();
+  };
+
+  if (!detailedInfo) {
+    return null;
+  }
 
   return createPortal(
     <div className="trait-modal-container" aria-modal="true" role="dialog">
@@ -57,31 +56,31 @@ const TraitInfoModal = ({ trait, traitInfo, isOpen, onClose }) => {
         <div className="trait-modal-header">
           <div className="trait-modal-icon">{detailedInfo.icon || "?"}</div>
           <h3 className="trait-modal-title">{detailedInfo.title || formatTrait(trait)}</h3>
-          <button className="trait-modal-close" onClick={onClose} aria-label="Close">
+          <button className="trait-modal-close" onClick={handleCloseClick} aria-label={t('common.close')}>
             ✕
           </button>
         </div>
 
         <div className="trait-modal-content">
           <div className="trait-modal-section">
-            <h4 className="trait-modal-section-title">What is it?</h4>
+            <h4 className="trait-modal-section-title">{t('personality.modal.whatIsIt')}</h4>
             <p className="trait-modal-text">{detailedInfo.description}</p>
           </div>
 
           <div className="trait-modal-section">
-            <h4 className="trait-modal-section-title">How it affects AI responses</h4>
+            <h4 className="trait-modal-section-title">{t('personality.modal.howItAffects')}</h4>
             <p className="trait-modal-text">{detailedInfo.effects}</p>
           </div>
 
           <div className="trait-modal-section">
-            <h4 className="trait-modal-section-title">Examples</h4>
+            <h4 className="trait-modal-section-title">{t('personality.modal.examples')}</h4>
             <div className="trait-modal-examples">
               <div className="trait-modal-example">
-                <h5 className="trait-modal-example-title">High {formatTrait(trait)}</h5>
+                <h5 className="trait-modal-example-title">{t('personality.modal.high')} {formatTrait(trait)}</h5>
                 <p className="trait-modal-example-text">{detailedInfo.highExample}</p>
               </div>
               <div className="trait-modal-example">
-                <h5 className="trait-modal-example-title">Low {formatTrait(trait)}</h5>
+                <h5 className="trait-modal-example-title">{t('personality.modal.low')} {formatTrait(trait)}</h5>
                 <p className="trait-modal-example-text">{detailedInfo.lowExample}</p>
               </div>
             </div>
@@ -89,8 +88,8 @@ const TraitInfoModal = ({ trait, traitInfo, isOpen, onClose }) => {
         </div>
 
         <div className="trait-modal-footer">
-          <button className="trait-modal-button" onClick={onClose}>
-            Close
+          <button className="trait-modal-button" onClick={handleCloseClick}>
+            {t('personality.modal.close')}
           </button>
         </div>
       </div>

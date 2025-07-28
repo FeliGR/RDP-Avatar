@@ -1,0 +1,142 @@
+{
+  "app": {
+    "title": "Persona Dynamics AI",
+    "subtitle": "Experimenta el futuro de la identidad digital",
+    "touchToBegin": "Toca para Comenzar",
+    "yourAiCompanionAwaits": "Tu compañero de IA te espera",
+    "systemStatus": {
+      "aiCore": "Núcleo de IA",
+      "avatarEngine": "Motor de Avatar",
+      "readyToChat": "Listo para Chatear"
+    },
+    "featureTags": {
+      "realTimeChat": "Chat en Tiempo Real",
+      "3dAvatar": "Avatar 3D",
+      "smartResponses": "Respuestas Inteligentes"
+    }
+  },
+  "navigation": {
+    "openChat": "Abrir Chat",
+    "personalityProfile": "Perfil de Personalidad",
+    "voiceConfiguration": "Configuración de Voz",
+    "customizeAvatar": "Personalizar Avatar",
+    "close": "Cerrar"
+  },
+  "chat": {
+    "chatAssistant": "Asistente de Chat",
+    "startConversation": "Inicia una conversación con tu avatar de IA",
+    "askAnything": "Pregunta lo que quieras",
+    "sendMessage": "Enviar mensaje",
+    "closeChat": "Cerrar Chat",
+    "messageInput": "Entrada de mensaje"
+  },
+  "personality": {
+    "personalityProfile": "Perfil de Personalidad",
+    "traits": {
+      "openness": "Apertura",
+      "conscientiousness": "Responsabilidad",
+      "extraversion": "Extraversión",
+      "agreeableness": "Amabilidad",
+      "neuroticism": "Sensibilidad Emocional"
+    },
+    "descriptions": {
+      "openness": "Curiosidad y apertura a nuevas experiencias",
+      "conscientiousness": "Organizado y enfocado en objetivos",
+      "extraversion": "Naturaleza social y extrovertida",
+      "agreeableness": "Actitud amigable y cooperativa",
+      "neuroticism": "Estabilidad emocional y reacciones al estrés"
+    },
+    "detailed": {
+      "openness": {
+        "title": "Apertura a la Experiencia",
+        "description": "Refleja la curiosidad, creatividad y preferencia por la novedad y variedad.",
+        "effects": "Valores más altos de apertura hacen que la IA sea más creativa, exploratoria y abierta a discutir conceptos abstractos e ideas nuevas. Valores más bajos resultan en respuestas más convencionales y prácticas enfocadas en hechos establecidos.",
+        "highExample": "¡Esa es una perspectiva interesante! Exploremos diferentes ángulos y posibilidades...",
+        "lowExample": "Prefiero seguir con enfoques probados y prácticos que funcionan de manera confiable...",
+        "icon": "🔍"
+      },
+      "conscientiousness": {
+        "title": "Responsabilidad",
+        "description": "Refleja la organización, responsabilidad y comportamiento dirigido hacia objetivos.",
+        "effects": "Valores más altos de responsabilidad hacen que la IA sea más metódica, detallista y enfocada en planificación y organización. Valores más bajos resultan en respuestas más espontáneas y flexibles con menos estructura.",
+        "highExample": "Haré un plan estructurado con pasos específicos para lograr tu objetivo de manera eficiente...",
+        "lowExample": "Tomemos un enfoque más flexible y veamos a dónde nos lleva...",
+        "icon": "✓"
+      },
+      "extraversion": {
+        "title": "Extraversión",
+        "description": "Refleja la sociabilidad, asertividad y expresividad emocional.",
+        "effects": "Valores más altos de extraversión hacen que la IA sea más entusiasta, habladora y socialmente comprometida. Valores más bajos resultan en respuestas más reservadas y reflexivas que son menos expresivas emocionalmente.",
+        "highExample": "¡Estoy emocionado de trabajar contigo en este proyecto! ¡Colaboremos y compartamos ideas!",
+        "lowExample": "He pensado cuidadosamente en esto y sugeriría un enfoque mesurado...",
+        "icon": "👥"
+      },
+      "agreeableness": {
+        "title": "Amabilidad",
+        "description": "Refleja la cooperación, compasión y consideración hacia otros.",
+        "effects": "Valores más altos de amabilidad hacen que la IA sea más empática, comprensiva y enfocada en crear armonía. Valores más bajos resultan en respuestas más directas y desafiantes que priorizan la honestidad sobre el tacto.",
+        "highExample": "Entiendo cómo te sientes, y estoy aquí para apoyarte en encontrar una solución...",
+        "lowExample": "Para ser directo, hay varios problemas con este enfoque que necesitan ser abordados...",
+        "icon": "🤝"
+      },
+      "neuroticism": {
+        "title": "Sensibilidad Emocional",
+        "description": "Refleja la reactividad emocional y sensibilidad a los factores estresantes.",
+        "effects": "Valores más altos de sensibilidad hacen que la IA sea más emocionalmente matizada, cautelosa y atenta a problemas potenciales. Valores más bajos resultan en respuestas más estables emocionalmente y optimistas con menos enfoque en riesgos.",
+        "highExample": "Me preocupan los desafíos potenciales que podríamos enfrentar con este enfoque...",
+        "lowExample": "Estoy seguro de que podemos manejar cualquier desafío que surja en el camino...",
+        "icon": "🧠"
+      }
+    },
+    "modal": {
+      "whatIsIt": "¿Qué es?",
+      "howItAffects": "Cómo afecta las respuestas de la IA",
+      "examples": "Ejemplos",
+      "high": "Alto",
+      "low": "Bajo",
+      "close": "Cerrar"
+    }
+  },
+  "voice": {
+    "voiceConfiguration": "Configuración de Voz",
+    "language": "Idioma",
+    "voiceModel": "Modelo de Voz",
+    "voiceGender": "Género de Voz",
+    "speakingRate": "Velocidad de Habla",
+    "pitch": "Tono",
+    "reset": "Restablecer",
+    "resetAll": "Restablecer todas las configuraciones a los valores predeterminados",
+    "resetAllSettings": "Restablecer Todas las Configuraciones",
+    "confirmReset": "¿Restablecer todas las configuraciones de voz a los valores predeterminados?",
+    "loading": "Cargando...",
+    "unknownLanguage": "Idioma Desconocido",
+    "currentLanguage": "Idioma Actual"
+  },
+  "avatar": {
+    "loading3DEngine": "Cargando motor 3D...",
+    "failed3DEngine": "Error al cargar el motor 3D",
+    "loadingOfficeEnvironment": "Cargando entorno de oficina...",
+    "officeEnvironmentReady": "Entorno de oficina listo",
+    "loadingAvatar": "Cargando avatar...",
+    "noAvatarCreated": "Aún no se ha creado un avatar",
+    "createAvatar": "Crear Avatar",
+    "customizeAvatar": "Personalizar Avatar",
+    "closeEditor": "Cerrar Editor",
+    "closeAvatarCreator": "Cerrar creador de avatar"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "close": "Cerrar",
+    "reset": "Restablecer",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "moreInformation": "Más información",
+    "moreInformationAbout": "Más información sobre {{trait}}"
+  },
+  "languageSwitcher": {
+    "selectLanguage": "Seleccionar Idioma",
+    "english": "Inglés",
+    "spanish": "Español"
+  }
+} 

@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useVoiceConfig } from "../context/VoiceConfigContext";
 import "./VoiceParameterSlider.css";
 
 const VoiceParameterSlider = ({ parameter, config, value, disabled = false }) => {
+  const { t } = useTranslation();
   const { updateSpeakingRate, updatePitch } = useVoiceConfig();
   const rangeRef = useRef(null);
   const [isPulse, setIsPulse] = useState(false);
@@ -58,7 +60,7 @@ const VoiceParameterSlider = ({ parameter, config, value, disabled = false }) =>
     <div className="voice-parameter-slider">
       <div className="voice-parameter-slider__header">
         <label className="voice-parameter-slider__title" htmlFor={`${parameter}-slider`}>
-          {config.label}
+          {t(`voice.${parameter}`)}
         </label>
         <div className="voice-parameter-slider__value-section">
           <span
@@ -72,8 +74,8 @@ const VoiceParameterSlider = ({ parameter, config, value, disabled = false }) =>
             className="voice-parameter-slider__reset"
             onClick={handleReset}
             disabled={disabled || value === config.default}
-            title="Reset to default"
-            aria-label={`Reset ${config.label} to default`}
+            title={`${t('common.reset')} ${t(`voice.${parameter}`)}`}
+            aria-label={`${t('common.reset')} ${t(`voice.${parameter}`)}`}
           >
             ↻
           </button>

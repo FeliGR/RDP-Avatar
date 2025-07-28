@@ -1,19 +1,26 @@
 import React, { useEffect, useRef, useState } from "react";
-import { DETAILED_TRAIT_DESCRIPTIONS, TRAIT_DESCRIPTIONS } from "../constants/constants";
+import { useTranslation } from "react-i18next";
+import { getDetailedTraitDescriptions, getTraitDescriptions } from "../constants/constants";
 import { formatTrait } from "../../../shared/utils";
 import TraitInfoModal from "./TraitInfoModal";
 import "./TraitInfoModal.css";
 
 const TraitSlider = ({ trait, value, onChange, disabled = false }) => {
+  const { t } = useTranslation();
   const rangeRef = useRef(null);
   const infoIconRef = useRef(null);
   const [isPulse, setIsPulse] = useState(false);
   const prevValueRef = useRef(value);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const numericValue = typeof value === "number" ? Math.round(value) : parseInt(value, 10) || 3;
+  
+  const traitDescriptions = getTraitDescriptions(t);
+  const detailedTraitDescriptions = getDetailedTraitDescriptions(t);
+  
   const calculatePercentage = (value) => {
     return ((value - 1) / 4) * 100;
   };
+
   useEffect(() => {
     if (prevValueRef.current !== numericValue) {
       setIsPulse(true);
@@ -22,6 +29,7 @@ const TraitSlider = ({ trait, value, onChange, disabled = false }) => {
       return () => clearTimeout(timer);
     }
   }, [numericValue]);
+
   useEffect(() => {
     const updateRangePosition = () => {
       if (rangeRef.current) {
@@ -43,22 +51,24 @@ const TraitSlider = ({ trait, value, onChange, disabled = false }) => {
       }
     };
   }, [numericValue]);
+
   const percentage = calculatePercentage(numericValue);
+
   const getValueDescription = (trait, value) => {
     const descriptions = {
       openness: [
         "Very conventional",
         "Somewhat conventional",
         "Balanced",
-        "Somewhat open",
-        "Very open",
+        "Somewhat creative",
+        "Very creative",
       ],
       conscientiousness: [
-        "Very disorganized",
-        "Somewhat disorganized",
+        "Very spontaneous",
+        "Somewhat spontaneous",
         "Balanced",
-        "Somewhat conscientious",
-        "Very conscientious",
+        "Somewhat organized",
+        "Very organized",
       ],
       extraversion: [
         "Very introverted",
@@ -82,34 +92,36 @@ const TraitSlider = ({ trait, value, onChange, disabled = false }) => {
         "Very sensitive",
       ],
     };
-    return descriptions[trait] ? descriptions[trait][value - 1] : "";
+    return descriptions[trait]?.[value - 1] || "Balanced";
   };
-  const openTraitInfoModal = (e) => {
-    e.stopPropagation();
+
+  const handleOpenModal = () => {
     setIsModalOpen(true);
   };
-  const closeTraitInfoModal = () => {
+
+  const handleCloseModal = () => {
     setIsModalOpen(false);
   };
+
   return (
     <div className={`trait-control ${trait}`}>
       <label htmlFor={trait}>
         <div style={{ display: "flex", alignItems: "center" }}>
-          {formatTrait(trait)}
+          {t(`personality.traits.${trait}`)}
           <div
             className="trait-info-icon"
-            onClick={openTraitInfoModal}
+            onClick={handleOpenModal}
             ref={infoIconRef}
-            aria-label={`Show information about ${formatTrait(trait)}`}
+            aria-label={t('common.moreInformationAbout', { trait: t(`personality.traits.${trait}`) })}
             role="button"
             tabIndex="0"
           >
-            ?
+            ⓘ
           </div>
         </div>
-        <span className="trait-value">({numericValue})</span>
+        <span className={`trait-value ${isPulse ? "pulse" : ""}`}>({numericValue})</span>
       </label>
-      <p className="trait-description">{TRAIT_DESCRIPTIONS[trait]}</p>
+      <p className="trait-description">{traitDescriptions[trait]}</p>
       <div className="trait-progress">
         <div className={`trait-progress-bar ${trait}-bar`} style={{ width: `${percentage}%` }} />
       </div>
@@ -131,12 +143,13 @@ const TraitSlider = ({ trait, value, onChange, disabled = false }) => {
         <span>{getValueDescription(trait, 1)}</span>
         <span>{getValueDescription(trait, 5)}</span>
       </div>
-      <TraitInfoModal
-        trait={trait}
-        traitInfo={DETAILED_TRAIT_DESCRIPTIONS[trait]}
-        isOpen={isModalOpen}
-        onClose={closeTraitInfoModal}
-      />
+      {isModalOpen && (
+        <TraitInfoModal
+          trait={trait}
+          detailedInfo={detailedTraitDescriptions[trait]}
+          onClose={handleCloseModal}
+        />
+      )}
     </div>
   );
 };

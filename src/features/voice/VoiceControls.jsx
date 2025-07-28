@@ -1,20 +1,22 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { useVoiceConfig } from "./context/VoiceConfigContext";
 import { useTTS } from "./context/TTSContext";
-import "./VoiceControls.css";
 import { ErrorMessage } from "../../shared";
-import VoiceSelector from "./components/VoiceSelector";
 import LanguageSelector from "./components/LanguageSelector";
-import VoiceParameterSlider from "./components/VoiceParameterSlider";
+import VoiceSelector from "./components/VoiceSelector";
 import SsmlGenderSelector from "./components/SsmlGenderSelector";
+import VoiceParameterSlider from "./components/VoiceParameterSlider";
 import { VOICE_PARAMETERS } from "./constants/voiceConstants";
+import "./VoiceControls.css";
 
 const VoiceControls = () => {
-  const { voiceConfig, isLoading, error, resetToDefaults } = useVoiceConfig();
+  const { t } = useTranslation();
+  const { voiceConfig, resetToDefaults, isLoading, error } = useVoiceConfig();
   const { isPlaying } = useTTS();
 
   const handleReset = () => {
-    if (window.confirm("Reset all voice settings to defaults?")) {
+    if (window.confirm(t('voice.confirmReset') || "Reset all voice settings to defaults?")) {
       resetToDefaults();
     }
   };
@@ -23,31 +25,37 @@ const VoiceControls = () => {
     <div className="voice-controls">
       <ErrorMessage message={error} />
 
-      {isLoading && <div className="loading-indicator" aria-label="Loading..." />}
+      {isLoading && <div className="loading-indicator" aria-label={t('common.loading')} />}
 
       <div className="voice-controls__content">
         {/* Language Selection Card */}
         <div className="voice-control-card language-card">
           <div className="voice-control-card__header">
-            <label className="voice-control-card__title">Language</label>
+            <label className="voice-control-card__title">{t('voice.language')}</label>
           </div>
-          <LanguageSelector disabled={isLoading || isPlaying} />
+          <div className="voice-control-card__content">
+            <LanguageSelector disabled={isLoading || isPlaying} />
+          </div>
         </div>
 
         {/* Voice Selection Card */}
         <div className="voice-control-card voice-card">
           <div className="voice-control-card__header">
-            <label className="voice-control-card__title">Voice Model</label>
+            <label className="voice-control-card__title">{t('voice.voiceModel')}</label>
           </div>
-          <VoiceSelector disabled={isLoading || isPlaying} />
+          <div className="voice-control-card__content">
+            <VoiceSelector disabled={isLoading || isPlaying} />
+          </div>
         </div>
 
         {/* Gender Selection Card */}
         <div className="voice-control-card gender-card">
           <div className="voice-control-card__header">
-            <label className="voice-control-card__title">Voice Gender</label>
+            <label className="voice-control-card__title">{t('voice.voiceGender')}</label>
           </div>
-          <SsmlGenderSelector disabled={isLoading || isPlaying} />
+          <div className="voice-control-card__content">
+            <SsmlGenderSelector disabled={isLoading || isPlaying} />
+          </div>
         </div>
 
         {/* Speaking Rate Card */}
@@ -77,10 +85,10 @@ const VoiceControls = () => {
               className="voice-controls__reset-btn"
               onClick={handleReset}
               disabled={isLoading || isPlaying}
-              title="Reset all settings to defaults"
+              title={t('voice.resetAll') || "Reset all settings to defaults"}
             >
               <span className="reset-icon">↻</span>
-              <span className="reset-text">Reset All Settings</span>
+              <span className="reset-text">{t('voice.resetAllSettings') || "Reset All Settings"}</span>
             </button>
           </div>
         </div>

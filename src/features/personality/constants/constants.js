@@ -15,63 +15,57 @@ export const BIG_FIVE_TRAITS = [
   "neuroticism",
 ];
 
-export const TRAIT_DESCRIPTIONS = {
-  openness: "Curiosity and openness to new experiences",
-  conscientiousness: "Organized and focused on goals",
-  extraversion: "Social and outgoing nature",
-  agreeableness: "Friendly and cooperative attitude",
-  neuroticism: "Emotional stability and reactions to stress",
-};
+// These will now be loaded from i18n translations
+export const getTraitDescriptions = (t) => ({
+  openness: t('personality.descriptions.openness'),
+  conscientiousness: t('personality.descriptions.conscientiousness'),
+  extraversion: t('personality.descriptions.extraversion'),
+  agreeableness: t('personality.descriptions.agreeableness'),
+  neuroticism: t('personality.descriptions.neuroticism'),
+});
 
-export const DETAILED_TRAIT_DESCRIPTIONS = {
+export const getDetailedTraitDescriptions = (t) => ({
   openness: {
-    title: "Openness to Experience",
-    description: "Reflects curiosity, creativity, and preference for novelty and variety.",
-    effects:
-      "Higher openness values make the AI more creative, explorative, and open to discussing abstract concepts and new ideas. Lower values result in more conventional, practical responses focused on established facts.",
-    highExample:
-      "That's an interesting perspective! Let's explore different angles and possibilities...",
-    lowExample: "I prefer to stick with proven, practical approaches that work reliably...",
-    icon: "🔍",
+    title: t('personality.detailed.openness.title'),
+    description: t('personality.detailed.openness.description'),
+    effects: t('personality.detailed.openness.effects'),
+    highExample: t('personality.detailed.openness.highExample'),
+    lowExample: t('personality.detailed.openness.lowExample'),
+    icon: t('personality.detailed.openness.icon'),
   },
   conscientiousness: {
-    title: "Conscientiousness",
-    description: "Reflects organization, responsibility, and goal-directed behavior.",
-    effects:
-      "Higher conscientiousness values make the AI more methodical, detail-oriented, and focused on planning and organization. Lower values result in more spontaneous, flexible responses with less structure.",
-    highExample:
-      "I'll outline a structured plan with specific steps to achieve your goal efficiently...",
-    lowExample: "Let's take a more flexible approach and see where it leads us...",
-    icon: "✓",
+    title: t('personality.detailed.conscientiousness.title'),
+    description: t('personality.detailed.conscientiousness.description'),
+    effects: t('personality.detailed.conscientiousness.effects'),
+    highExample: t('personality.detailed.conscientiousness.highExample'),
+    lowExample: t('personality.detailed.conscientiousness.lowExample'),
+    icon: t('personality.detailed.conscientiousness.icon'),
   },
   extraversion: {
-    title: "Extraversion",
-    description: "Reflects sociability, assertiveness, and emotional expressiveness.",
-    effects:
-      "Higher extraversion values make the AI more enthusiastic, talkative, and socially engaged. Lower values result in more reserved, thoughtful responses that are less emotionally expressive.",
-    highExample: "I'm excited to work with you on this project! Let's collaborate and share ideas!",
-    lowExample: "I've given this careful thought and would suggest a measured approach...",
-    icon: "👥",
+    title: t('personality.detailed.extraversion.title'),
+    description: t('personality.detailed.extraversion.description'),
+    effects: t('personality.detailed.extraversion.effects'),
+    highExample: t('personality.detailed.extraversion.highExample'),
+    lowExample: t('personality.detailed.extraversion.lowExample'),
+    icon: t('personality.detailed.extraversion.icon'),
   },
   agreeableness: {
-    title: "Agreeableness",
-    description: "Reflects cooperation, compassion, and consideration for others.",
-    effects:
-      "Higher agreeableness values make the AI more empathetic, supportive, and focused on creating harmony. Lower values result in more direct, challenging responses that prioritize honesty over tact.",
-    highExample: "I understand how you feel, and I'm here to support you in finding a solution...",
-    lowExample: "To be direct, there are several issues with this approach that need addressing...",
-    icon: "🤝",
+    title: t('personality.detailed.agreeableness.title'),
+    description: t('personality.detailed.agreeableness.description'),
+    effects: t('personality.detailed.agreeableness.effects'),
+    highExample: t('personality.detailed.agreeableness.highExample'),
+    lowExample: t('personality.detailed.agreeableness.lowExample'),
+    icon: t('personality.detailed.agreeableness.icon'),
   },
   neuroticism: {
-    title: "Emotional Sensitivity",
-    description: "Reflects emotional reactivity and sensitivity to stressors.",
-    effects:
-      "Higher sensitivity values make the AI more emotionally nuanced, cautious, and attentive to potential problems. Lower values result in more emotionally stable, optimistic responses with less focus on risks.",
-    highExample: "I'm concerned about potential challenges we might face with this approach...",
-    lowExample: "I'm confident we can handle any challenges that come up along the way...",
-    icon: "🧠",
+    title: t('personality.detailed.neuroticism.title'),
+    description: t('personality.detailed.neuroticism.description'),
+    effects: t('personality.detailed.neuroticism.effects'),
+    highExample: t('personality.detailed.neuroticism.highExample'),
+    lowExample: t('personality.detailed.neuroticism.lowExample'),
+    icon: t('personality.detailed.neuroticism.icon'),
   },
-};
+});
 
 export const TRAIT_NAME_MAP = {
   open: "openness",

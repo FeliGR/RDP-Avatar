@@ -1,9 +1,11 @@
 import React, { useRef } from "react";
+import { useTranslation } from "react-i18next";
 import useScrollToBottom from "../hooks/useScrollToBottom";
 import TypingIndicator from "./TypingIndicator";
 import { useTTS } from "../../voice/context/TTSContext";
 
 const MessageList = ({ messages, isLoading }) => {
+  const { t } = useTranslation();
   const messagesEndRef = useRef(null);
   const { isPlaying } = useTTS();
 
@@ -13,7 +15,7 @@ const MessageList = ({ messages, isLoading }) => {
     return (
       <div className="messages-container">
         <div className="empty-chat">
-          <p>Start a conversation with your AI avatar</p>
+          <p>{t('chat.startConversation')}</p>
         </div>
         <div ref={messagesEndRef} />
       </div>

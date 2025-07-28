@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { TYPING_DEBOUNCE_DELAY, TYPING_EVENTS } from "../constants/constants";
 import VoiceInput from "./VoiceInput";
 
@@ -9,6 +10,7 @@ const MessageInput = ({
   onToggleVoice,
   isRealTimeMode = false,
 }) => {
+  const { t } = useTranslation();
   const [inputText, setInputText] = useState("");
   const typingTimeoutRef = useRef(null);
 
@@ -74,17 +76,17 @@ const MessageInput = ({
           value={inputText}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          placeholder="Ask anything"
+          placeholder={t('chat.askAnything')}
           disabled={isLoading}
           className="message-input"
-          aria-label="Message input"
+          aria-label={t('chat.messageInput')}
         />
 
         <button
           type="submit"
           disabled={isLoading || !inputText.trim()}
           className="send-button"
-          aria-label="Send message"
+          aria-label={t('chat.sendMessage')}
         >
           {isLoading ? "⋯" : "➤"}
         </button>

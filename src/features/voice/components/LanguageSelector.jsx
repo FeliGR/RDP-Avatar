@@ -1,9 +1,11 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { useVoiceConfig } from "../context/VoiceConfigContext";
 import { LANGUAGE_OPTIONS } from "../constants/voiceConstants";
 import "./LanguageSelector.css";
 
 const LanguageSelector = ({ disabled = false }) => {
+  const { t } = useTranslation();
   const { voiceConfig, updateLanguage } = useVoiceConfig();
 
   const handleLanguageChange = (event) => {
@@ -32,7 +34,7 @@ const LanguageSelector = ({ disabled = false }) => {
       </div>
       <div className="language-selector__info">
         <span className="language-selector__current">
-          {currentLanguage?.label || "Unknown Language"}
+          {currentLanguage?.label || t('voice.unknownLanguage')}
         </span>
       </div>
     </div>

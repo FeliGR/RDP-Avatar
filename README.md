@@ -1,11 +1,13 @@
-# Persona Dynamics AI
+# RPM-Avatar
 
 An interactive 3D AI companion with customizable personality and voice.
+
+**Note:** This repository was previously named RDP-Avatar (or ar-avatar).
 
 ## Features
 
 - **3D Avatar**: Create and customize avatars using Ready Player Me
-- **AI Chat**: Real-time conversations with personality-driven responses  
+- **AI Chat**: Real-time conversations with personality-driven responses
 - **Personality System**: Adjust Big Five personality traits (openness, conscientiousness, extraversion, agreeableness, emotional sensitivity)
 - **Voice Configuration**: Multilingual TTS with customizable voice parameters
 - **Multilingual**: English and Spanish support
@@ -13,8 +15,8 @@ An interactive 3D AI companion with customizable personality and voice.
 ## Quick Start
 
 ```bash
-git clone https://github.com/FeliGR/ar-avatar.git
-cd ar-avatar
+git clone https://github.com/FeliGR/RPM-Avatar.git
+cd RPM-Avatar
 npm install
 npm start
 ```
@@ -52,5 +54,3 @@ docker-compose up -d
 <img width="2560" height="1320" alt="image" src="https://github.com/user-attachments/assets/ab808de6-92c5-49c7-b97f-ec943c116d29" />
 <img width="2560" height="1320" alt="image" src="https://github.com/user-attachments/assets/a5c3f56a-7e71-421d-8c15-12dc3b0f8a5f" />
 <img width="2560" height="1320" alt="image" src="https://github.com/user-attachments/assets/04f55e5a-39ba-491e-a49f-4c29732a2918" />
-
-

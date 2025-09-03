@@ -95,6 +95,43 @@
       "high": "Alto",
       "low": "Bajo",
       "close": "Cerrar"
+    },
+    "scale": {
+      "openness": {
+        "1": "Muy convencional",
+        "2": "Algo convencional",
+        "3": "Equilibrado",
+        "4": "Algo creativo",
+        "5": "Muy creativo"
+      },
+      "conscientiousness": {
+        "1": "Muy espontáneo",
+        "2": "Algo espontáneo",
+        "3": "Equilibrado",
+        "4": "Algo organizado",
+        "5": "Muy organizado"
+      },
+      "extraversion": {
+        "1": "Muy introvertido",
+        "2": "Algo introvertido",
+        "3": "Equilibrado",
+        "4": "Algo extrovertido",
+        "5": "Muy extrovertido"
+      },
+      "agreeableness": {
+        "1": "Muy directo",
+        "2": "Algo directo",
+        "3": "Equilibrado",
+        "4": "Algo amable",
+        "5": "Muy amable"
+      },
+      "neuroticism": {
+        "1": "Muy estable",
+        "2": "Algo estable",
+        "3": "Equilibrado",
+        "4": "Algo sensible",
+        "5": "Muy sensible"
+      }
     }
   },
   "voice": {

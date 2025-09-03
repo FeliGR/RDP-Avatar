@@ -28,6 +28,7 @@ Create a `.env` file:
 ```env
 REACT_APP_PERSONA_ENGINE_URL=http://localhost:5001
 REACT_APP_DIALOG_ORCHESTRATOR_URL=http://localhost:5002
+REACT_APP_AUDIO_ENGINE_URL=http://localhost:5003
 REACT_APP_RPM_CLIENT_ID=your_rpm_client_id
 ```
 

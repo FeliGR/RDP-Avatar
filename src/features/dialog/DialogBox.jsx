@@ -5,7 +5,6 @@ import { useDialog } from "./context/DialogContext";
 import MessageInput from "./components/MessageInput";
 import MessageList from "./components/MessageList";
 import useVoiceCommands from "./hooks/useVoiceCommands";
-import { useTTS } from "../voice/context/TTSContext";
 import { useRealTimeConversation } from "../voice";
 
 const DialogBox = ({ isVisible = true }) => {
@@ -20,11 +19,9 @@ const DialogBox = ({ isVisible = true }) => {
     isListening: isStreamListening,
     startRealTimeConversation,
     stopRealTimeConversation,
-    conversationState,
     isRealTimeActive,
-    isContinuousMode,
   } = useRealTimeConversation();
-  const { isPlaying: isTTSSpeaking } = useTTS();
+  // TTS state is not needed here; handled within dialog context when speaking
 
   const isRealTimeActiveRef = useRef(isRealTimeActive);
   const stopRealTimeConversationRef = useRef(stopRealTimeConversation);

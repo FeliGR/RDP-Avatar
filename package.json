@@ -4,13 +4,13 @@
   "private": true,
   "dependencies": {
     "@readyplayerme/react-avatar-creator": "^0.5.0",
-    "axios": "^1.8.4",
-    "babylonjs": "^8.0.1",
-    "babylonjs-loaders": "^8.0.1",
-    "i18next": "^25.3.2",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "react-i18next": "^15.6.1",
+    "axios": "^1.11.0",
+    "babylonjs": "^8.25.1",
+    "babylonjs-loaders": "^8.25.1",
+    "i18next": "^23.16.8",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-i18next": "^13.5.0",
     "react-scripts": "^5.0.1",
     "socket.io-client": "^4.8.1"
   },
@@ -48,6 +48,6 @@
     "react-app-rewired": "^2.2.1",
     "stream-browserify": "^3.0.0",
     "util": "^0.12.5",
-    "webpack": "^5.99.5"
+    "webpack": "^5.101.3"
   }
 }

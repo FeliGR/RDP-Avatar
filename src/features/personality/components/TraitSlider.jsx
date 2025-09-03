@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getDetailedTraitDescriptions, getTraitDescriptions } from "../constants/constants";
-import { formatTrait } from "../../../shared/utils";
 import TraitInfoModal from "./TraitInfoModal";
 import "./TraitInfoModal.css";
 
@@ -55,44 +54,10 @@ const TraitSlider = ({ trait, value, onChange, disabled = false }) => {
   const percentage = calculatePercentage(numericValue);
 
   const getValueDescription = (trait, value) => {
-    const descriptions = {
-      openness: [
-        "Very conventional",
-        "Somewhat conventional",
-        "Balanced",
-        "Somewhat creative",
-        "Very creative",
-      ],
-      conscientiousness: [
-        "Very spontaneous",
-        "Somewhat spontaneous",
-        "Balanced",
-        "Somewhat organized",
-        "Very organized",
-      ],
-      extraversion: [
-        "Very introverted",
-        "Somewhat introverted",
-        "Balanced",
-        "Somewhat extraverted",
-        "Very extraverted",
-      ],
-      agreeableness: [
-        "Very direct",
-        "Somewhat direct",
-        "Balanced",
-        "Somewhat agreeable",
-        "Very agreeable",
-      ],
-      neuroticism: [
-        "Very stable",
-        "Somewhat stable",
-        "Balanced",
-        "Somewhat sensitive",
-        "Very sensitive",
-      ],
-    };
-    return descriptions[trait]?.[value - 1] || "Balanced";
+    const key = `personality.scale.${trait}.${value}`;
+    const translated = t(key);
+    // If key missing, fall back to Balanced
+    return translated === key ? t('personality.scale.openness.3', 'Balanced') : translated;
   };
 
   const handleOpenModal = () => {
@@ -140,8 +105,8 @@ const TraitSlider = ({ trait, value, onChange, disabled = false }) => {
         aria-valuetext={`${numericValue} - ${getValueDescription(trait, numericValue)}`}
       />
       <div className="trait-range">
-        <span>{getValueDescription(trait, 1)}</span>
-        <span>{getValueDescription(trait, 5)}</span>
+  <span>{getValueDescription(trait, 1)}</span>
+  <span>{getValueDescription(trait, 5)}</span>
       </div>
       {isModalOpen && (
         <TraitInfoModal

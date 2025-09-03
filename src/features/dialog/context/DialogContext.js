@@ -1,7 +1,6 @@
 import React, { createContext, useCallback, useContext, useState, useEffect, useRef } from "react";
 import { sendMessage } from "../../../services/api";
 import { usePersonality } from "../../personality";
-import { useAvatarAnimation } from "../../avatar/context/AvatarAnimationContext";
 import { useTTS } from "../../voice/context/TTSContext";
 import { useVoiceConfig } from "../../voice/context/VoiceConfigContext";
 
@@ -111,14 +110,7 @@ export const DialogProvider = ({ children }) => {
         setIsLoading(false);
       }
     },
-    [
-      personalityTraits.userId,
-      dialogApiAvailable,
-      fetchBotResponse,
-      createMessage,
-      ttsAvailable,
-      speak,
-    ],
+  [personalityTraits.userId, dialogApiAvailable, fetchBotResponse, createMessage],
   );
   const clearConversation = useCallback(() => {
     setMessages([]);

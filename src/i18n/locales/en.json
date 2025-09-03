@@ -95,6 +95,43 @@
       "high": "High",
       "low": "Low",
       "close": "Close"
+    },
+    "scale": {
+      "openness": {
+        "1": "Very conventional",
+        "2": "Somewhat conventional",
+        "3": "Balanced",
+        "4": "Somewhat creative",
+        "5": "Very creative"
+      },
+      "conscientiousness": {
+        "1": "Very spontaneous",
+        "2": "Somewhat spontaneous",
+        "3": "Balanced",
+        "4": "Somewhat organized",
+        "5": "Very organized"
+      },
+      "extraversion": {
+        "1": "Very introverted",
+        "2": "Somewhat introverted",
+        "3": "Balanced",
+        "4": "Somewhat extraverted",
+        "5": "Very extraverted"
+      },
+      "agreeableness": {
+        "1": "Very direct",
+        "2": "Somewhat direct",
+        "3": "Balanced",
+        "4": "Somewhat agreeable",
+        "5": "Very agreeable"
+      },
+      "neuroticism": {
+        "1": "Very stable",
+        "2": "Somewhat stable",
+        "3": "Balanced",
+        "4": "Somewhat sensitive",
+        "5": "Very sensitive"
+      }
     }
   },
   "voice": {

@@ -6,7 +6,7 @@ import { io } from "socket.io-client";
 
 class STTService {
   constructor() {
-    this.serverUrl = "http://localhost:5003";
+    this.serverUrl = process.env.REACT_APP_AUDIO_ENGINE_URL || "http://localhost:5003";
     this.socket = null;
     this.isConnected = false;
     this.isStreaming = false;

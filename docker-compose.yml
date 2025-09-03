@@ -1,19 +1,29 @@
 services:
-  adaptiveai-personaar-frontend:
+  rpd-avatar:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: adaptiveai-personaar-frontend
+    container_name: rpd-avatar
+    restart: unless-stopped
     ports:
       - "3000:3000"
-    restart: always
     environment:
       - REACT_APP_PERSONA_ENGINE_URL=http://localhost:5001
       - REACT_APP_DIALOG_ORCHESTRATOR_URL=http://localhost:5002
+      - REACT_APP_AUDIO_ENGINE_URL=http://localhost:5003
       - REACT_APP_RPM_CLIENT_ID=684b2978d8c346fff8566d83
     networks:
       - persona_network
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - wget -qO- http://localhost:3000/ >/dev/null 2>&1 || curl -fsS http://localhost:3000/ || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
 
 networks:
   persona_network:
     external: true
+    name: persona_network

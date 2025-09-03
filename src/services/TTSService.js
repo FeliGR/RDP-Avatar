@@ -4,7 +4,7 @@
  */
 class TTSService {
   constructor() {
-    this.baseUrl = "http://localhost:5003";
+    this.baseUrl = process.env.REACT_APP_AUDIO_ENGINE_URL || "http://localhost:5003";
     this.defaultVoiceConfig = {
       languageCode: "en-US",
       name: "en-US-Wavenet-D",

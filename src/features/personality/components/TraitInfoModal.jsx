@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
-import { formatTrait } from "../../../shared/utils";
 import "./TraitInfoModal.css";
 
 const TraitInfoModal = ({ trait, detailedInfo, onClose }) => {
@@ -55,7 +54,7 @@ const TraitInfoModal = ({ trait, detailedInfo, onClose }) => {
       <div className={`trait-modal ${trait}`} ref={modalRef} tabIndex={-1}>
         <div className="trait-modal-header">
           <div className="trait-modal-icon">{detailedInfo.icon || "?"}</div>
-          <h3 className="trait-modal-title">{detailedInfo.title || formatTrait(trait)}</h3>
+          <h3 className="trait-modal-title">{detailedInfo.title || t(`personality.traits.${trait}`)}</h3>
           <button className="trait-modal-close" onClick={handleCloseClick} aria-label={t('common.close')}>
             ✕
           </button>
@@ -76,11 +75,11 @@ const TraitInfoModal = ({ trait, detailedInfo, onClose }) => {
             <h4 className="trait-modal-section-title">{t('personality.modal.examples')}</h4>
             <div className="trait-modal-examples">
               <div className="trait-modal-example">
-                <h5 className="trait-modal-example-title">{t('personality.modal.high')} {formatTrait(trait)}</h5>
+                <h5 className="trait-modal-example-title">{t('personality.modal.high')} {t(`personality.traits.${trait}`)}</h5>
                 <p className="trait-modal-example-text">{detailedInfo.highExample}</p>
               </div>
               <div className="trait-modal-example">
-                <h5 className="trait-modal-example-title">{t('personality.modal.low')} {formatTrait(trait)}</h5>
+                <h5 className="trait-modal-example-title">{t('personality.modal.low')} {t(`personality.traits.${trait}`)}</h5>
                 <p className="trait-modal-example-text">{detailedInfo.lowExample}</p>
               </div>
             </div>

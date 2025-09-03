@@ -117,13 +117,23 @@ const ReadyPlayerMeAvatar = ({
       new BABYLON.Vector3(0, 1, 0),
       scene,
     );
-    hemiLight.intensity = 0.15;
+    hemiLight.intensity = 0.6; 
+    
     const dirLight = new BABYLON.DirectionalLight(
       "dirLight",
       new BABYLON.Vector3(-2, -7, -5),
       scene,
     );
-    dirLight.intensity = 1.75;
+    dirLight.intensity = 2.2; 
+    
+    
+    const fillLight = new BABYLON.DirectionalLight(
+      "fillLight",
+      new BABYLON.Vector3(2, -3, 2),
+      scene,
+    );
+    fillLight.intensity = 0.8;
+    fillLight.position = new BABYLON.Vector3(-10, 15, -5);
     dirLight.position = new BABYLON.Vector3(0, 30, 10);
     dirLight.shadowMinZ = -100;
     dirLight.shadowMaxZ = 100;

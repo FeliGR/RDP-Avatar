@@ -19,6 +19,16 @@ npm install
 npm start
 ```
 
+## Required backend services
+
+This UI depends on three backend services. Make sure they’re running (locally or via Docker) before using the app:
+
+- Audio Engine (TTS/STT): https://github.com/FeliGR/Audio-Engine
+- Dialog Orchestrator (chat flow): https://github.com/FeliGR/Dialog-Orchestrator
+- Persona Engine (personality/profile): https://github.com/FeliGR/Persona-Engine
+
+Configure their URLs via the `.env` variables below.
+
 ## Configuration
 
 Create a `.env` file:

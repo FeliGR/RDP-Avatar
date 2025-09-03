@@ -56,7 +56,6 @@ const TraitSlider = ({ trait, value, onChange, disabled = false }) => {
   const getValueDescription = (trait, value) => {
     const key = `personality.scale.${trait}.${value}`;
     const translated = t(key);
-    // If key missing, fall back to Balanced
     return translated === key ? t("personality.scale.openness.3", "Balanced") : translated;
   };
 

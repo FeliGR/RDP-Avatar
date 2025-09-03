@@ -15,7 +15,6 @@ export const BIG_FIVE_TRAITS = [
   "neuroticism",
 ];
 
-// These will now be loaded from i18n translations
 export const getTraitDescriptions = (t) => ({
   openness: t("personality.descriptions.openness"),
   conscientiousness: t("personality.descriptions.conscientiousness"),

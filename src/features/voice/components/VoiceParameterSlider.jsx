@@ -27,12 +27,10 @@ const VoiceParameterSlider = ({ parameter, config, value, disabled = false }) =>
     updateValue(config.default);
   };
 
-  // Calculate percentage for visual indicator
   const calculatePercentage = (value) => {
     return ((value - config.min) / (config.max - config.min)) * 100;
   };
 
-  // Pulse effect when value changes
   useEffect(() => {
     if (prevValueRef.current !== value) {
       setIsPulse(true);
@@ -42,7 +40,6 @@ const VoiceParameterSlider = ({ parameter, config, value, disabled = false }) =>
     }
   }, [value]);
 
-  // Update CSS custom property for range styling
   useEffect(() => {
     const updateRangePosition = () => {
       if (rangeRef.current) {

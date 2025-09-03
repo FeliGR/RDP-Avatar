@@ -21,7 +21,6 @@ const DialogBox = ({ isVisible = true }) => {
     stopRealTimeConversation,
     isRealTimeActive,
   } = useRealTimeConversation();
-  // TTS state is not needed here; handled within dialog context when speaking
 
   const isRealTimeActiveRef = useRef(isRealTimeActive);
   const stopRealTimeConversationRef = useRef(stopRealTimeConversation);

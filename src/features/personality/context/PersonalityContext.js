@@ -2,6 +2,43 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { getPersonaProfile, updatePersonaTrait } from "../../../services/api";
 import { DEFAULT_PERSONALITY } from "../constants/constants";
 
+const normalizePersonalityData = (raw) => {
+  try {
+    const source = raw?.data ?? raw?.profile ?? raw?.persona ?? raw ?? {};
+    const traits = source?.traits ?? source;
+
+    const mapAlt = {
+      openness: ["open"],
+      conscientiousness: ["conscientious"],
+      extraversion: ["extraverted"],
+      agreeableness: ["agreeable"],
+      neuroticism: ["neurotic"],
+    };
+
+    const result = {};
+    Object.keys(mapAlt).forEach((key) => {
+      let val = traits?.[key];
+      if (val === undefined) {
+        for (const alt of mapAlt[key]) {
+          if (traits && traits[alt] !== undefined) {
+            val = traits[alt];
+            break;
+          }
+        }
+      }
+      if (typeof val === "string") val = parseFloat(val);
+      if (typeof val === "number" && !Number.isNaN(val)) {
+        const clamped = Math.min(5, Math.max(1, Math.round(val)));
+        result[key] = clamped;
+      }
+    });
+
+    return result;
+  } catch (_) {
+    return {};
+  }
+};
+
 export const PersonalityContext = createContext();
 export const usePersonality = () => useContext(PersonalityContext);
 export const PersonalityProvider = ({ children }) => {
@@ -15,8 +52,10 @@ export const PersonalityProvider = ({ children }) => {
       try {
         setIsLoading(true);
         const userId = personalityTraits.userId;
-        const data = await getPersonaProfile(userId);
-        setPersonalityTraits({ ...data, userId });
+        const apiData = await getPersonaProfile(userId);
+        const normalized = normalizePersonalityData(apiData);
+
+        setPersonalityTraits({ ...DEFAULT_PERSONALITY, ...normalized, userId });
         setError(null);
         setApiAvailable(true);
       } catch (err) {

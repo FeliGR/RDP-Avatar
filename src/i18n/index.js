@@ -12,10 +12,10 @@ i18n.use(initReactI18next).init({
       translation: esTranslations,
     },
   },
-  lng: "en", // default language
+  lng: "en",
   fallbackLng: "en",
   interpolation: {
-    escapeValue: false, // React already escapes values
+    escapeValue: false,
   },
   react: {
     useSuspense: false,

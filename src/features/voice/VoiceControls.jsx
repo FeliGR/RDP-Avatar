@@ -40,6 +40,16 @@ const VoiceControls = () => {
           </div>
         </div>
 
+        {/* Gender Selection Card (moved above Voice Selection) */}
+        <div className="voice-control-card gender-card">
+          <div className="voice-control-card__header">
+            <label className="voice-control-card__title">{t("voice.voiceGender")}</label>
+          </div>
+          <div className="voice-control-card__content">
+            <SsmlGenderSelector disabled={isLoading || isPlaying} />
+          </div>
+        </div>
+
         {/* Voice Selection Card */}
         <div className="voice-control-card voice-card">
           <div className="voice-control-card__header">
@@ -47,16 +57,6 @@ const VoiceControls = () => {
           </div>
           <div className="voice-control-card__content">
             <VoiceSelector disabled={isLoading || isPlaying} />
-          </div>
-        </div>
-
-        {/* Gender Selection Card */}
-        <div className="voice-control-card gender-card">
-          <div className="voice-control-card__header">
-            <label className="voice-control-card__title">{t("voice.voiceGender")}</label>
-          </div>
-          <div className="voice-control-card__content">
-            <SsmlGenderSelector disabled={isLoading || isPlaying} />
           </div>
         </div>
 

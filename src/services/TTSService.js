@@ -30,16 +30,13 @@ class TTSService {
     }
 
     try {
-      // Use provided voiceConfig or fallback to default
       const finalVoiceConfig = voiceConfig
         ? { ...this.defaultVoiceConfig, ...voiceConfig }
         : this.defaultVoiceConfig;
 
-      // Convert camelCase to snake_case for API compatibility
       const apiVoiceConfig = {
         language_code: finalVoiceConfig.languageCode,
         name: finalVoiceConfig.name,
-        ssml_gender: finalVoiceConfig.ssmlGender,
         speaking_rate: finalVoiceConfig.speakingRate,
         pitch: finalVoiceConfig.pitch,
       };

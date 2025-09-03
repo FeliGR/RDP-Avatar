@@ -13,7 +13,6 @@ export const useVoiceConfig = () => {
 
 export const VoiceConfigProvider = ({ children }) => {
   const [voiceConfig, setVoiceConfig] = useState(() => {
-    // Try to load from localStorage
     try {
       const saved = localStorage.getItem("ar-avatar-voice-config");
       return saved ? JSON.parse(saved) : DEFAULT_VOICE_CONFIG;
@@ -26,7 +25,6 @@ export const VoiceConfigProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Save to localStorage whenever config changes
   const saveToLocalStorage = useCallback((config) => {
     try {
       localStorage.setItem("ar-avatar-voice-config", JSON.stringify(config));
@@ -49,7 +47,6 @@ export const VoiceConfigProvider = ({ children }) => {
 
   const updateLanguage = useCallback(
     (languageCode) => {
-      // When language changes, we need to update the voice name to match the new language
       const getDefaultVoiceForLanguage = (langCode) => {
         switch (langCode) {
           case "en-US":
@@ -105,7 +102,6 @@ export const VoiceConfigProvider = ({ children }) => {
     setError(null);
   }, [saveToLocalStorage]);
 
-  // Convert to the format expected by the TTS service
   const getTTSConfig = useCallback(() => {
     return {
       languageCode: voiceConfig.languageCode,

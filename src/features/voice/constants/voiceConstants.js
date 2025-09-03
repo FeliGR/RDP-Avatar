@@ -13,22 +13,25 @@ export const getLanguageOptions = (t) => [
 
 export const VOICE_OPTIONS = {
   "en-US": [
-    { name: "en-US-Wavenet-A", label: "Wavenet A", gender: "Female" },
-    { name: "en-US-Wavenet-B", label: "Wavenet B", gender: "Male" },
-    { name: "en-US-Wavenet-C", label: "Wavenet C", gender: "Female" },
-    { name: "en-US-Wavenet-D", label: "Wavenet D", gender: "Male" },
-    { name: "en-US-Wavenet-E", label: "Wavenet E", gender: "Female" },
-    { name: "en-US-Wavenet-F", label: "Wavenet F", gender: "Female" },
-    { name: "en-US-Wavenet-G", label: "Wavenet G", gender: "Female" },
-    { name: "en-US-Wavenet-H", label: "Wavenet H", gender: "Female" },
-    { name: "en-US-Wavenet-I", label: "Wavenet I", gender: "Male" },
-    { name: "en-US-Wavenet-J", label: "Wavenet J", gender: "Male" },
+    // --- WaveNet ---
+    { name: "en-US-Wavenet-A", label: "WaveNet A", gender: "Male" },
+    { name: "en-US-Wavenet-B", label: "WaveNet B", gender: "Male" },
+    { name: "en-US-Wavenet-C", label: "WaveNet C", gender: "Female" },
+    { name: "en-US-Wavenet-D", label: "WaveNet D", gender: "Male" },
+    { name: "en-US-Wavenet-E", label: "WaveNet E", gender: "Female" },
+    { name: "en-US-Wavenet-F", label: "WaveNet F", gender: "Female" },
+    { name: "en-US-Wavenet-G", label: "WaveNet G", gender: "Female" },
+    { name: "en-US-Wavenet-H", label: "WaveNet H", gender: "Female" },
+    { name: "en-US-Wavenet-I", label: "WaveNet I", gender: "Male" },
+    { name: "en-US-Wavenet-J", label: "WaveNet J", gender: "Male" },
   ],
+
   "es-ES": [
-    { name: "es-ES-Wavenet-A", label: "Wavenet A", gender: "Female" },
-    { name: "es-ES-Wavenet-B", label: "Wavenet B", gender: "Male" },
-    { name: "es-ES-Wavenet-C", label: "Wavenet C", gender: "Female" },
-    { name: "es-ES-Wavenet-D", label: "Wavenet D", gender: "Female" },
+    // --- WaveNet ---
+    { name: "es-ES-Wavenet-E", label: "WaveNet E", gender: "Male" },
+    { name: "es-ES-Wavenet-F", label: "WaveNet F", gender: "Female" },
+    { name: "es-ES-Wavenet-G", label: "WaveNet G", gender: "Male" },
+    { name: "es-ES-Wavenet-H", label: "WaveNet H", gender: "Female" },
   ],
 };
 

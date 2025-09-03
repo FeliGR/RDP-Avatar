@@ -24,12 +24,10 @@ const TraitInfoModal = ({ trait, detailedInfo, onClose }) => {
     document.addEventListener("keydown", handleEscape);
     document.addEventListener("click", handleClickOutside);
 
-    // Focus management
     if (modalRef.current) {
       modalRef.current.focus();
     }
 
-    // Prevent body scroll
     document.body.style.overflow = "hidden";
 
     return () => {

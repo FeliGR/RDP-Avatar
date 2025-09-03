@@ -2,8 +2,6 @@
 
 An interactive 3D AI companion with customizable personality and voice.
 
-**Note:** This repository was previously named RDP-Avatar (or ar-avatar).
-
 ## Features
 
 - **3D Avatar**: Create and customize avatars using Ready Player Me

@@ -59,7 +59,36 @@ docker-compose up -d
 - Socket.io
 - i18next
 
-<img width="2560" height="1320" alt="image" src="https://github.com/user-attachments/assets/c1ffce4a-f246-4a3e-b1cc-e6b3ab71aba0" />
-<img width="2560" height="1320" alt="image" src="https://github.com/user-attachments/assets/ab808de6-92c5-49c7-b97f-ec943c116d29" />
-<img width="2560" height="1320" alt="image" src="https://github.com/user-attachments/assets/a5c3f56a-7e71-421d-8c15-12dc3b0f8a5f" />
-<img width="2560" height="1320" alt="image" src="https://github.com/user-attachments/assets/04f55e5a-39ba-491e-a49f-4c29732a2918" />
+## Screenshots
+
+<img width="2560" height="1318" alt="Avatar Chat 1" src="https://github.com/user-attachments/assets/e412c493-e0d7-4692-aec4-18a70b69c71a" />
+<img width="2560" height="1318" alt="Avatar Chat 2" src="https://github.com/user-attachments/assets/80ba8535-b6fb-45f2-b188-28f8a60db8d0" />
+<img width="2560" height="1318" alt="Avatar Personality Panel" src="https://github.com/user-attachments/assets/0e7447f2-e393-473f-a9f3-6599477c3002" />
+<img width="2560" height="1318" alt="Voice Settings" src="https://github.com/user-attachments/assets/3bd7a2d8-ed8b-4fa1-b976-abbe6a28d48d" />
+
+<table>
+  <tr>
+    <td>
+      <a href="https://github.com/user-attachments/assets/e5316471-ab26-4e8b-9368-a24b53cfc5e9">
+        <img src="https://github.com/user-attachments/assets/e5316471-ab26-4e8b-9368-a24b53cfc5e9" width="100%" alt="Screenshot 1" />
+      </a>
+    </td>
+    <td>
+      <a href="https://github.com/user-attachments/assets/6d5be6a3-65c3-419b-af40-4f58a60fe2f4">
+        <img src="https://github.com/user-attachments/assets/6d5be6a3-65c3-419b-af40-4f58a60fe2f4" width="100%" alt="Screenshot 2" />
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://github.com/user-attachments/assets/46c77209-a1c7-4ebb-bf62-6b0db18742f7">
+        <img src="https://github.com/user-attachments/assets/46c77209-a1c7-4ebb-bf62-6b0db18742f7" width="100%" alt="Screenshot 3" />
+      </a>
+    </td>
+    <td>
+      <a href="https://github.com/user-attachments/assets/09865849-5e65-456f-8b41-de7a32c5cbfb">
+        <img src="https://github.com/user-attachments/assets/09865849-5e65-456f-8b41-de7a32c5cbfb" width="100%" alt="Screenshot 4" />
+      </a>
+    </td>
+  </tr>
+</table>

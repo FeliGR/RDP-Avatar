@@ -110,7 +110,7 @@ export const DialogProvider = ({ children }) => {
         setIsLoading(false);
       }
     },
-  [personalityTraits.userId, dialogApiAvailable, fetchBotResponse, createMessage],
+    [personalityTraits.userId, dialogApiAvailable, fetchBotResponse, createMessage],
   );
   const clearConversation = useCallback(() => {
     setMessages([]);

@@ -41,7 +41,7 @@
 }
 
 .language-code {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   font-weight: 600;
   letter-spacing: 0.5px;
 }
@@ -52,12 +52,12 @@
     top: 15px;
     right: 15px;
   }
-  
+
   .language-switcher-btn {
     padding: 6px 10px;
     font-size: 13px;
   }
-  
+
   .language-flag {
     font-size: 14px;
   }
@@ -69,9 +69,9 @@
     background: rgba(0, 0, 0, 0.3);
     border-color: rgba(255, 255, 255, 0.1);
   }
-  
+
   .language-switcher-btn:hover {
     background: rgba(0, 0, 0, 0.4);
     border-color: rgba(255, 255, 255, 0.2);
   }
-} 
+}

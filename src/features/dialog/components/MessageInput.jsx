@@ -76,17 +76,17 @@ const MessageInput = ({
           value={inputText}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          placeholder={t('chat.askAnything')}
+          placeholder={t("chat.askAnything")}
           disabled={isLoading}
           className="message-input"
-          aria-label={t('chat.messageInput')}
+          aria-label={t("chat.messageInput")}
         />
 
         <button
           type="submit"
           disabled={isLoading || !inputText.trim()}
           className="send-button"
-          aria-label={t('chat.sendMessage')}
+          aria-label={t("chat.sendMessage")}
         >
           {isLoading ? "⋯" : "➤"}
         </button>

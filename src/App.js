@@ -178,15 +178,15 @@ const App = () => {
               </div>
               <div className="welcome-text">
                 <h1 className="main-title">
-                  <span className="title-word">{t('app.title').split(' ')[0]}</span>
-                  <span className="title-word highlight">{t('app.title').split(' ')[1]}</span>
-                  <span className="title-word">{t('app.title').split(' ')[2]}</span>
+                  <span className="title-word">{t("app.title").split(" ")[0]}</span>
+                  <span className="title-word highlight">{t("app.title").split(" ")[1]}</span>
+                  <span className="title-word">{t("app.title").split(" ")[2]}</span>
                 </h1>
-                <p className="subtitle">{t('app.subtitle')}</p>
+                <p className="subtitle">{t("app.subtitle")}</p>
                 <div className="feature-tags">
-                  <span className="tag">{t('app.featureTags.realTimeChat')}</span>
-                  <span className="tag">{t('app.featureTags.3dAvatar')}</span>
-                  <span className="tag">{t('app.featureTags.smartResponses')}</span>
+                  <span className="tag">{t("app.featureTags.realTimeChat")}</span>
+                  <span className="tag">{t("app.featureTags.3dAvatar")}</span>
+                  <span className="tag">{t("app.featureTags.smartResponses")}</span>
                 </div>
               </div>
               <div className="interaction-zone" onClick={handleStart}>
@@ -196,22 +196,22 @@ const App = () => {
                   </div>
                 </div>
                 <p className="interaction-text">
-                  <span className="primary-text">{t('app.touchToBegin')}</span>
-                  <span className="secondary-text">{t('app.yourAiCompanionAwaits')}</span>
+                  <span className="primary-text">{t("app.touchToBegin")}</span>
+                  <span className="secondary-text">{t("app.yourAiCompanionAwaits")}</span>
                 </p>
               </div>
               <div className="system-status">
                 <div className="status-item">
                   <div className="status-dot active"></div>
-                  <span>{t('app.systemStatus.aiCore')}</span>
+                  <span>{t("app.systemStatus.aiCore")}</span>
                 </div>
                 <div className="status-item">
                   <div className="status-dot active"></div>
-                  <span>{t('app.systemStatus.avatarEngine')}</span>
+                  <span>{t("app.systemStatus.avatarEngine")}</span>
                 </div>
                 <div className="status-item">
                   <div className="status-dot active"></div>
-                  <span>{t('app.systemStatus.readyToChat')}</span>
+                  <span>{t("app.systemStatus.readyToChat")}</span>
                 </div>
               </div>
             </div>
@@ -237,7 +237,7 @@ const App = () => {
               <button
                 className={`control-btn ${activePanel === "chat" ? "active" : ""}`}
                 onClick={() => togglePanel("chat")}
-                title={t('navigation.openChat')}
+                title={t("navigation.openChat")}
               >
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" />
@@ -246,7 +246,7 @@ const App = () => {
               <button
                 className={`control-btn ${activePanel === "personality" ? "active" : ""}`}
                 onClick={() => togglePanel("personality")}
-                title={t('navigation.personalityProfile')}
+                title={t("navigation.personalityProfile")}
               >
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
@@ -255,7 +255,7 @@ const App = () => {
               <button
                 className={`control-btn ${activePanel === "voice" ? "active" : ""}`}
                 onClick={() => togglePanel("voice")}
-                title={t('navigation.voiceConfiguration')}
+                title={t("navigation.voiceConfiguration")}
               >
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5z" />
@@ -265,7 +265,7 @@ const App = () => {
               <button
                 className="control-btn"
                 onClick={handleCustomizeAvatar}
-                title={t('navigation.customizeAvatar')}
+                title={t("navigation.customizeAvatar")}
               >
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
@@ -294,7 +294,7 @@ const App = () => {
               className={`side-panel personality-panel ${activePanel === "personality" ? "active" : ""}`}
             >
               <div className="panel-header">
-                <h3>{t('personality.personalityProfile')}</h3>
+                <h3>{t("personality.personalityProfile")}</h3>
                 <button className="close-panel-btn" onClick={() => setActivePanel(null)}>
                   ×
                 </button>
@@ -305,7 +305,7 @@ const App = () => {
             </div>
             <div className={`side-panel voice-panel ${activePanel === "voice" ? "active" : ""}`}>
               <div className="panel-header">
-                <h3>{t('voice.voiceConfiguration')}</h3>
+                <h3>{t("voice.voiceConfiguration")}</h3>
                 <button className="close-panel-btn" onClick={() => setActivePanel(null)}>
                   ×
                 </button>

@@ -7,8 +7,8 @@ export const DEFAULT_VOICE_CONFIG = {
 };
 
 export const getLanguageOptions = (t) => [
-  { code: "en-US", label: t('voice.languages.englishUS'), flag: "🇺🇸" },
-  { code: "es-ES", label: t('voice.languages.spanishSpain'), flag: "🇪🇸" },
+  { code: "en-US", label: t("voice.languages.englishUS"), flag: "🇺🇸" },
+  { code: "es-ES", label: t("voice.languages.spanishSpain"), flag: "🇪🇸" },
 ];
 
 export const VOICE_OPTIONS = {
@@ -33,9 +33,9 @@ export const VOICE_OPTIONS = {
 };
 
 export const getSsmlGenderOptions = (t) => [
-  { value: "NEUTRAL", label: t('voice.genderOptions.neutral'), icon: "N" },
-  { value: "MALE", label: t('voice.genderOptions.male'), icon: "M" },
-  { value: "FEMALE", label: t('voice.genderOptions.female'), icon: "F" },
+  { value: "NEUTRAL", label: t("voice.genderOptions.neutral"), icon: "N" },
+  { value: "MALE", label: t("voice.genderOptions.male"), icon: "M" },
+  { value: "FEMALE", label: t("voice.genderOptions.female"), icon: "F" },
 ];
 
 export const getVoiceParameters = (t) => ({
@@ -44,8 +44,8 @@ export const getVoiceParameters = (t) => ({
     max: 4.0,
     default: 1.0,
     step: 0.1,
-    label: t('voice.parameterLabels.speakingRateLabel'),
-    description: t('voice.parameterDescriptions.speakingRateDesc'),
+    label: t("voice.parameterLabels.speakingRateLabel"),
+    description: t("voice.parameterDescriptions.speakingRateDesc"),
     unit: "x",
   },
   pitch: {
@@ -53,8 +53,8 @@ export const getVoiceParameters = (t) => ({
     max: 20.0,
     default: 0.0,
     step: 0.5,
-    label: t('voice.parameterLabels.pitchLabel'),
-    description: t('voice.parameterDescriptions.pitchDesc'),
+    label: t("voice.parameterLabels.pitchLabel"),
+    description: t("voice.parameterDescriptions.pitchDesc"),
     unit: " semitones",
   },
 });

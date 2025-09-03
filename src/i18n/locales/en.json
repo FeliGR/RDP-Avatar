@@ -34,7 +34,7 @@
     "personalityProfile": "Personality Profile",
     "traits": {
       "openness": "Openness",
-      "conscientiousness": "Conscientiousness", 
+      "conscientiousness": "Conscientiousness",
       "extraversion": "Extraversion",
       "agreeableness": "Agreeableness",
       "neuroticism": "Emotional Sensitivity"
@@ -198,4 +198,4 @@
     "english": "English",
     "spanish": "Spanish"
   }
-} 
+}

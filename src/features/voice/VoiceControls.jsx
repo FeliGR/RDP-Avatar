@@ -18,7 +18,7 @@ const VoiceControls = () => {
   const voiceParameters = getVoiceParameters(t);
 
   const handleReset = () => {
-    if (window.confirm(t('voice.confirmReset') || "Reset all voice settings to defaults?")) {
+    if (window.confirm(t("voice.confirmReset") || "Reset all voice settings to defaults?")) {
       resetToDefaults();
     }
   };
@@ -27,13 +27,13 @@ const VoiceControls = () => {
     <div className="voice-controls">
       <ErrorMessage message={error} />
 
-      {isLoading && <div className="loading-indicator" aria-label={t('common.loading')} />}
+      {isLoading && <div className="loading-indicator" aria-label={t("common.loading")} />}
 
       <div className="voice-controls__content">
         {/* Language Selection Card */}
         <div className="voice-control-card language-card">
           <div className="voice-control-card__header">
-            <label className="voice-control-card__title">{t('voice.language')}</label>
+            <label className="voice-control-card__title">{t("voice.language")}</label>
           </div>
           <div className="voice-control-card__content">
             <LanguageSelector disabled={isLoading || isPlaying} />
@@ -43,7 +43,7 @@ const VoiceControls = () => {
         {/* Voice Selection Card */}
         <div className="voice-control-card voice-card">
           <div className="voice-control-card__header">
-            <label className="voice-control-card__title">{t('voice.voiceModel')}</label>
+            <label className="voice-control-card__title">{t("voice.voiceModel")}</label>
           </div>
           <div className="voice-control-card__content">
             <VoiceSelector disabled={isLoading || isPlaying} />
@@ -53,7 +53,7 @@ const VoiceControls = () => {
         {/* Gender Selection Card */}
         <div className="voice-control-card gender-card">
           <div className="voice-control-card__header">
-            <label className="voice-control-card__title">{t('voice.voiceGender')}</label>
+            <label className="voice-control-card__title">{t("voice.voiceGender")}</label>
           </div>
           <div className="voice-control-card__content">
             <SsmlGenderSelector disabled={isLoading || isPlaying} />
@@ -87,10 +87,12 @@ const VoiceControls = () => {
               className="voice-controls__reset-btn"
               onClick={handleReset}
               disabled={isLoading || isPlaying}
-              title={t('voice.resetAll') || "Reset all settings to defaults"}
+              title={t("voice.resetAll") || "Reset all settings to defaults"}
             >
               <span className="reset-icon">↻</span>
-              <span className="reset-text">{t('voice.resetAllSettings') || "Reset All Settings"}</span>
+              <span className="reset-text">
+                {t("voice.resetAllSettings") || "Reset All Settings"}
+              </span>
             </button>
           </div>
         </div>

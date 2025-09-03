@@ -23,7 +23,7 @@ const PersonalityControls = () => {
   return (
     <div className="personality-controls">
       <ErrorMessage message={error} />
-      {isLoading && <div className="loading-indicator" aria-label={t('common.loading')} />}
+      {isLoading && <div className="loading-indicator" aria-label={t("common.loading")} />}
       {BIG_FIVE_TRAITS.map((trait) => (
         <TraitSlider
           key={trait}

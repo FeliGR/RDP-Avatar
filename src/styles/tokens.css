@@ -25,7 +25,7 @@
   --header-height: 160px;
   --animation-smooth: cubic-bezier(0.23, 1, 0.32, 1);
   --animation-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  
+
   /* Additional variables for consistency */
   --radius-sm: 8px;
   --radius-md: 12px;

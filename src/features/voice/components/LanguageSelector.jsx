@@ -35,7 +35,7 @@ const LanguageSelector = ({ disabled = false }) => {
       </div>
       <div className="language-selector__info">
         <span className="language-selector__current">
-          {currentLanguage?.label || t('voice.unknownLanguage')}
+          {currentLanguage?.label || t("voice.unknownLanguage")}
         </span>
       </div>
     </div>

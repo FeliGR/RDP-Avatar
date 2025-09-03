@@ -38,7 +38,8 @@ const VoiceSelector = ({ disabled = false }) => {
             {currentVoice.gender === "Male" ? "♂" : "♀"}
           </span>
           <span className="voice-selector__info-text">
-            {t(`voice.voiceGenders.${currentVoice.gender}`)} {t('voice.voiceLabel')} - {currentVoice.label}
+            {t(`voice.voiceGenders.${currentVoice.gender}`)} {t("voice.voiceLabel")} -{" "}
+            {currentVoice.label}
           </span>
         </div>
       )}

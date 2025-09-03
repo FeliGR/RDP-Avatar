@@ -67,15 +67,16 @@ const VoiceParameterSlider = ({ parameter, config, value, disabled = false }) =>
             className={`voice-parameter-value ${isPulse ? "pulse" : ""}`}
             title={config.description}
           >
-            {displayValue}{config.unit}
+            {displayValue}
+            {config.unit}
           </span>
           <button
             type="button"
             className="voice-parameter-slider__reset"
             onClick={handleReset}
             disabled={disabled || value === config.default}
-            title={`${t('common.reset')} ${t(`voice.${parameter}`)}`}
-            aria-label={`${t('common.reset')} ${t(`voice.${parameter}`)}`}
+            title={`${t("common.reset")} ${t(`voice.${parameter}`)}`}
+            aria-label={`${t("common.reset")} ${t(`voice.${parameter}`)}`}
           >
             ↻
           </button>
@@ -85,9 +86,9 @@ const VoiceParameterSlider = ({ parameter, config, value, disabled = false }) =>
       <div className="voice-parameter-description">{config.description}</div>
 
       <div className="voice-parameter-progress">
-        <div 
-          className={`voice-parameter-progress-bar ${parameter}-bar`} 
-          style={{ width: `${percentage}%` }} 
+        <div
+          className={`voice-parameter-progress-bar ${parameter}-bar`}
+          style={{ width: `${percentage}%` }}
         />
       </div>
 
@@ -106,9 +107,18 @@ const VoiceParameterSlider = ({ parameter, config, value, disabled = false }) =>
       />
 
       <div className="voice-parameter-range-labels">
-        <span>{config.min}{config.unit}</span>
-        <span>{config.default}{config.unit}</span>
-        <span>{config.max}{config.unit}</span>
+        <span>
+          {config.min}
+          {config.unit}
+        </span>
+        <span>
+          {config.default}
+          {config.unit}
+        </span>
+        <span>
+          {config.max}
+          {config.unit}
+        </span>
       </div>
     </div>
   );

@@ -15,7 +15,7 @@ const MessageList = ({ messages, isLoading }) => {
     return (
       <div className="messages-container">
         <div className="empty-chat">
-          <p>{t('chat.startConversation')}</p>
+          <p>{t("chat.startConversation")}</p>
         </div>
         <div ref={messagesEndRef} />
       </div>

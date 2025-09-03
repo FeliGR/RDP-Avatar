@@ -54,32 +54,42 @@ const TraitInfoModal = ({ trait, detailedInfo, onClose }) => {
       <div className={`trait-modal ${trait}`} ref={modalRef} tabIndex={-1}>
         <div className="trait-modal-header">
           <div className="trait-modal-icon">{detailedInfo.icon || "?"}</div>
-          <h3 className="trait-modal-title">{detailedInfo.title || t(`personality.traits.${trait}`)}</h3>
-          <button className="trait-modal-close" onClick={handleCloseClick} aria-label={t('common.close')}>
+          <h3 className="trait-modal-title">
+            {detailedInfo.title || t(`personality.traits.${trait}`)}
+          </h3>
+          <button
+            className="trait-modal-close"
+            onClick={handleCloseClick}
+            aria-label={t("common.close")}
+          >
             ✕
           </button>
         </div>
 
         <div className="trait-modal-content">
           <div className="trait-modal-section">
-            <h4 className="trait-modal-section-title">{t('personality.modal.whatIsIt')}</h4>
+            <h4 className="trait-modal-section-title">{t("personality.modal.whatIsIt")}</h4>
             <p className="trait-modal-text">{detailedInfo.description}</p>
           </div>
 
           <div className="trait-modal-section">
-            <h4 className="trait-modal-section-title">{t('personality.modal.howItAffects')}</h4>
+            <h4 className="trait-modal-section-title">{t("personality.modal.howItAffects")}</h4>
             <p className="trait-modal-text">{detailedInfo.effects}</p>
           </div>
 
           <div className="trait-modal-section">
-            <h4 className="trait-modal-section-title">{t('personality.modal.examples')}</h4>
+            <h4 className="trait-modal-section-title">{t("personality.modal.examples")}</h4>
             <div className="trait-modal-examples">
               <div className="trait-modal-example">
-                <h5 className="trait-modal-example-title">{t('personality.modal.high')} {t(`personality.traits.${trait}`)}</h5>
+                <h5 className="trait-modal-example-title">
+                  {t("personality.modal.high")} {t(`personality.traits.${trait}`)}
+                </h5>
                 <p className="trait-modal-example-text">{detailedInfo.highExample}</p>
               </div>
               <div className="trait-modal-example">
-                <h5 className="trait-modal-example-title">{t('personality.modal.low')} {t(`personality.traits.${trait}`)}</h5>
+                <h5 className="trait-modal-example-title">
+                  {t("personality.modal.low")} {t(`personality.traits.${trait}`)}
+                </h5>
                 <p className="trait-modal-example-text">{detailedInfo.lowExample}</p>
               </div>
             </div>
@@ -88,7 +98,7 @@ const TraitInfoModal = ({ trait, detailedInfo, onClose }) => {
 
         <div className="trait-modal-footer">
           <button className="trait-modal-button" onClick={handleCloseClick}>
-            {t('personality.modal.close')}
+            {t("personality.modal.close")}
           </button>
         </div>
       </div>
